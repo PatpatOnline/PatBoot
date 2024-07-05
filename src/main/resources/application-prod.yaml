@@ -11,6 +11,9 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
+  output:
+    ansi:
+      enabled: detect
 server:
   port: 8080
 springdoc:
