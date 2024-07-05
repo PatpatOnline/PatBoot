@@ -19,3 +19,15 @@ server:
 springdoc:
   swagger-ui:
     operationsSorter: method
+cors:
+  allowed-origins:
+    - http://8.130.103.241
+    - http://8.130.103.241:2121
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers: Authorization
+  allow-credentials: true
