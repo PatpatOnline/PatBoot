@@ -68,7 +68,7 @@ public class MessageDispatcher {
                 try {
                     entry.getKey().sendMessage(payload.toTextMessage());
                 } catch (Exception e) {
-                    log.error("Failed to send message to tag: {}", tag, e);
+                    log.error("Failed to send message to tag: {}", tag);
                     invalidSessions.add(entry.getKey());
                 }
             }
