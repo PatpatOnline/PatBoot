@@ -4,9 +4,12 @@ import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.net.URI;
 
 @Component
@@ -40,8 +43,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String jwt = uri.toString().substring(pos + 1);
         dispatcher.addSession(jwt, session);
-        session.sendMessage(WebSocketPayload.message("Battle control online").toTextMessage());
+        dispatcher.send(jwt, WebSocketPayload.message("Battle control online"));
 
-        log.info("New connection established: {}", jwt);
+        log.info("New WebSocket connection with {}", jwt);
+    }
+
+    @Override
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        session.sendMessage(WebSocketPayload.message("You are the silent role.").toTextMessage());
+    }
+
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable throwable) throws Exception {
+        if (session.isOpen()) {
+            session.close();
+        }
+        String tag = dispatcher.removeSession(session);
+        log.error("WebSocket connection with {} encountered error: {}", tag, throwable.toString());
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        String tag = dispatcher.removeSession(session);
+        log.info("WebSocket connection with {} closed", tag);
     }
 }
