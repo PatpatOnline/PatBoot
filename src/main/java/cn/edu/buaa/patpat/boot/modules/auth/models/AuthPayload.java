@@ -8,4 +8,8 @@ public class AuthPayload {
     private String buaaId;
     private boolean isTa;
     private boolean isTeacher;
+
+    boolean isStudent() {
+        return !isTa;
+    }
 }

@@ -16,9 +16,9 @@ spring:
       enabled: detect
 server:
   port: 8080
-url:
-  http: ${HTTP_URL:http://localhost:8080}
-  websocket: ${WS_URL:ws://localhost:8080}
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
 springdoc:
   swagger-ui:
     operationsSorter: method
@@ -44,5 +44,9 @@ cookies:
   secure: false
 bucket:
   serve: true
-  public-root: volume/wwwroot
-  private-root: volume/bucket
+  public-root: ./volume/wwwroot/
+  private-root: ./volume/bucket/
+config:
+  allow-register: true
+  http: ${HTTP_URL:http://localhost:8080}
+  websocket: ${WS_URL:ws://localhost:8080}

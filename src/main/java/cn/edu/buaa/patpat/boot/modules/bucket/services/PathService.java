@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
+
 /**
  * The service to handle the path of the content.
  * There are two types of content: public and private.
@@ -31,7 +33,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PathService {
     private final BucketOptions bucketOptions;
-    @Value("${url.http}")
+    @Value("${config.http}")
     private String httpUrl;
 
     /**
@@ -46,7 +48,7 @@ public class PathService {
         if (Strings.isNullOrEmpty(tag)) {
             return toRecord(filename);
         }
-        return tag + "/" + filename;
+        return Paths.get(tag, filename).toString();
     }
 
     /**
@@ -66,7 +68,7 @@ public class PathService {
      * @return The private path of the content.
      */
     public String recordToPrivatePath(String record) {
-        return bucketOptions.getPrivateRoot() + "/" + record;
+        return Paths.get(bucketOptions.getPrivateRoot(), record).toString();
     }
 
     /**
@@ -76,7 +78,7 @@ public class PathService {
      * @return The URL of the content.
      */
     public String recordToUrl(String record) {
-        return httpUrl + "/" + record;
+        return httpUrl + "/public/" + record;
     }
 
     /**
@@ -86,7 +88,7 @@ public class PathService {
      * @return The public path of the content.
      */
     public String recordToPublicPath(String record) {
-        return bucketOptions.getPublicRoot() + "/" + record;
+        return Paths.get(bucketOptions.getPublicRoot(), record).toString();
     }
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Stream", description = "WebSocket stream API")
 public class StreamController {
     private final AuthApi authApi;
-    @Value("${url.websocket}")
+    @Value("${config.websocket}")
     private String webSocketUrl;
 
     @GetMapping("websocket")

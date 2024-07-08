@@ -55,6 +55,13 @@ public class BucketApi {
     }
 
     /**
+     * @see PathService#recordToUrl(String)
+     */
+    public String recordToUrl(String record) {
+        return pathService.recordToUrl(record);
+    }
+
+    /**
      * @see PathService#toRecord(String, String)
      */
     public String toRecord(String tag, String filename) {

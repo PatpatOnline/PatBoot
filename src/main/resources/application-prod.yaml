@@ -5,7 +5,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:patpat-prod}
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:patpat-dev}
   rabbitmq:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT:5672}
@@ -16,16 +16,16 @@ spring:
       enabled: detect
 server:
   port: 8080
-url:
-  http: ${HTTP_URL}
-  websocket: ${WS_URL}
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
 springdoc:
   swagger-ui:
     operationsSorter: method
 cors:
   allowed-origins:
-    - http://8.130.103.241
-    - http://8.130.103.241:2121
+    - http://localhost:8000
+    - http://localhost:5173
   allowed-methods:
     - GET
     - POST
@@ -43,5 +43,10 @@ cookies:
   http-only: true
   secure: false
 bucket:
+  serve: true
   public-root: /wwwroot
   private-root: /bucket
+config:
+  allow-register: true
+  http: ${HTTP_URL:http://localhost:8080}
+  websocket: ${WS_URL:ws://localhost:8080}
