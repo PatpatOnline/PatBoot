@@ -1,10 +1,12 @@
 package cn.edu.buaa.patpat.boot.modules.auth.api;
 
+import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtVerifyException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.auth.services.AuthService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthApi {
     private final AuthService authService;
+    private final ICookieSetter jwtCookieSetter;
 
     public String issueJwt(AuthPayload auth) throws JwtIssueException {
         return authService.issueJwt(auth);
@@ -43,5 +46,9 @@ public class AuthApi {
 
     public Cookie cleanRefreshCookie() {
         return authService.cleanRefreshCookie();
+    }
+
+    public String getJwt(HttpServletRequest request) {
+        return jwtCookieSetter.get(request);
     }
 }

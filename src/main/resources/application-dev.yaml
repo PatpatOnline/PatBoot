@@ -16,6 +16,9 @@ spring:
       enabled: detect
 server:
   port: 8080
+url:
+  http: ${HTTP_URL:http://localhost:8080}
+  websocket: ${WS_URL:ws://localhost:8080}
 springdoc:
   swagger-ui:
     operationsSorter: method
