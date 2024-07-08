@@ -20,10 +20,6 @@ public class StreamApi {
         dispatcher.broadcast(tags, payload);
     }
 
-    public void send(int tag, WebSocketPayload<?> payload) {
-        send(String.valueOf(tag), payload);
-    }
-
     public void send(String tag, WebSocketPayload<?> payload) {
         dispatcher.send(tag, payload);
     }

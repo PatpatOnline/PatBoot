@@ -21,7 +21,7 @@ public class JudgeController {
 
     @PostMapping("submit/{id}")
     public DataResponse<SubmissionDto> submit(
-            @PathVariable("id") int id
+            @PathVariable("id") String id
     ) {
         SubmissionDto submissionDto = judgeService.initiateSubmission(id);
         return DataResponse.ok(submissionDto);

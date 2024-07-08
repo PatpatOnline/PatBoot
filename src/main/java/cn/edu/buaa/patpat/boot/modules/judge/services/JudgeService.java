@@ -18,9 +18,9 @@ public class JudgeService {
     private final RabbitTemplate rabbitTemplate;
     private final StreamApi streamApi;
 
-    public SubmissionDto initiateSubmission(int id) {
+    public SubmissionDto initiateSubmission(String id) {
         SubmissionDto submissionDto = new SubmissionDto();
-        submissionDto.setId(id);
+        submissionDto.setBuaaId(id);
         submissionDto.setTaskId(Generator.randomInt(10000, 99999));
         rabbitTemplate.convertAndSend(RabbitMqConfig.PENDING, submissionDto);
         log.info("Sent submission {}", submissionDto.getTaskId());
@@ -29,7 +29,7 @@ public class JudgeService {
 
     @RabbitListener(queues = RabbitMqConfig.RESULT)
     public void receive(SubmissionDto submissionDto) {
-        streamApi.send(submissionDto.getId(), WebSocketPayload.of("judge", submissionDto));
+        streamApi.send(submissionDto.getBuaaId(), WebSocketPayload.of("judge", submissionDto));
         log.info("Received result {}", submissionDto);
     }
 }
