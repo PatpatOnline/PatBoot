@@ -31,7 +31,7 @@ public class JwtIssuer implements IJwtIssuer {
     }
 
     @Override
-    public String verify(String token) throws JwtException {
+    public String verify(String token) throws JwtVerifyException {
         try {
             return Jwts.parser()
                     .decryptWith(key)
@@ -39,9 +39,9 @@ public class JwtIssuer implements IJwtIssuer {
                     .parseEncryptedClaims(token)
                     .getPayload().getSubject();
         } catch (io.jsonwebtoken.JwtException e) {
-            throw new JwtException("JWT expired", e);
+            throw new JwtVerifyException("JWT expired", e);
         } catch (IllegalArgumentException e) {
-            throw new JwtException("Invalid JWT", e);
+            throw new JwtVerifyException("Invalid JWT", e);
         }
     }
 }

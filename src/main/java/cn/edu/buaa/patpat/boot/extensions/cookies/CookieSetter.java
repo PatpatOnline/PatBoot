@@ -2,6 +2,8 @@ package cn.edu.buaa.patpat.boot.extensions.cookies;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.util.WebUtils;
 
 public class CookieSetter implements ICookieSetter {
     private final String name;
@@ -65,5 +67,15 @@ public class CookieSetter implements ICookieSetter {
     @Override
     public Cookie clean() {
         return set("");
+    }
+
+    @Override
+    public String get(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, name);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return null;
+        }
     }
 }

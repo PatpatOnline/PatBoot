@@ -17,7 +17,7 @@ public interface IJwtIssuer {
      *
      * @param token The token to be verified.
      * @return The payload of the token.
-     * @throws JwtException If the token is invalid.
+     * @throws JwtIssueException If the token is invalid.
      */
-    String verify(String token) throws JwtException;
+    String verify(String token) throws JwtVerifyException;
 }
