@@ -1,5 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
+import cn.edu.buaa.patpat.boot.modules.account.dto.AuthLevel;
+import cn.edu.buaa.patpat.boot.annotations.RequestValidation;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -33,24 +35,23 @@ public class AuthController extends BaseController {
 
     @PostMapping("register")
     @Operation(summary = "Register a new account", description = "Register a new account, only available in development")
+    @RequestValidation
     public MessageResponse register(
             @RequestBody @Valid RegisterRequest dto,
-            BindingResult bindingResult,
-            HttpServletRequest request
+            BindingResult bindingResult
     ) {
-        validateRequest(bindingResult);
         accountService.register(dto);
         return MessageResponse.ok("Register success");
     }
 
     @PostMapping("login")
     @Operation(summary = "Login", description = "Login with BUAA ID and password")
+    @RequestValidation
     public DataResponse<AccountDto> login(
             @RequestBody @Valid LoginRequest dto,
             BindingResult bindingResult,
             HttpServletResponse response
     ) {
-        validateRequest(bindingResult);
         var account = accountService.login(dto);
         AuthPayload auth = objects.map(account, AuthPayload.class);
         try {
@@ -67,7 +68,11 @@ public class AuthController extends BaseController {
 
     @PostMapping("logout")
     @Operation(summary = "Logout", description = "Logout and clear the session")
-    public MessageResponse logout(HttpServletResponse response) {
+    @RequestValidation(authLevel = AuthLevel.LOGIN)
+    public MessageResponse logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         response.addCookie(authApi.cleanJwtCookie());
         response.addCookie(authApi.cleanRefreshCookie());
         return MessageResponse.ok("Logout successfully");
