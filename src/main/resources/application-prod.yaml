@@ -42,3 +42,6 @@ cookies:
   domain: localhost
   http-only: true
   secure: false
+bucket:
+  public-root: /wwwroot
+  private-root: /bucket

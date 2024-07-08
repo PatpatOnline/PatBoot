@@ -42,3 +42,7 @@ cookies:
   domain: localhost
   http-only: true
   secure: false
+bucket:
+  serve: true
+  public-root: volume/wwwroot
+  private-root: volume/bucket

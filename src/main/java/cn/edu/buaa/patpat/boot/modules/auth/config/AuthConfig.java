@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AuthConfig {
+    public static final String AUTH_ATTR = "auth";
+
     private final JwtOptions jwtOptions;
     private final CookiesOptions cookiesOptions;
 

@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.exceptions.UnauthorizedException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtVerifyException;
+import cn.edu.buaa.patpat.boot.modules.auth.config.AuthConfig;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.auth.services.AuthService;
 import jakarta.servlet.http.Cookie;
@@ -53,6 +54,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         } catch (JwtIssueException e) {
             throw new UnauthorizedException("Failed to issue new JWT tokens");
         }
+
+        request.setAttribute(AuthConfig.AUTH_ATTR, payload);
 
         return true;
     }

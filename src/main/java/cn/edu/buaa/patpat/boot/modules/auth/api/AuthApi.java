@@ -3,6 +3,7 @@ package cn.edu.buaa.patpat.boot.modules.auth.api;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtVerifyException;
+import cn.edu.buaa.patpat.boot.modules.auth.config.AuthConfig;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.auth.services.AuthService;
 import jakarta.servlet.http.Cookie;
@@ -50,5 +51,9 @@ public class AuthApi {
 
     public String getJwt(HttpServletRequest request) {
         return jwtCookieSetter.get(request);
+    }
+
+    public AuthPayload getAuth(HttpServletRequest request) {
+        return (AuthPayload) request.getAttribute(AuthConfig.AUTH_ATTR);
     }
 }
