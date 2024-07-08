@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.extensions.jwt;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -34,10 +35,11 @@ public class JwtIssuer implements IJwtIssuer {
 
     @Override
     public String issue(String subject) {
-        return Jwts.builder().subject(subject)
+        return Jwts.builder()
+                .signWith(key)
+                .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + expiration))
-                .signWith(key)
                 .compact();
     }
 
@@ -45,11 +47,11 @@ public class JwtIssuer implements IJwtIssuer {
     public String verify(String token) throws JwtVerifyException {
         try {
             return Jwts.parser()
-                    .decryptWith(key)
+                    .verifyWith(key)
                     .build()
-                    .parseEncryptedClaims(token)
+                    .parseSignedClaims(token)
                     .getPayload().getSubject();
-        } catch (io.jsonwebtoken.JwtException e) {
+        } catch (JwtException e) {
             throw new JwtVerifyException("JWT expired", e);
         } catch (IllegalArgumentException e) {
             throw new JwtVerifyException("Invalid JWT", e);

@@ -34,7 +34,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         // Validate JWT first.
         try {
-            authService.verifyJwt(jwt);
+            payload = authService.verifyJwt(jwt);
+            request.setAttribute(AuthConfig.AUTH_ATTR, payload);
             return true;
         } catch (JwtVerifyException e) {
             // JWT expired, try refresh token.

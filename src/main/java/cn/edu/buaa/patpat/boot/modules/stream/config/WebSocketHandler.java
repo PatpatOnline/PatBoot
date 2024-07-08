@@ -33,26 +33,36 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(@Nonnull WebSocketSession session) throws Exception {
         URI uri = session.getUri();
         if (uri == null) {
-            session.close();
             log.error("Request uri is null!");
+            session.sendMessage(WebSocketPayload.message("Invalid request").toTextMessage());
+            session.close();
             return;
         }
 
         // check if path is /ws
         if (!"/ws".equals(uri.getPath())) {
-            session.close();
             log.error("Invalid path: {}", uri.getPath());
+            session.sendMessage(WebSocketPayload.message("Invalid path").toTextMessage());
+            session.close();
             return;
         }
 
         // validate JWT in query
         String jwt = getJwtFromQuery(uri);
+        if (jwt == null) {
+            log.error("Invalid JWT in query");
+            session.sendMessage(WebSocketPayload.message("Invalid JWT").toTextMessage());
+            session.close();
+            return;
+        }
+
         AuthPayload payload;
         try {
             payload = authApi.verifyJwt(jwt);
         } catch (JwtVerifyException e) {
-            session.close();
             log.error("Expired JWT: {}", e.getMessage());
+            session.sendMessage(WebSocketPayload.message("Expired JWT").toTextMessage());
+            session.close();
             return;
         }
 
