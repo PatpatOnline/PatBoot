@@ -64,4 +64,12 @@ public class AuthController extends BaseController {
 
         return DataResponse.ok(account);
     }
+
+    @PostMapping("logout")
+    @Operation(summary = "Logout", description = "Logout and clear the session")
+    public MessageResponse logout(HttpServletResponse response) {
+        response.addCookie(authApi.cleanJwtCookie());
+        response.addCookie(authApi.cleanRefreshCookie());
+        return MessageResponse.ok("Logout successfully");
+    }
 }

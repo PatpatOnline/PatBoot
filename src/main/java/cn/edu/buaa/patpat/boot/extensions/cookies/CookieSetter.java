@@ -52,7 +52,7 @@ public class CookieSetter implements ICookieSetter {
     @Override
     public Cookie set(String value) {
         if (Strings.isNullOrEmpty(value)) {
-            value = "";
+            value = null;
         }
 
         Cookie cookie = new Cookie(name, value);
@@ -66,7 +66,7 @@ public class CookieSetter implements ICookieSetter {
 
     @Override
     public Cookie clean() {
-        return set("");
+        return set(null);
     }
 
     @Override
