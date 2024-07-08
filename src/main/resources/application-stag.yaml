@@ -50,4 +50,4 @@ bucket:
 config:
   allow-register: true
   http: ${HTTP_URL}
-  websocket: ${WS_UR
+  websocket: ${WS_URL}
