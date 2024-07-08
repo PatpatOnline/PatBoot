@@ -3,6 +3,9 @@ package cn.edu.buaa.patpat.boot.modules.stream.controllers;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.exceptions.UnauthorizedException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/stream")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Stream API")
+@Tag(name = "Stream", description = "WebSocket stream API")
 public class StreamController {
     private final AuthApi authApi;
     @Value("${url.websocket}")
     private String webSocketUrl;
 
     @GetMapping("websocket")
+    @Operation(summary = "Get WebSocket URL", description = "Get WebSocket URL for the current user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Get WebSocket URL successfully"),
+            @ApiResponse(responseCode = "401", description = "Missing JWT token")
+    })
     public DataResponse<String> getWebSocketUrl(
             HttpServletRequest request
     ) {
