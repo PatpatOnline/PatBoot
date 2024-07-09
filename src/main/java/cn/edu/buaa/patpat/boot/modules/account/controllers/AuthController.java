@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
-import cn.edu.buaa.patpat.boot.modules.account.dto.AuthLevel;
 import cn.edu.buaa.patpat.boot.annotations.RequestValidation;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
@@ -8,6 +7,7 @@ import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
+import cn.edu.buaa.patpat.boot.modules.account.dto.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
@@ -37,10 +37,10 @@ public class AuthController extends BaseController {
     @Operation(summary = "Register a new account", description = "Register a new account, only available in development")
     @RequestValidation
     public MessageResponse register(
-            @RequestBody @Valid RegisterRequest dto,
+            @RequestBody @Valid RegisterRequest request,
             BindingResult bindingResult
     ) {
-        accountService.register(dto);
+        accountService.register(request);
         return MessageResponse.ok("Register success");
     }
 
@@ -48,17 +48,17 @@ public class AuthController extends BaseController {
     @Operation(summary = "Login", description = "Login with BUAA ID and password")
     @RequestValidation
     public DataResponse<AccountDto> login(
-            @RequestBody @Valid LoginRequest dto,
+            @RequestBody @Valid LoginRequest request,
             BindingResult bindingResult,
-            HttpServletResponse response
+            HttpServletResponse servletResponse
     ) {
-        var account = accountService.login(dto);
+        var account = accountService.login(request);
         AuthPayload auth = objects.map(account, AuthPayload.class);
         try {
             String jwt = authApi.issueJwt(auth);
             String refresh = authApi.issueRefresh(auth);
-            response.addCookie(authApi.setJwtCookie(jwt));
-            response.addCookie(authApi.setRefreshCookie(refresh));
+            servletResponse.addCookie(authApi.setJwtCookie(jwt));
+            servletResponse.addCookie(authApi.setRefreshCookie(refresh));
         } catch (JwtIssueException e) {
             throw new InternalServerErrorException("Failed to issue JWT");
         }

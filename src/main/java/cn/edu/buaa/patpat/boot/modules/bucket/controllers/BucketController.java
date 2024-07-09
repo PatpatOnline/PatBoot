@@ -39,12 +39,15 @@ public class BucketController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Failed to save file")
     })
-    public DataResponse<String> uploadPublic(MultipartFile file, HttpServletRequest request) {
+    public DataResponse<String> uploadPublic(
+            MultipartFile file,
+            HttpServletRequest servletRequest
+    ) {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("No file uploaded");
         }
 
-        AuthPayload auth = authApi.getAuth(request);
+        AuthPayload auth = authApi.getAuth(servletRequest);
         String record;
         try {
             record = bucketService.saveToPublic(auth.getBuaaId(), file.getOriginalFilename(), file);

@@ -32,9 +32,9 @@ public class StreamController {
             @ApiResponse(responseCode = "401", description = "Missing JWT token")
     })
     public DataResponse<String> getWebSocketUrl(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
-        String jwt = authApi.getJwt(request);
+        String jwt = authApi.getJwt(servletRequest);
         if (jwt == null) {
             throw new UnauthorizedException("Missing JWT token");
         }
