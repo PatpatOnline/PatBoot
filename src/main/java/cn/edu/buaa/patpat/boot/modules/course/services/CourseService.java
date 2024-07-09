@@ -19,6 +19,7 @@ public class CourseService extends BaseService {
 
     public Course create(CreateCourseRequest request) {
         Course course = objects.map(request, Course.class);
+        course.setActive(true);
         courseMapper.insert(course);
         return course;
     }
