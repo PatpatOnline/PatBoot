@@ -39,13 +39,13 @@ public class Account {
     /**
      * Whether the account belongs to a teacher.
      */
-    private boolean isTeacher;
+    private boolean teacher;
 
     /**
      * Whether the account is a teacher assistant.
      * A teacher is also a teacher assistant.
      */
-    private boolean isTa;
+    private boolean ta;
 
     /**
      * Avatar path, a relative path to avatar base directory.
@@ -53,6 +53,6 @@ public class Account {
     private String avatar;
 
     public boolean isStudent() {
-        return !isTa;
+        return !ta;
     }
 }

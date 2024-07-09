@@ -9,7 +9,7 @@ public class AccountDto {
     private String name;
     private int gender;
     private String school;
-    private boolean isTeacher;
-    private boolean isTa;
+    private boolean teacher;
+    private boolean ta;
     private String avatar;
 }

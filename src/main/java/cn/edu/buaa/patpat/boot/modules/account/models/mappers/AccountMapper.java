@@ -15,8 +15,8 @@ public interface AccountMapper {
                        `password`,
                        `gender`,
                        `school`,
-                       `is_ta`,
-                       `is_teacher`,
+                       `ta`,
+                       `teacher`,
                        `avatar`)
             VALUES (
                 #{buaaId},
@@ -24,12 +24,12 @@ public interface AccountMapper {
                 #{password},
                 #{gender},
                 #{school},
-                #{isTa},
-                #{isTeacher},
+                #{ta},
+                #{teacher},
                 #{avatar})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int save(Account account);
+    void save(Account account);
 
     @Select("SELECT COUNT(*) FROM `account` WHERE `buaa_id` = #{buaaId}")
     boolean existsByBuaaId(String buaaId);

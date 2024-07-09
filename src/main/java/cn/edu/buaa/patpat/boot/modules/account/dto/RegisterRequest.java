@@ -25,6 +25,6 @@ public class RegisterRequest {
 
     @Size(min = 1, max = 31)
     private String school;
-    private boolean isTeacher;
-    private boolean isTa;
+    private boolean teacher;
+    private boolean ta;
 }
