@@ -2,14 +2,17 @@ package cn.edu.buaa.patpat.boot.config;
 
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<MessageResponse> handleBadRequest(BadRequestException e) {
@@ -67,6 +70,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
                 MessageResponse.methodNotAllowed(e.getMessage())
+        );
+    }
+
+    @ExceptionHandler(BadSqlGrammarException.class)
+    public ResponseEntity<MessageResponse> handleBadSqlGrammarException(BadSqlGrammarException e) {
+        log.error("Bad SQL grammar: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                MessageResponse.internalServerError("Bad SQL grammar")
         );
     }
 }
