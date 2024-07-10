@@ -57,7 +57,7 @@ public class BucketService {
             path = pathService.recordToPrivatePath(record);
         }
         // ensure the path exists
-        medias.ensurePath(path);
+        medias.ensureParentPath(path);
         medias.save(path, source);
 
         return record;

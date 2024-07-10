@@ -47,6 +47,7 @@ public interface CourseMapper {
             SET `name` = #{name},
                 `code` = #{code},
                 `semester` = #{semester},
+                `active` = #{active},
                 `updated_at` = #{updatedAt}
             WHERE `id` = #{id}
             """)

@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.bucket.controllers;
 
+import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
@@ -39,6 +40,7 @@ public class BucketController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Failed to save file")
     })
+    @ValidateMultipartFile(maxSize = 10)
     public DataResponse<String> uploadPublic(MultipartFile file, HttpServletRequest request) {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("No file uploaded");
@@ -49,6 +51,7 @@ public class BucketController {
         try {
             record = bucketService.saveToPublic(auth.getBuaaId(), file.getOriginalFilename(), file);
         } catch (IOException e) {
+            log.error("Failed to save file", e);
             throw new InternalServerErrorException("Failed to save file");
         }
 

@@ -50,6 +50,10 @@ public class CourseService extends BaseService {
         return courseMapper.findAllActiveByAccount(auth.getId());
     }
 
+    public Course findById(int id) {
+        return courseMapper.findById(id);
+    }
+
     public Course tryGetCourse(AuthPayload auth, int courseId) {
         if (auth.isTa()) {
             return courseMapper.findById(courseId);

@@ -20,6 +20,10 @@ public class CourseApi {
         return courseService.getAll(auth);
     }
 
+    public Cookie setCourseCookie(int courseId) {
+        return courseCookieSetter.set(String.valueOf(courseId));
+    }
+
     public Cookie cleanCourseCookie() {
         return courseCookieSetter.clean();
     }

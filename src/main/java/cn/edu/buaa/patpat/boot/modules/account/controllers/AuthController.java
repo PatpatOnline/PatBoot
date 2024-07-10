@@ -1,21 +1,23 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
-import cn.edu.buaa.patpat.boot.annotations.RequestValidation;
+import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
-import cn.edu.buaa.patpat.boot.modules.account.dto.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginResponse;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
+import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.api.CourseApi;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +43,11 @@ public class AuthController extends BaseController {
 
     @PostMapping("register")
     @Operation(summary = "Register a new account", description = "Register a new account, only available in development")
-    @RequestValidation
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Register successfully"),
+            @ApiResponse(responseCode = "400", description = "BUAA ID already exists")
+    })
+    @ValidateParameters
     public MessageResponse register(
             @RequestBody @Valid RegisterRequest dto,
             BindingResult bindingResult
@@ -52,11 +58,16 @@ public class AuthController extends BaseController {
 
     @PostMapping("login")
     @Operation(summary = "Login", description = "Login with BUAA ID and password")
-    @RequestValidation
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login successfully"),
+            @ApiResponse(responseCode = "400", description = "Account not found or password incorrect"),
+            @ApiResponse(responseCode = "403", description = "You are not in any course")
+    })
+    @ValidateParameters
     public DataResponse<LoginResponse> login(
             @RequestBody @Valid LoginRequest dto,
             BindingResult bindingResult,
-            HttpServletResponse response
+            HttpServletResponse servletResponse
     ) {
         var account = accountService.login(dto);
         AuthPayload auth = objects.map(account, AuthPayload.class);
@@ -68,12 +79,18 @@ public class AuthController extends BaseController {
         try {
             String jwt = authApi.issueJwt(auth);
             String refresh = authApi.issueRefresh(auth);
-            response.addCookie(authApi.setJwtCookie(jwt));
-            response.addCookie(authApi.setRefreshCookie(refresh));
-            // clean possible previous course cookie to improve security
-            response.addCookie(courseApi.cleanCourseCookie());
+            servletResponse.addCookie(authApi.setJwtCookie(jwt));
+            servletResponse.addCookie(authApi.setRefreshCookie(refresh));
         } catch (JwtIssueException e) {
             throw new InternalServerErrorException("Failed to issue JWT");
+        }
+
+        if (courses.size() == 1) {
+            // If only one course available, set it as the active course.
+            servletResponse.addCookie(courseApi.setCourseCookie(courses.get(0).getId()));
+        } else {
+            // If more than one course available, force user to select course.
+            servletResponse.addCookie(courseApi.cleanCourseCookie());
         }
 
         return DataResponse.ok(new LoginResponse(account, courses));
@@ -81,14 +98,15 @@ public class AuthController extends BaseController {
 
     @PostMapping("logout")
     @Operation(summary = "Logout", description = "Logout and clear the session")
-    @RequestValidation(authLevel = AuthLevel.LOGIN)
+    @ValidateParameters
+    @ValidatePermission
     public MessageResponse logout(
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest servletRequest,
+            HttpServletResponse servletResponse
     ) {
-        response.addCookie(authApi.cleanJwtCookie());
-        response.addCookie(authApi.cleanRefreshCookie());
-        response.addCookie(courseApi.cleanCourseCookie());
+        servletResponse.addCookie(authApi.cleanJwtCookie());
+        servletResponse.addCookie(authApi.cleanRefreshCookie());
+        servletResponse.addCookie(courseApi.cleanCourseCookie());
         return MessageResponse.ok("Logout successfully");
     }
 }

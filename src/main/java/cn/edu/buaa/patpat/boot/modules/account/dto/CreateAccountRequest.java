@@ -10,7 +10,7 @@ import lombok.Data;
  * Register is only enabled in development environment.
  */
 @Data
-public class RegisterRequest {
+public class CreateAccountRequest {
     @NotNull
     @Size(min = 1, max = 8)
     private String buaaId;
@@ -18,10 +18,6 @@ public class RegisterRequest {
     @NotNull
     @Size(min = 1, max = 31)
     private String name;
-
-    @NotNull
-    @Size(min = 1, max = 31)
-    private String password;
 
     @Min(0)
     @Max(2)

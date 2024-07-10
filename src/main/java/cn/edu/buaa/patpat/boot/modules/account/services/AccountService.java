@@ -20,25 +20,25 @@ public class AccountService extends BaseService {
     private final AccountMapper accountMapper;
     private final BucketApi bucketApi;
 
-    public Account register(RegisterRequest dto) {
-        if (accountMapper.existsByBuaaId(dto.getBuaaId())) {
+    public Account register(RegisterRequest request) {
+        if (accountMapper.existsByBuaaId(request.getBuaaId())) {
             throw new BadRequestException("BUAA ID already exists");
         }
 
-        Account account = objects.map(dto, Account.class);
+        Account account = objects.map(request, Account.class);
         account.setAvatar(Gender.toAvatar(account.getGender()));
         accountMapper.save(account);
 
         return account;
     }
 
-    public AccountDto login(LoginRequest dto) {
-        Account account = accountMapper.findByBuaaId(dto.getBuaaId());
+    public AccountDto login(LoginRequest request) {
+        Account account = accountMapper.findByBuaaId(request.getBuaaId());
         if (account == null) {
             throw new BadRequestException("Account not found");
         }
 
-        if (!account.getPassword().equals(dto.getPassword())) {
+        if (!account.getPassword().equals(request.getPassword())) {
             throw new BadRequestException("Password incorrect");
         }
 

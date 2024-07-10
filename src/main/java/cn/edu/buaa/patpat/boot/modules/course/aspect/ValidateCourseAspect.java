@@ -2,15 +2,15 @@ package cn.edu.buaa.patpat.boot.modules.course.aspect;
 
 
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
+import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
-import cn.edu.buaa.patpat.boot.modules.course.annotations.CourseId;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
@@ -20,19 +20,24 @@ import java.lang.reflect.Method;
 @Aspect
 @RequiredArgsConstructor
 @Slf4j
-public class CourseValidationAspect {
+public class ValidateCourseAspect {
     private final ICookieSetter courseCookieSetter;
 
-    @Before("@annotation(cn.edu.buaa.patpat.boot.modules.course.annotations.CourseValidation)")
-    public void intercept(JoinPoint point) {
+    @Around("@annotation(cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse)")
+    public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
 
         // get HttpServletRequest in args
         HttpServletRequest request = getRequest(method, args);
+        String course = courseCookieSetter.get(request);
+        if (course == null) {
+            throw new ForbiddenException("No course selected");
+        }
+
         int courseId;
         try {
-            courseId = Integer.parseInt(courseCookieSetter.get(request));
+            courseId = Integer.parseInt(course);
         } catch (NumberFormatException e) {
             throw new BadRequestException("Invalid courseId");
         }
@@ -40,13 +45,12 @@ public class CourseValidationAspect {
         // find the method parameter with the name "courseId"
         for (int i = 0; i < method.getParameterCount(); i++) {
             if (method.getParameters()[i].isAnnotationPresent(CourseId.class)) {
-                if (!(args[i] instanceof Integer)) {
-                    throw new InternalServerErrorException("@CourseId parameter is not Integer");
-                }
                 args[i] = courseId;
-                return;
+                break;
             }
         }
+
+        return point.proceed(args);
     }
 
     private HttpServletRequest getRequest(Method method, Object[] args) {

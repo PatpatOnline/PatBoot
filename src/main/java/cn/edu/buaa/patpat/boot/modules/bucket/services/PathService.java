@@ -4,10 +4,12 @@ import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.modules.bucket.config.BucketOptions;
 import cn.edu.buaa.patpat.boot.modules.bucket.exceptions.MalformedPathException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 /**
  * The service to handle the path of the content.
@@ -37,29 +39,58 @@ public class PathService {
     private String httpUrl;
 
     /**
-     * Get the record of the content in the database.
-     *
-     * @param tag      The tag of the content. If is null or empty, will
-     *                 be stored to the shared bucket.
-     * @param filename The filename of the content.
-     * @return The record of the content.
+     * @see PathService#toRecord(String, String, boolean)
      */
     public String toRecord(String tag, String filename) {
+        return toRecord(tag, filename, true);
+    }
+
+    /**
+     * Get the record of the content in the database.
+     *
+     * @param tag        The tag of the content. If is null or empty, will
+     *                   be stored to the shared bucket.
+     * @param filename   The filename of the content.
+     * @param randomName Whether to generate a random name for the content.
+     * @return The record of the content.
+     */
+    public String toRecord(String tag, String filename, boolean randomName) {
         if (Strings.isNullOrEmpty(tag)) {
-            return toRecord(filename);
+            return toRecord(filename, randomName);
         }
-        return Paths.get(tag, filename).toString();
+        return tag + "/" + toRecord(filename, randomName);
     }
 
     /**
      * Get the record of the public content in the database.
      *
-     * @param filename The filename of the content.
+     * @param filename   The filename of the content.
+     * @param randomName Whether to generate a random name for the content.
      * @return The record of the content.
      */
-    public String toRecord(String filename) {
+    public String toRecord(String filename, boolean randomName) {
+        if (randomName) {
+            return randomizeFilename(filename);
+        }
         return filename;
     }
+
+    /**
+     * @see PathService#toRecord(String, boolean)
+     */
+    public String toRecord(String filename) {
+        return toRecord(filename, true);
+    }
+
+    private String randomizeFilename(String originalFilename) {
+        String ext = FilenameUtils.getExtension(originalFilename);
+        String filename = RandomStringUtils.randomAlphanumeric(16);
+        if ("".equals(ext)) {
+            return filename;
+        }
+        return filename + "." + ext;
+    }
+
 
     /**
      * Get the private path of the content.
@@ -68,7 +99,7 @@ public class PathService {
      * @return The private path of the content.
      */
     public String recordToPrivatePath(String record) {
-        return Paths.get(bucketOptions.getPrivateRoot(), record).toString();
+        return Path.of(bucketOptions.getPrivateRoot(), record).toString();
     }
 
     /**
@@ -88,7 +119,7 @@ public class PathService {
      * @return The public path of the content.
      */
     public String recordToPublicPath(String record) {
-        return Paths.get(bucketOptions.getPublicRoot(), record).toString();
+        return Path.of(bucketOptions.getPublicRoot(), record).toString();
     }
 
     /**

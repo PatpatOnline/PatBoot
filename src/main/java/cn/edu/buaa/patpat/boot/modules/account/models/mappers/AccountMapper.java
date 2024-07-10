@@ -21,8 +21,8 @@ public interface AccountMapper {
                 #{password},
                 #{gender},
                 #{school},
-                #{Ta},
-                #{Teacher},
+                #{ta},
+                #{teacher},
                 #{avatar})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")

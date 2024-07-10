@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ public class StudentImporter {
         this.studentImportMapper = studentImportMapper;
     }
 
+    @Transactional
     public ImportStudentResponse importStudents(int courseId, String excelPath, boolean clean) {
         int deleted = 0;
         int created = 0;

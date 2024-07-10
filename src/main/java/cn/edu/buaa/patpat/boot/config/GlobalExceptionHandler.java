@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -78,6 +79,13 @@ public class GlobalExceptionHandler {
         log.error("Bad SQL grammar: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 MessageResponse.internalServerError("Bad SQL grammar")
+        );
+    }
+
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<MessageResponse> handleMissingPathVariableException(MissingPathVariableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
         );
     }
 }
