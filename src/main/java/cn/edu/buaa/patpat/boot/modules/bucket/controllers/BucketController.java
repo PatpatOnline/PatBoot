@@ -41,7 +41,10 @@ public class BucketController {
             @ApiResponse(responseCode = "500", description = "Failed to save file")
     })
     @ValidateMultipartFile(maxSize = 10)
-    public DataResponse<String> uploadPublic(MultipartFile file, HttpServletRequest request) {
+    public DataResponse<String> uploadPublic(
+            MultipartFile file,
+            HttpServletRequest servletRequest
+    ) {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("No file uploaded");
         }

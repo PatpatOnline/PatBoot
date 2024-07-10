@@ -65,7 +65,7 @@ public class AuthController extends BaseController {
     })
     @ValidateParameters
     public DataResponse<LoginResponse> login(
-            @RequestBody @Valid LoginRequest dto,
+            @RequestBody @Valid LoginRequest request,
             BindingResult bindingResult,
             HttpServletResponse servletResponse
     ) {
