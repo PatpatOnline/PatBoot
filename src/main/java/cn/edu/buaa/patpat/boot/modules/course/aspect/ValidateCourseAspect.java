@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.course.aspect;
 
 
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
@@ -31,7 +32,7 @@ public class ValidateCourseAspect {
         // get HttpServletRequest in args
         HttpServletRequest request = getRequest(method, args);
         String course = courseCookieSetter.get(request);
-        if (course == null) {
+        if (Strings.isNullOrEmpty(course)) {
             throw new ForbiddenException("No course selected");
         }
 
