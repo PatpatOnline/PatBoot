@@ -13,7 +13,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class BucketService {
     private final PathService pathService;
-    private final Medias medias;
 
     /**
      * Save public shared content.
@@ -57,8 +56,8 @@ public class BucketService {
             path = pathService.recordToPrivatePath(record);
         }
         // ensure the path exists
-        medias.ensurePath(path);
-        medias.save(path, source);
+        Medias.ensureParentPath(path);
+        Medias.save(path, source);
 
         return record;
     }

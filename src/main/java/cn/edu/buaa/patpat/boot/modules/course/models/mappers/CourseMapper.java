@@ -16,23 +16,42 @@ public interface CourseMapper {
             )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insert(Course course);
+    void save(Course course);
 
     @Select("SELECT * FROM `course` WHERE `id` = #{id}")
     Course findById(int id);
 
+    @Select("""
+            SELECT * FROM `course`
+            WHERE `id` = (
+                SELECT `course_id` FROM `student`
+                WHERE `course_id` = #{id} AND `account_id` = #{accountId}
+            ) AND `active` = true
+            """)
+    Course findActiveByIdAndAccount(int id, int accountId);
+
+    @Select("""
+            SELECT * FROM `course`
+            WHERE `active` = true AND `id` IN (
+                SELECT `course_id` FROM `student`
+                WHERE `account_id` = #{accountId}
+            )
+            """)
+    List<Course> findAllActiveByAccount(int accountId);
+
     @Delete("DELETE FROM `course` WHERE `id` = #{id}")
-    int deleteById(int id);
+    void deleteById(int id);
 
     @Update("""
             UPDATE `course`
             SET `name` = #{name},
                 `code` = #{code},
                 `semester` = #{semester},
+                `active` = #{active},
                 `updated_at` = #{updatedAt}
             WHERE `id` = #{id}
             """)
-    int update(Course course);
+    void update(Course course);
 
     @Select("SELECT * FROM `course` ORDER BY `semester` DESC")
     List<Course> getAll();

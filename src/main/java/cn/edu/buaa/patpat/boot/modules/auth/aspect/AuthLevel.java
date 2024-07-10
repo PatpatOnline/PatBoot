@@ -1,4 +1,4 @@
-package cn.edu.buaa.patpat.boot.modules.account.dto;
+package cn.edu.buaa.patpat.boot.modules.auth.aspect;
 
 public enum AuthLevel {
     NONE,

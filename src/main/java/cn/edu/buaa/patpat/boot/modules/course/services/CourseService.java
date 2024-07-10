@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CreateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
@@ -20,7 +21,7 @@ public class CourseService extends BaseService {
     public Course create(CreateCourseRequest request) {
         Course course = objects.map(request, Course.class);
         course.setActive(true);
-        courseMapper.insert(course);
+        courseMapper.save(course);
         return course;
     }
 
@@ -42,7 +43,21 @@ public class CourseService extends BaseService {
         return course;
     }
 
-    public List<Course> getAll() {
-        return courseMapper.getAll();
+    public List<Course> getAll(AuthPayload auth) {
+        if (auth.isTa()) {
+            return courseMapper.getAll();
+        }
+        return courseMapper.findAllActiveByAccount(auth.getId());
+    }
+
+    public Course findById(int id) {
+        return courseMapper.findById(id);
+    }
+
+    public Course tryGetCourse(AuthPayload auth, int courseId) {
+        if (auth.isTa()) {
+            return courseMapper.findById(courseId);
+        }
+        return courseMapper.findActiveByIdAndAccount(courseId, auth.getId());
     }
 }

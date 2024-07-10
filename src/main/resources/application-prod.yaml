@@ -21,7 +21,9 @@ mybatis:
     map-underscore-to-camel-case: true
 springdoc:
   swagger-ui:
-    operationsSorter: method
+    operations-sorter: method
+    tags-sorter: alpha
+    enabled: false
 cors:
   allowed-origins:
     - ${HTTP_URL}
