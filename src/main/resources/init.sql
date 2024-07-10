@@ -4,15 +4,15 @@
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account`
 (
-    `id`         int         NOT NULL AUTO_INCREMENT,
-    `buaa_id`    varchar(10) NOT NULL UNIQUE,
-    `name`       varchar(31) NOT NULL,
-    `password`   varchar(31) NOT NULL,
-    `gender`     int         NOT NULL default 0,
-    `school`     varchar(63) NOT NULL,
-    `is_teacher` bool        NOT NULL default false,
-    `is_ta`      bool        NOT NULL default false,
-    `avatar`     varchar(63) NOT NULL,
+    `id`       int         NOT NULL AUTO_INCREMENT,
+    `buaa_id`  varchar(10) NOT NULL UNIQUE,
+    `name`     varchar(31) NOT NULL,
+    `password` varchar(31) NOT NULL,
+    `gender`   int         NOT NULL default 0,
+    `school`   varchar(63) NOT NULL,
+    `teacher`  bool        NOT NULL default false,
+    `ta`       bool        NOT NULL default false,
+    `avatar`   varchar(63) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -43,3 +43,24 @@ CREATE TABLE `course`
 # Insert root course to ensure at least one course exists.
 INSERT INTO `course` (`name`, `code`, `semester`, `active`, `created_at`, `updated_at`)
 VALUES ('Object-oriented Programming (Java)', 'root', '2023 Autumn', true, NOW(), NOW());
+
+
+############################################################
+#                         Student                          #
+############################################################
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student`
+(
+    `id`         int         NOT NULL AUTO_INCREMENT,
+    `account_id` int         NOT NULL,
+    `course_id`  int         NOT NULL,
+    `teacher_id` int         NOT NULL,
+    `major`      varchar(63) NOT NULL,
+    `class_name` varchar(15) NOT NULL,
+    `repeat`     bool        NOT NULL DEFAULT false,
+    `created_at` timestamp   NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
+CREATE INDEX `student_course_id_index` ON `student` (`course_id`);

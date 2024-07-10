@@ -10,9 +10,9 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -26,8 +26,8 @@ import java.lang.reflect.Method;
 public class RequestValidationAspect {
     private final AuthApi authApi;
 
-    @Before("@annotation(cn.edu.buaa.patpat.boot.annotations.RequestValidation)")
-    public void intercept(JoinPoint point) {
+    @Around("@annotation(cn.edu.buaa.patpat.boot.annotations.RequestValidation)")
+    public Object intercept(final ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         RequestValidation validation = method.getAnnotation(RequestValidation.class);
@@ -36,7 +36,16 @@ public class RequestValidationAspect {
             validateParams(method, args);
         }
 
-        validatePermission(method, args, validation.authLevel());
+        AuthPayload payload = validatePermission(method, args, validation.authLevel());
+        if (payload != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof AuthPayload) {
+                    args[i] = payload;
+                    break;
+                }
+            }
+        }
+        return point.proceed(args);
     }
 
     private void validateParams(Method method, Object[] args) {
@@ -54,9 +63,9 @@ public class RequestValidationAspect {
         }
     }
 
-    private void validatePermission(Method method, Object[] args, AuthLevel level) {
+    private AuthPayload validatePermission(Method method, Object[] args, AuthLevel level) {
         if (level == AuthLevel.NONE) {
-            return;
+            return null;
         }
         for (Object arg : args) {
             if (arg instanceof HttpServletRequest request) {
@@ -71,7 +80,7 @@ public class RequestValidationAspect {
                     log.error("Require T.A. permission for method {}", method.getName());
                     throw new UnauthorizedException("Require T.A. permission");
                 }
-                return;
+                return auth;
             }
         }
         log.error("Require HttpServletRequest in method {}", method.getName());

@@ -10,7 +10,7 @@ public class AuthView {
     private int id;
     private String buaaId;
     private String name;
-    private boolean isTeacher;
-    private boolean isTa;
+    private boolean teacher;
+    private boolean ta;
     private String password;
 }

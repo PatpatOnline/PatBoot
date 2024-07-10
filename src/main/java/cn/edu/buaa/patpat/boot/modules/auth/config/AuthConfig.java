@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.auth.config;
 
+import cn.edu.buaa.patpat.boot.config.CookiesOptions;
 import cn.edu.buaa.patpat.boot.extensions.cookies.CookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.IJwtIssuer;

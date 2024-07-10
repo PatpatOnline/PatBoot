@@ -1,10 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface AccountMapper {
@@ -15,8 +12,8 @@ public interface AccountMapper {
                        `password`,
                        `gender`,
                        `school`,
-                       `is_ta`,
-                       `is_teacher`,
+                       `ta`,
+                       `teacher`,
                        `avatar`)
             VALUES (
                 #{buaaId},
@@ -24,8 +21,8 @@ public interface AccountMapper {
                 #{password},
                 #{gender},
                 #{school},
-                #{isTa},
-                #{isTeacher},
+                #{Ta},
+                #{Teacher},
                 #{avatar})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -39,4 +36,20 @@ public interface AccountMapper {
 
     @Select("SELECT * FROM `account` WHERE `buaa_id` = #{buaaId} LIMIT 1")
     Account findByBuaaId(String buaaId);
+
+    @Select("SELECT * FROM `account` WHERE `name` = #{name} LIMIT 1")
+    Account findByName(String name);
+
+    @Update("""
+            UPDATE `account`
+            SET `buaa_id` = #{buaaId},
+                `name` = #{name},
+                `gender` = #{gender},
+                `school` = #{school}
+            WHERE `id` = #{id}
+            """)
+    int update(Account account);
+
+    @Delete("DELETE FROM `account` WHERE `id` = #{id}")
+    int deleteById(int id);
 }
