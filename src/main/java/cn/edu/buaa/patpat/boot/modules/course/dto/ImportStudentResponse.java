@@ -1,11 +1,14 @@
 package cn.edu.buaa.patpat.boot.modules.course.dto;
 
+import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class ImportStudentResponse {
     private boolean status;
     private String message;
@@ -21,5 +24,9 @@ public class ImportStudentResponse {
 
     public static ImportStudentResponse of(int created, int updated, int deleted) {
         return new ImportStudentResponse(true, "Import successfully", created, updated, deleted);
+    }
+
+    public WebSocketPayload<ImportStudentResponse> toWebSocketPayload() {
+        return new WebSocketPayload<>("import-student", this);
     }
 }

@@ -2,11 +2,12 @@ package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
-import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
+import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
@@ -33,31 +34,31 @@ import java.io.IOException;
 public class StudentController {
     private final BucketApi bucketApi;
     private final StudentService studentService;
-    private final Medias medias;
 
     @PostMapping("/import")
-    @Operation(summary = "Import students from an Excel file", description = "T.A. imports students from an Excel file.")
+    @Operation(summary = "Import students from an Excel file", description = "T.A. imports students from an Excel file, results will be returned via WebSocket.")
     @ValidateParameters
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
-    public DataResponse<ImportStudentResponse> importStudents(
+    public MessageResponse importStudents(
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
             @CourseId Integer courseId,
+            AuthPayload auth,
             HttpServletRequest request
     ) {
         String record = bucketApi.toRecord(file.getOriginalFilename());
         String path = bucketApi.recordToPrivatePath(record);
-        ImportStudentResponse response;
         try {
-            medias.save(path, file);
-            response = studentService.importStudents(courseId, path, clean);
-            medias.remove(path);
+            Medias.save(path, file);
         } catch (IOException e) {
             throw new InternalServerErrorException("Failed to save the file");
         }
 
-        return DataResponse.ok(response);
+        // Import students asynchronously.
+        studentService.importStudents(auth.getBuaaId(), courseId, path, clean);
+
+        return MessageResponse.ok("Importing students...");
     }
 }
