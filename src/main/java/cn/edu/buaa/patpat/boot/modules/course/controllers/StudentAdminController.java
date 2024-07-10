@@ -11,7 +11,6 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
-import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,11 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("api/student")
+@RequestMapping("api/admin/student")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Student", description = "Student management API")
-public class StudentController {
+@Tag(name = "Student Admin", description = "Admin student management API")
+public class StudentAdminController {
     private final BucketApi bucketApi;
     private final StudentService studentService;
 

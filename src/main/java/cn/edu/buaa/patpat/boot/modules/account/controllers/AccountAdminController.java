@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/account")
+@RequestMapping("api/admin/account")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Account", description = "Account management API")
-public class AccountController extends BaseController {
+@Tag(name = "Account Admin", description = "Admin account management API")
+public class AccountAdminController extends BaseController {
     private final AccountService accountService;
     private final BucketApi bucketApi;
 
