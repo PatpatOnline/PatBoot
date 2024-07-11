@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/stream")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class StreamController {
     ) {
         String jwt = authApi.getJwt(servletRequest);
         if (jwt == null) {
-            throw new UnauthorizedException("Missing JWT token");
+            throw new UnauthorizedException(M("auth.permission.jwt.missing"));
         }
         return DataResponse.ok(webSocketUrl + "/ws?jwt=" + jwt);
     }

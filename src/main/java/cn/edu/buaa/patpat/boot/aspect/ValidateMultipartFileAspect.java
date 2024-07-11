@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -35,32 +37,32 @@ public class ValidateMultipartFileAspect {
     private void validateMultipartFile(MultipartFile file, ValidateMultipartFile rule) {
         if (file == null) {
             if (!rule.allowNull()) {
-                throw new BadRequestException("No file uploaded");
+                throw new BadRequestException(M("validation.file.null"));
             }
             return;
         }
 
         if (file.isEmpty()) {
             if (!rule.allowEmpty()) {
-                throw new BadRequestException("Empty file uploaded");
+                throw new BadRequestException(M("validation.file.empty"));
             }
             return;
         }
 
         String filename = file.getOriginalFilename();
         if (filename == null) {
-            throw new BadRequestException("Missing filename");
+            throw new BadRequestException(M("validation.file.name"));
         }
 
         if (rule.extensions().length > 0) {
             String extension = FilenameUtils.getExtension(filename);
             if (Arrays.stream(rule.extensions()).noneMatch(extension::equalsIgnoreCase)) {
-                throw new BadRequestException("Invalid file format");
+                throw new BadRequestException(M("validation.file.type"));
             }
         }
 
         if (rule.maxSize() > 0 && file.getSize() > rule.maxSize() * 1024 * 1024) {
-            throw new BadRequestException("File too large");
+            throw new BadRequestException(M("validation.file.size"));
         }
     }
 }

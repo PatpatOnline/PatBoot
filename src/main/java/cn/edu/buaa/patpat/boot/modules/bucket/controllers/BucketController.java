@@ -2,7 +2,6 @@ package cn.edu.buaa.patpat.boot.modules.bucket.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
-import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @RestController
 @RequestMapping("api/bucket")
@@ -45,19 +46,17 @@ public class BucketController {
             MultipartFile file,
             HttpServletRequest servletRequest
     ) {
-        if (file == null || file.isEmpty()) {
-            throw new BadRequestException("No file uploaded");
-        }
-
         AuthPayload auth = authApi.getAuth(servletRequest);
         String record;
         try {
             record = bucketService.saveToPublic(auth.getBuaaId(), file.getOriginalFilename(), file);
         } catch (IOException e) {
             log.error("Failed to save file", e);
-            throw new InternalServerErrorException("Failed to save file");
+            throw new InternalServerErrorException();
         }
 
-        return DataResponse.ok(pathService.recordToUrl(record));
+        return DataResponse.ok(
+                M("bucket.upload.success"),
+                pathService.recordToUrl(record));
     }
 }

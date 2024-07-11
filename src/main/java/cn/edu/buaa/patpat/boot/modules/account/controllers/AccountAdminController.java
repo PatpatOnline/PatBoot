@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/admin/account")
 @RequiredArgsConstructor
@@ -50,6 +52,9 @@ public class AccountAdminController extends BaseController {
         Account account = accountService.register(registerRequest);
         AccountDto dto = objects.map(account, AccountDto.class);
         dto.setAvatar(bucketApi.recordToUrl(dto.getAvatar()));
-        return DataResponse.ok(dto);
+
+        return DataResponse.ok(
+                M("account.create.success"),
+                dto);
     }
 }

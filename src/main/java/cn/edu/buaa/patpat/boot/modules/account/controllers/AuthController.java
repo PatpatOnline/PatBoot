@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
@@ -58,9 +60,9 @@ public class AuthController extends BaseController {
     ) {
         if (allowRegister) {
             accountService.register(request);
-            return MessageResponse.ok("Register success");
+            return MessageResponse.ok(M("account.register.success"));
         } else {
-            throw new ForbiddenException("Register is not allowed");
+            throw new ForbiddenException(M("account.register.disabled"));
         }
     }
 
@@ -81,7 +83,7 @@ public class AuthController extends BaseController {
         AuthPayload auth = objects.map(account, AuthPayload.class);
         List<Course> courses = courseApi.getAllAvailableCourses(auth);
         if (courses.isEmpty()) {
-            throw new ForbiddenException("You are not in any course");
+            throw new ForbiddenException(M("account.login.course.not"));
         }
 
         try {
@@ -90,7 +92,7 @@ public class AuthController extends BaseController {
             servletResponse.addCookie(authApi.setJwtCookie(jwt));
             servletResponse.addCookie(authApi.setRefreshCookie(refresh));
         } catch (JwtIssueException e) {
-            throw new InternalServerErrorException("Failed to issue JWT");
+            throw new InternalServerErrorException(M("auth.permission.jwt.issue"));
         }
 
         if (courses.size() == 1) {
@@ -101,7 +103,9 @@ public class AuthController extends BaseController {
             servletResponse.addCookie(courseApi.cleanCourseCookie());
         }
 
-        return DataResponse.ok(new LoginResponse(account, courses));
+        return DataResponse.ok(
+                M("account.login.success", account.getName()),
+                new LoginResponse(account, courses));
     }
 
     @PostMapping("logout")
@@ -109,12 +113,13 @@ public class AuthController extends BaseController {
     @ValidateParameters
     @ValidatePermission
     public MessageResponse logout(
+            AuthPayload auth,
             HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
         servletResponse.addCookie(authApi.cleanJwtCookie());
         servletResponse.addCookie(authApi.cleanRefreshCookie());
         servletResponse.addCookie(courseApi.cleanCourseCookie());
-        return MessageResponse.ok("Logout successfully");
+        return MessageResponse.ok(M("account.logout.success"));
     }
 }

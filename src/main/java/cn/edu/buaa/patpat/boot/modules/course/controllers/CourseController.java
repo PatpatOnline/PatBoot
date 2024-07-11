@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/course")
 @RequiredArgsConstructor
@@ -55,13 +57,15 @@ public class CourseController extends BaseController {
     ) {
         Course course = courseService.tryGetCourse(auth, id);
         if (course == null) {
-            throw new NotFoundException("Course not found");
+            throw new NotFoundException(M("course.exists.not"));
         }
 
         Cookie cookie = courseCookieSetter.set(String.valueOf(course.getId()));
         servletResponse.addCookie(cookie);
 
-        return DataResponse.ok(course);
+        return DataResponse.ok(
+                M("course.select.success"),
+                course);
     }
 
     @GetMapping("current")
@@ -76,7 +80,7 @@ public class CourseController extends BaseController {
         if (course == null) {
             Cookie cookie = courseCookieSetter.clean();
             servletResponse.addCookie(cookie);
-            throw new NotFoundException("Course not found");
+            throw new NotFoundException(M("course.exists.not"));
         }
         return DataResponse.ok(course);
     }

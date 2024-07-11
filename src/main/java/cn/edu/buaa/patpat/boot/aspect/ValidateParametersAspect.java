@@ -12,6 +12,8 @@ import org.springframework.validation.BindingResult;
 
 import java.lang.reflect.Method;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class ValidateParametersAspect {
             if (arg instanceof BindingResult result) {
                 if (result.hasErrors()) {
                     log.error("Argument has errors in method {}", method.getName());
-                    throw new BadRequestException("Argument has errors");
+                    throw new BadRequestException(M("validation.params.error"));
                 }
             }
         }

@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.auth.interceptors;
 
+import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.UnauthorizedException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -27,7 +30,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String jwt = jwtCookieSetter.get(request);
         if (jwt == null) {
-            throw new UnauthorizedException("Missing JWT token");
+            throw new UnauthorizedException(M("auth.permission.jwt.missing"));
         }
 
         AuthPayload payload;
@@ -51,9 +54,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             response.addCookie(jwtCookie);
             response.addCookie(refreshCookie);
         } catch (JwtVerifyException e) {
-            throw new UnauthorizedException("JWT tokens expired");
+            throw new UnauthorizedException(M("auth.permission.jwt.expired"));
         } catch (JwtIssueException e) {
-            throw new UnauthorizedException("Failed to issue new JWT tokens");
+            log.error("Failed to issue new JWT: {}", e.getMessage());
+            throw new InternalServerErrorException(M("auth.permission.jwt.issue"));
         }
 
         request.setAttribute(AuthConfig.AUTH_ATTR, payload);

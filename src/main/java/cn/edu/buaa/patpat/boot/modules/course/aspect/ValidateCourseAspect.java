@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -33,14 +35,14 @@ public class ValidateCourseAspect {
         HttpServletRequest request = getRequest(method, args);
         String course = courseCookieSetter.get(request);
         if (Strings.isNullOrEmpty(course)) {
-            throw new ForbiddenException("No course selected");
+            throw new ForbiddenException(M("validation.course.select.not"));
         }
 
         int courseId;
         try {
             courseId = Integer.parseInt(course);
         } catch (NumberFormatException e) {
-            throw new BadRequestException("Invalid courseId");
+            throw new BadRequestException(M("validation.course.id.invalid"));
         }
 
         // find the method parameter with the name "courseId"
@@ -61,6 +63,6 @@ public class ValidateCourseAspect {
             }
         }
         log.error("Require HttpServletRequest in method {}", method.getName());
-        throw new InternalServerErrorException("Require HttpServletRequest in method");
+        throw new InternalServerErrorException();
     }
 }

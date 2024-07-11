@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/admin/student")
 @RequiredArgsConstructor
@@ -58,6 +60,6 @@ public class StudentAdminController {
         // Import students asynchronously.
         studentService.importStudents(auth.getBuaaId(), courseId, path, clean);
 
-        return MessageResponse.ok("Importing students...");
+        return MessageResponse.ok(M("student.import.progress"));
     }
 }

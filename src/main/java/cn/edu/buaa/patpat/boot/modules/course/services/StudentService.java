@@ -25,7 +25,7 @@ public class StudentService {
         try {
             Medias.remove(excelPath);
         } catch (IOException e) {
-            log.error("Failed to remove the student Excel: {}", e.getMessage());
+            log.error("IO exception when importing students: {}", e.getMessage());
         }
     }
 }

@@ -14,6 +14,10 @@ spring:
   output:
     ansi:
       enabled: detect
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    use-code-as-default-message: true
 server:
   port: 8080
 mybatis:

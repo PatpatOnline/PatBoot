@@ -5,7 +5,6 @@ import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
-import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
@@ -23,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/admin/course")
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Course Admin", description = "Admin course management API")
 public class CourseAdminController extends BaseController {
     private final CourseService courseService;
-    private final ICookieSetter courseCookieSetter;
 
     @PostMapping("create")
     @Operation(summary = "Create a new course", description = "Teacher creates a new course")
@@ -43,7 +43,9 @@ public class CourseAdminController extends BaseController {
     ) {
         Course course = courseService.create(request);
         log.info("Created course: {}", course);
-        return DataResponse.ok(course);
+        return DataResponse.ok(
+                M("course.create.success"),
+                course);
     }
 
     @DeleteMapping("delete/{id}")
@@ -57,17 +59,19 @@ public class CourseAdminController extends BaseController {
             HttpServletRequest servletRequest
     ) {
         if (id == 1) {
-            throw new ForbiddenException("Cannot delete the default course");
+            throw new ForbiddenException(M("course.delete.default"));
         } else if (id == courseId) {
-            throw new ForbiddenException("Cannot delete the current course");
+            throw new ForbiddenException(M("course.delete.current"));
         }
 
         Course course = courseService.delete(id);
         if (course == null) {
-            throw new NotFoundException("Course not found");
+            throw new NotFoundException(M("course.exists.not"));
         }
         log.info("Deleted course: {}", course);
-        return DataResponse.ok(course);
+        return DataResponse.ok(
+                M("course.delete.success"),
+                course);
     }
 
     @PutMapping("update")
@@ -82,13 +86,15 @@ public class CourseAdminController extends BaseController {
             HttpServletRequest servletRequest
     ) {
         if (courseId == 1) {
-            throw new ForbiddenException("Cannot update the default course");
+            throw new ForbiddenException(M("course.update.default"));
         }
         Course course = courseService.update(courseId, request);
         if (course == null) {
-            throw new NotFoundException("Course not found");
+            throw new NotFoundException(M("course.exists.not"));
         }
         log.info("Updated course: {}", course);
-        return DataResponse.ok(course);
+        return DataResponse.ok(
+                M("course.update.success"),
+                course);
     }
 }

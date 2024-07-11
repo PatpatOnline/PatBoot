@@ -13,6 +13,8 @@ public class CookiesOptions {
 
     public static final String COURSE_COOKIE = "course";
 
+    public static final String LANGUAGE_COOKIE = "language";
+
     public static final String PATH = "/";
 
     private String domain;

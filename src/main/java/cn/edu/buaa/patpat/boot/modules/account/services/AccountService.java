@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,7 +24,7 @@ public class AccountService extends BaseService {
 
     public Account register(RegisterRequest request) {
         if (accountMapper.existsByBuaaId(request.getBuaaId())) {
-            throw new BadRequestException("BUAA ID already exists");
+            throw new BadRequestException(M("account.exists"));
         }
 
         Account account = objects.map(request, Account.class);
@@ -35,11 +37,11 @@ public class AccountService extends BaseService {
     public AccountDto login(LoginRequest request) {
         Account account = accountMapper.findByBuaaId(request.getBuaaId());
         if (account == null) {
-            throw new BadRequestException("Account not found");
+            throw new BadRequestException(M("account.exists.not"));
         }
 
         if (!account.getPassword().equals(request.getPassword())) {
-            throw new BadRequestException("Password incorrect");
+            throw new BadRequestException(M("account.password.incorrect"));
         }
 
         AccountDto accountDto = objects.map(account, AccountDto.class);

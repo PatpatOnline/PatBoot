@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -50,13 +52,13 @@ public class ValidatePermissionAspect {
         AuthPayload auth = authApi.getAuth(request);
         if (auth == null) {
             log.error("Require authentication for method {}", method.getName());
-            throw new UnauthorizedException("Require authentication");
+            throw new UnauthorizedException(M("auth.login.not"));
         } else if ((level == AuthLevel.TEACHER) && !auth.isTeacher()) {
             log.error("Require teacher permission for method {}", method.getName());
-            throw new UnauthorizedException("Require teacher permission");
+            throw new UnauthorizedException(M("auth.permission.denied"));
         } else if ((level == AuthLevel.TA) && !auth.isTa()) {
             log.error("Require T.A. permission for method {}", method.getName());
-            throw new UnauthorizedException("Require T.A. permission");
+            throw new UnauthorizedException(M("auth.permission.denied"));
         }
         return auth;
     }
@@ -68,6 +70,6 @@ public class ValidatePermissionAspect {
             }
         }
         log.error("Require HttpServletRequest in method {}", method.getName());
-        throw new InternalServerErrorException("Require HttpServletRequest in method");
+        throw new InternalServerErrorException(M("system.error.internal"));
     }
 }
