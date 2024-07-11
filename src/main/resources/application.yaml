@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: PatBoot
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:patpat-prod}
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+  output:
+    ansi:
+      enabled: detect
+server:
+  port: 8080
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+springdoc:
+  swagger-ui:
+    operations-sorter: method
+    tags-sorter: alpha
+    enabled: false
+cors:
+  allowed-origins:
+    - ${HTTP_URL}
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers: Authorization
+  allow-credentials: true
+jwt:
+  secret: ${JWT_SECRET}
+  jwt-expiration: 86400  # 24 hours
+  refresh-expiration: 604800  # 7 days
+cookies:
+  domain: ${DOMAIN}
+  http-only: true
+  secure: false
+bucket:
+  serve: false
+  public-root: /wwwroot/
+  private-root: /bucket/
+config:
+  allow-register: false
+  http: ${HTTP_URL}
+  websocket: ${WS_URL}
