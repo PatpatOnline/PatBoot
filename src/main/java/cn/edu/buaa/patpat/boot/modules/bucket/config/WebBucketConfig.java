@@ -12,7 +12,9 @@ public class WebBucketConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/public/**")
-                .addResourceLocations("file:" + bucketOptions.getPublicRoot());
+        if (bucketOptions.isServe()) {
+            registry.addResourceHandler("/public/**")
+                    .addResourceLocations("file:" + bucketOptions.getPublicRoot());
+        }
     }
 }

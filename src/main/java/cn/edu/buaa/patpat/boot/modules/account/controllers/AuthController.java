@@ -24,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,9 @@ public class AuthController extends BaseController {
     private final AccountService accountService;
     private final CourseApi courseApi;
 
+    @Value("${config.allow-register}")
+    private boolean allowRegister;
+
     @PostMapping("register")
     @Operation(summary = "Register a new account", description = "Register a new account, only available in development")
     @ApiResponses({
@@ -52,8 +56,12 @@ public class AuthController extends BaseController {
             @RequestBody @Valid RegisterRequest request,
             BindingResult bindingResult
     ) {
-        accountService.register(request);
-        return MessageResponse.ok("Register success");
+        if (allowRegister) {
+            accountService.register(request);
+            return MessageResponse.ok("Register success");
+        } else {
+            throw new ForbiddenException("Register is not allowed");
+        }
     }
 
     @PostMapping("login")
