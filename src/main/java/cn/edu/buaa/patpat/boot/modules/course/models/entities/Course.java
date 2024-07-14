@@ -29,5 +29,5 @@ public class Course extends HasCreatedAndUpdated {
     /**
      * Past courses will be marked as inactive.
      */
-    private boolean active;
+    private Boolean active;
 }
