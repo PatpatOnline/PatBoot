@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.common.requets;
 
-import cn.edu.buaa.patpat.boot.common.utils.Objects;
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +12,7 @@ public class BaseController {
     protected AuthApi authApi;
 
     @Autowired
-    protected Objects objects;
+    protected Mappers mappers;
 
     protected void validateRequest(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

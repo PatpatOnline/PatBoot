@@ -1,6 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.stream.config;
 
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -13,9 +15,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class MessageDispatcher {
     private final Map<WebSocketSession, String> sessions = new ConcurrentHashMap<>();
+    private final Mappers mappers;
 
     void addSession(String tag, WebSocketSession session) {
         sessions.put(session, tag);
@@ -30,7 +34,7 @@ public class MessageDispatcher {
         List<WebSocketSession> invalidSessions = new ArrayList<>();
         for (WebSocketSession session : sessions.keySet()) {
             try {
-                session.sendMessage(payload.toTextMessage());
+                session.sendMessage(payload.toTextMessage(mappers));
             } catch (Exception e) {
                 log.error("Failed to broadcast message to {}", sessions.get(session));
                 invalidSessions.add(session);
@@ -66,7 +70,7 @@ public class MessageDispatcher {
         for (Map.Entry<WebSocketSession, String> entry : sessions.entrySet()) {
             if (entry.getValue().equals(tag)) {
                 try {
-                    entry.getKey().sendMessage(payload.toTextMessage());
+                    entry.getKey().sendMessage(payload.toTextMessage(mappers));
                 } catch (Exception e) {
                     log.error("Failed to send message to tag: {}", tag);
                     invalidSessions.add(entry.getKey());

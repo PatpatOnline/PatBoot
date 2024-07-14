@@ -49,7 +49,7 @@ public class StudentAdminController {
             AuthPayload auth,
             HttpServletRequest request
     ) {
-        String record = bucketApi.toRecord(file.getOriginalFilename());
+        String record = bucketApi.toRandomRecord(file.getOriginalFilename());
         String path = bucketApi.recordToPrivatePath(record);
         try {
             Medias.save(path, file);

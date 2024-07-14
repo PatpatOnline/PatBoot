@@ -64,14 +64,28 @@ public class BucketApi {
     /**
      * @see PathService#toRecord(String, String)
      */
-    public String toRecord(String tag, String filename) {
+    public String toRandomRecord(String tag, String filename) {
         return pathService.toRecord(tag, filename);
     }
 
     /**
      * @see PathService#toRecord(String)
      */
-    public String toRecord(String filename) {
+    public String toRandomRecord(String filename) {
         return pathService.toRecord(filename);
+    }
+
+    /**
+     * @see PathService#toRecord(String, String, boolean)
+     */
+    public String toRecord(String tag, String filename) {
+        return pathService.toRecord(tag, filename, false);
+    }
+
+    /**
+     * @see PathService#toRecord(String)
+     */
+    public String toRecord(String filename) {
+        return pathService.toRecord(filename, false);
     }
 }

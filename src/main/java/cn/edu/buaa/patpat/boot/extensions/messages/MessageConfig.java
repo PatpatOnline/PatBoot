@@ -22,7 +22,7 @@ public class MessageConfig implements WebMvcConfigurer {
         return localeResolver;
     }
 
-    @Bean(name = "localeCookieSetter")
+    @Bean("localeCookieSetter")
     public ICookieSetter getLocaleCookieSetter(CookiesOptions cookiesOptions) {
         return new CookieSetter(
                 CookiesOptions.LANGUAGE_COOKIE,

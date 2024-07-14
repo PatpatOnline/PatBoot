@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.auth.services;
 
-import cn.edu.buaa.patpat.boot.common.utils.Objects;
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.IJwtIssuer;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
@@ -18,12 +18,12 @@ public class AuthService {
     private final IJwtIssuer refreshIssuer;
     private final ICookieSetter jwtCookieSetter;
     private final ICookieSetter refreshCookieSetter;
-    private final Objects objects;
+    private final Mappers mappers;
 
     public String issueJwt(AuthPayload auth) throws JwtIssueException {
         String subject;
         try {
-            subject = objects.toJson(auth);
+            subject = mappers.toJson(auth);
         } catch (JsonProcessingException e) {
             throw new JwtIssueException("Failed to serialize auth view", e);
         }
@@ -38,7 +38,7 @@ public class AuthService {
     private AuthPayload validateJwt(String jwt) throws JwtVerifyException {
         String subject = refreshIssuer.verify(jwt);
         try {
-            return objects.fromJson(subject, AuthPayload.class);
+            return mappers.fromJson(subject, AuthPayload.class);
         } catch (JsonProcessingException e) {
             throw new JwtVerifyException("Failed to deserialize auth view", e);
         }
@@ -47,7 +47,7 @@ public class AuthService {
     public String issueRefresh(AuthPayload auth) throws JwtIssueException {
         String subject;
         try {
-            subject = objects.toJson(auth);
+            subject = mappers.toJson(auth);
         } catch (JsonProcessingException e) {
             throw new JwtIssueException("Failed to serialize auth view", e);
         }

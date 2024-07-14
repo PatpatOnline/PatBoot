@@ -27,7 +27,7 @@ public class AccountService extends BaseService {
             throw new BadRequestException(M("account.exists"));
         }
 
-        Account account = objects.map(request, Account.class);
+        Account account = mappers.map(request, Account.class);
         account.setAvatar(Gender.toAvatar(account.getGender()));
         accountMapper.save(account);
 
@@ -44,7 +44,7 @@ public class AccountService extends BaseService {
             throw new BadRequestException(M("account.password.incorrect"));
         }
 
-        AccountDto accountDto = objects.map(account, AccountDto.class);
+        AccountDto accountDto = mappers.map(account, AccountDto.class);
         accountDto.setAvatar(bucketApi.recordToUrl(accountDto.getAvatar()));
 
         return accountDto;

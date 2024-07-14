@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.stream.config;
 
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtVerifyException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -22,6 +23,7 @@ import java.net.URI;
 public class WebSocketHandler extends TextWebSocketHandler {
     private final MessageDispatcher dispatcher;
     private final AuthApi authApi;
+    private final Mappers mappers;
 
     /**
      * Handle new WebSocket connection. URL should be in the format of /ws/{jwt}.
@@ -34,7 +36,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         URI uri = session.getUri();
         if (uri == null) {
             log.error("Request uri is null!");
-            session.sendMessage(WebSocketPayload.message("Invalid request").toTextMessage());
+            session.sendMessage(WebSocketPayload.message("Invalid request").toTextMessage(mappers));
             session.close();
             return;
         }
@@ -42,7 +44,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // check if path is /ws
         if (!"/ws".equals(uri.getPath())) {
             log.error("Invalid path: {}", uri.getPath());
-            session.sendMessage(WebSocketPayload.message("Invalid path").toTextMessage());
+            session.sendMessage(WebSocketPayload.message("Invalid path").toTextMessage(mappers));
             session.close();
             return;
         }
@@ -51,7 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         String jwt = getJwtFromQuery(uri);
         if (jwt == null) {
             log.error("Invalid JWT in query");
-            session.sendMessage(WebSocketPayload.message("Invalid JWT").toTextMessage());
+            session.sendMessage(WebSocketPayload.message("Invalid JWT").toTextMessage(mappers));
             session.close();
             return;
         }
@@ -61,7 +63,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             payload = authApi.verifyJwt(jwt);
         } catch (JwtVerifyException e) {
             log.error("Expired JWT: {}", e.getMessage());
-            session.sendMessage(WebSocketPayload.message("Expired JWT").toTextMessage());
+            session.sendMessage(WebSocketPayload.message("Expired JWT").toTextMessage(mappers));
             session.close();
             return;
         }
@@ -74,7 +76,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, @Nonnull TextMessage message) throws IOException {
-        session.sendMessage(WebSocketPayload.message("You are the silent role.").toTextMessage());
+        session.sendMessage(WebSocketPayload.message("You are the silent role.").toTextMessage(mappers));
     }
 
     @Override

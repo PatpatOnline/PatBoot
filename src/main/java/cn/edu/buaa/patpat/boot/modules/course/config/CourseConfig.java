@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CourseConfig {
-    @Bean(name = "courseCookieSetter")
+    @Bean("courseCookieSetter")
     public ICookieSetter getCourseCookieSetter(CookiesOptions cookiesOptions) {
         return new CookieSetter(
                 CookiesOptions.COURSE_COOKIE,

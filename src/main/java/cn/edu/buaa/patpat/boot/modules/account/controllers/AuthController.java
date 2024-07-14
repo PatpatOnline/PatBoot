@@ -80,7 +80,7 @@ public class AuthController extends BaseController {
             HttpServletResponse servletResponse
     ) {
         var account = accountService.login(request);
-        AuthPayload auth = objects.map(account, AuthPayload.class);
+        AuthPayload auth = mappers.map(account, AuthPayload.class);
         List<Course> courses = courseApi.getAllAvailableCourses(auth);
         if (courses.isEmpty()) {
             throw new ForbiddenException(M("account.login.course.not"));

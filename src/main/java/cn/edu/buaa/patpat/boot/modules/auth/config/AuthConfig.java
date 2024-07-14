@@ -17,17 +17,17 @@ public class AuthConfig {
     private final JwtOptions jwtOptions;
     private final CookiesOptions cookiesOptions;
 
-    @Bean(name = "jwtIssuer")
+    @Bean("jwtIssuer")
     public IJwtIssuer getJwtIssuer() {
         return new JwtIssuer(jwtOptions.getJwtExpiration() * 1000, jwtOptions.getSecret());
     }
 
-    @Bean(name = "refreshIssuer")
+    @Bean("refreshIssuer")
     public IJwtIssuer getRefreshIssuer() {
         return new JwtIssuer(jwtOptions.getRefreshExpiration() * 1000, jwtOptions.getSecret());
     }
 
-    @Bean(name = "jwtCookieSetter")
+    @Bean("jwtCookieSetter")
     public ICookieSetter getJwtCookieSetter() {
         return new CookieSetter(
                 CookiesOptions.JWT_COOKIE,
@@ -38,7 +38,7 @@ public class AuthConfig {
                 cookiesOptions.isSecure());
     }
 
-    @Bean(name = "refreshCookieSetter")
+    @Bean("refreshCookieSetter")
     public ICookieSetter getRefreshCookieSetter() {
         return new CookieSetter(
                 CookiesOptions.JWT_REFRESH_COOKIE,

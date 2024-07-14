@@ -19,7 +19,7 @@ public class CourseService extends BaseService {
     private final CourseMapper courseMapper;
 
     public Course create(CreateCourseRequest request) {
-        Course course = objects.map(request, Course.class);
+        Course course = mappers.map(request, Course.class);
         course.setActive(true);
         courseMapper.save(course);
         return course;
@@ -38,7 +38,7 @@ public class CourseService extends BaseService {
         if (course == null) {
             return null;
         }
-        objects.map(request, course);
+        mappers.map(request, course);
         courseMapper.update(course);
         return course;
     }

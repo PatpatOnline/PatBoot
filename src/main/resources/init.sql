@@ -64,3 +64,20 @@ CREATE TABLE `student`
 
 CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
 CREATE INDEX `student_course_id_index` ON `student` (`course_id`);
+
+
+############################################################
+#                        Problem                           #
+############################################################
+DROP TABLE IF EXISTS `problem`;
+CREATE TABLE `problem`
+(
+    `id`          int          NOT NULL AUTO_INCREMENT,
+    `title`       varchar(255) NOT NULL,
+    `description` text         NOT NULL,
+    `hidden`      bool         NOT NULL,
+    `data`        json         NULL DEFAULT NULL,
+    `created_at`  datetime     NOT NULL,
+    `updated_at`  datetime     NOT NULL,
+    PRIMARY KEY (`id`)
+);

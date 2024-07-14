@@ -43,14 +43,14 @@ public class AccountAdminController extends BaseController {
             BindingResult bindingResult,
             HttpServletRequest servletRequest
     ) {
-        var registerRequest = objects.map(request, RegisterRequest.class);
+        var registerRequest = mappers.map(request, RegisterRequest.class);
         if (registerRequest.isTeacher()) {
             registerRequest.setTa(true);
         }
         registerRequest.setPassword(registerRequest.getBuaaId());
 
         Account account = accountService.register(registerRequest);
-        AccountDto dto = objects.map(account, AccountDto.class);
+        AccountDto dto = mappers.map(account, AccountDto.class);
         dto.setAvatar(bucketApi.recordToUrl(dto.getAvatar()));
 
         return DataResponse.ok(
