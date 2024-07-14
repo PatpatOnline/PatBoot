@@ -1,10 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.problem.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
-import io.swagger.v3.oas.annotations.Operation;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface ProblemMapper {
@@ -23,7 +23,10 @@ public interface ProblemMapper {
             SET `title` = #{title}, `description` = #{description}, `hidden` = #{hidden}, `updated_at` = #{updatedAt}
             WHERE `id` = #{id}
             """)
-    void updateInfo(Problem problem);
+    void update(Problem problem);
+
+    @Select("SELECT * FROM `problem` WHERE `id` = #{id}")
+    Problem findById(int id);
 
     @Insert("""
             UPDATE `problem`
@@ -33,5 +36,7 @@ public interface ProblemMapper {
     void updateData(Problem problem);
 
     @Insert("DELETE FROM `problem` WHERE `id` = #{id}")
-    void deleteById(int id);
+    int deleteById(int id);
+
+
 }
