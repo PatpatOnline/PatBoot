@@ -55,3 +55,5 @@ config:
   allow-register: false
   http: ${HTTP_URL}
   websocket: ${WS_URL}
+judge:
+  judge-root: /judge

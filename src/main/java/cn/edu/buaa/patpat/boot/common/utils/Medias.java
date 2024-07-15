@@ -89,4 +89,28 @@ public class Medias {
     public static boolean exists(Path path) {
         return Files.exists(path);
     }
+
+    public static void copyFile(String src, String dest) throws IOException {
+        copyFile(Path.of(src), Path.of(dest));
+    }
+
+    /**
+     * Copy file from src to target directory.
+     *
+     * @param src  source file path
+     * @param dest target directory path
+     * @throws IOException if an I/O error occurs
+     */
+    public static void copyFile(Path src, Path dest) throws IOException {
+        ensurePath(dest);
+        Files.copy(src, dest.resolve(src.getFileName()));
+    }
+
+    public static void copyDirectory(String src, String dest) throws IOException {
+        copyDirectory(Path.of(src), Path.of(dest));
+    }
+
+    public static void copyDirectory(Path src, Path dest) throws IOException {
+        FileUtils.copyDirectory(src.toFile(), dest.toFile());
+    }
 }

@@ -24,3 +24,21 @@ To run the project locally, you need to set up the following environment variabl
 - Base URL
   - `HTTP_URL`: The base URL of the application, default is `http://localhost:8080`
   - `WS_URL`: The base URL of the WebSocket server, default is `ws://localhost:8080`
+
+---
+
+## Volume Structure
+
+- `/log/`: The log directory
+- `/bucket/`: The private bucket for storing files
+  - `${buaa-id}/`: Private files uploaded by the user
+  - `problem/`: The problem root directory
+    - `${problem-id}/`: The problem directory
+  - `submission/`: The submission root directory
+    - `${submission-id}/`: The submission directory
+      - `${buaa-id}/`: The user's submission directory
+  - `temp/`: Temporary files
+- `/judge/`: The judge directory
+  - `${random}/`: A copy of a submission for judging
+- `/wwwroot`: The public bucket for storing files
+  - `${buaa-id}/`: Public files uploaded by the user, e.g. avatar

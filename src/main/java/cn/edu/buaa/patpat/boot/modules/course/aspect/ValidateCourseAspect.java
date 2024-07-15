@@ -45,7 +45,7 @@ public class ValidateCourseAspect {
             throw new BadRequestException(M("validation.course.id.invalid"));
         }
 
-        // find the method parameter with the name "courseId"
+        // find courseId annotated with @CourseId
         for (int i = 0; i < method.getParameterCount(); i++) {
             if (method.getParameters()[i].isAnnotationPresent(CourseId.class)) {
                 args[i] = courseId;

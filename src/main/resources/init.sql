@@ -81,3 +81,33 @@ CREATE TABLE `problem`
     `updated_at`  datetime     NOT NULL,
     PRIMARY KEY (`id`)
 );
+
+CREATE INDEX `problem_title_index` ON `problem` (`title`);
+
+
+############################################################
+#                        Submission                        #
+############################################################
+DROP TABLE IF EXISTS `submission`;
+CREATE TABLE `submission`
+(
+    `id`          int         NOT NULL AUTO_INCREMENT,
+    `account_id`  int         NOT NULL,
+    `buaa_id`     varchar(10) NOT NULL,
+    `course_id`   int         NOT NULL,
+    `problem_id`  int         NOT NULL,
+    `language`    varchar(7)  NOT NULL,
+
+    `submit_time` datetime    NOT NULL,
+    `start_time`  datetime    NULL     DEFAULT NULL,
+    `end_time`    datetime    NULL     DEFAULT NULL,
+
+    `score`       int         NOT NULL DEFAULT 0,
+    `data`        json        NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `submission_account_id_index` ON `submission` (`account_id`);
+CREATE INDEX `submission_buaa_id_index` ON `submission` (`buaa_id`);
+CREATE INDEX `submission_course_id_index` ON `submission` (`course_id`);
+CREATE INDEX `submission_problem_id_index` ON `submission` (`problem_id`);

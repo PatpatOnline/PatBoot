@@ -1,12 +1,29 @@
 package cn.edu.buaa.patpat.boot.modules.judge.dto;
 
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.modules.judge.models.JudgeTimestamp;
+import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
 import lombok.Data;
-import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Data
-@ToString
-public class SubmissionDto {
+@EqualsAndHashCode(callSuper = true)
+public class SubmissionDto extends JudgeTimestamp {
+    private int id;
+    private int accountId;
     private String buaaId;
-    private int taskId;
-    private String result;
+    private int courseId;
+    private int problemId;
+
+    private String language;
+    private int score;
+    private TestResult result;
+
+    public static SubmissionDto of(Submission submission, Mappers mappers) {
+        SubmissionDto dto = mappers.map(submission, SubmissionDto.class);
+        if (submission.getData() != null) {
+            dto.setResult(mappers.fromJson(submission.getData(), TestResult.class, null));
+        }
+        return dto;
+    }
 }

@@ -88,4 +88,12 @@ public class GlobalExceptionHandler {
                 MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
         );
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<MessageResponse> handleException(Exception e) {
+        log.error("Internal server error", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                MessageResponse.internalServerError("Internal server error")
+        );
+    }
 }

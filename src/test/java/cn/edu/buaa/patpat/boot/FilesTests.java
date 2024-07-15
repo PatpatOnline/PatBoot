@@ -51,4 +51,17 @@ public class FilesTests {
         Medias.save(Path.of(SRC_PATH.toString(), "a.txt"), "a");
         assertThat(Medias.exists(Path.of(DEST_PATH.toString(), "b.txt"))).isFalse();
     }
+
+    @Test
+    public void copyFileTest() throws IOException {
+        Medias.copyFile(Path.of(SRC_PATH.toString(), "a.txt"), DEST_PATH);
+        assertThat(Medias.exists(Path.of(DEST_PATH.toString(), "a.txt"))).isTrue();
+    }
+
+    @Test
+    public void copyDirectoryTest() throws IOException {
+        Medias.copyDirectory(SRC_PATH, DEST_PATH);
+        assertThat(Medias.exists(Path.of(DEST_PATH.toString(), "a.txt"))).isTrue();
+        assertThat(Medias.exists(Path.of(DEST_PATH.toString(), "b.txt"))).isTrue();
+    }
 }

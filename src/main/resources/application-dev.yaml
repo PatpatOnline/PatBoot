@@ -18,3 +18,5 @@ config:
   allow-register: true
   http: http://localhost:8080
   websocket: ws://localhost:8080
+judge:
+  judge-root: ./volume/judge/
