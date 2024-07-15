@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
@@ -86,6 +87,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleMissingPathVariableException(MissingPathVariableException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
+        );
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<MessageResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                MessageResponse.badRequest("Missing request part: " + e.getRequestPartName())
         );
     }
 
