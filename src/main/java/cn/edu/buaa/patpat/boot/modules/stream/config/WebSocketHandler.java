@@ -1,6 +1,11 @@
 package cn.edu.buaa.patpat.boot.modules.stream.config;
 
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.jwt.JwtVerifyException;
+import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,7 +22,8 @@ import java.net.URI;
 @Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
     private final MessageDispatcher dispatcher;
-
+    private final AuthApi authApi;
+    private final Mappers mappers;
 
     /**
      * Handle new WebSocket connection. URL should be in the format of /ws/{jwt}.
@@ -26,35 +32,55 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @throws Exception Exception.
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@Nonnull WebSocketSession session) throws Exception {
         URI uri = session.getUri();
         if (uri == null) {
-            session.close();
             log.error("Request uri is null!");
-            return;
-        }
-
-        int pos = uri.toString().lastIndexOf('/');
-        if (pos == -1) {
+            session.sendMessage(WebSocketPayload.message("Invalid request").toTextMessage(mappers));
             session.close();
-            log.error("Invalid uri: {}", uri);
             return;
         }
 
-        String jwt = uri.toString().substring(pos + 1);
-        dispatcher.addSession(jwt, session);
-        dispatcher.send(jwt, WebSocketPayload.message("Battle control online"));
+        // check if path is /ws
+        if (!"/ws".equals(uri.getPath())) {
+            log.error("Invalid path: {}", uri.getPath());
+            session.sendMessage(WebSocketPayload.message("Invalid path").toTextMessage(mappers));
+            session.close();
+            return;
+        }
 
-        log.info("New WebSocket connection with {}", jwt);
+        // validate JWT in query
+        String jwt = getJwtFromQuery(uri);
+        if (jwt == null) {
+            log.error("Invalid JWT in query");
+            session.sendMessage(WebSocketPayload.message("Invalid JWT").toTextMessage(mappers));
+            session.close();
+            return;
+        }
+
+        AuthPayload payload;
+        try {
+            payload = authApi.verifyJwt(jwt);
+        } catch (JwtVerifyException e) {
+            log.error("Expired JWT: {}", e.getMessage());
+            session.sendMessage(WebSocketPayload.message("Expired JWT").toTextMessage(mappers));
+            session.close();
+            return;
+        }
+
+        dispatcher.addSession(payload.getBuaaId(), session);
+        dispatcher.send(payload.getBuaaId(), WebSocketPayload.message("Battle control online"));
+
+        log.info("New WebSocket connection with {}", payload.getBuaaId());
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        session.sendMessage(WebSocketPayload.message("You are the silent role.").toTextMessage());
+    public void handleTextMessage(WebSocketSession session, @Nonnull TextMessage message) throws IOException {
+        session.sendMessage(WebSocketPayload.message("You are the silent role.").toTextMessage(mappers));
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable throwable) throws Exception {
+    public void handleTransportError(WebSocketSession session, @Nonnull Throwable throwable) throws Exception {
         if (session.isOpen()) {
             session.close();
         }
@@ -63,8 +89,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) throws Exception {
         String tag = dispatcher.removeSession(session);
-        log.info("WebSocket connection with {} closed", tag);
+        // only log successful close
+        if (tag != null) {
+            log.info("WebSocket connection with {} closed", tag);
+        }
+    }
+
+    private String getJwtFromQuery(URI uri) {
+        String queries = uri.getQuery();
+        if (queries == null) {
+            return null;
+        }
+
+        String[] queryParts = queries.split("&");
+        if (queryParts.length != 1) {
+            return null;
+        }
+        String query = queryParts[0];
+        if (!query.startsWith("jwt=")) {
+            return null;
+        }
+        return query.substring(4);
     }
 }

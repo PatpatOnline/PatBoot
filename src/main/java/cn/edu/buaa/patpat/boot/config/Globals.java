@@ -1,16 +1,12 @@
 package cn.edu.buaa.patpat.boot.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 public class Globals {
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String TEMP_TAG = "temp";
+    public static final String PROBLEM_TAG = "problem";
+    public static final String SUBMISSION_TAG = "submission";
 
-    static {
-        JSON_MAPPER.registerModule(new JavaTimeModule());
-        JSON_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    public static final String WS_IMPORT_STUDENT = "import-student";
+    public static final String WS_SUBMIT = "submit";
 }

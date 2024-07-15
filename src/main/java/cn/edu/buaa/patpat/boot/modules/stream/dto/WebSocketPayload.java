@@ -1,11 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.stream.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.socket.TextMessage;
-
-import static cn.edu.buaa.patpat.boot.config.Globals.JSON_MAPPER;
 
 @Data
 @AllArgsConstructor
@@ -21,16 +19,7 @@ public class WebSocketPayload<TData> {
         return new WebSocketPayload<>(type, data);
     }
 
-    public TextMessage toTextMessage() {
-        return new TextMessage(toString());
-    }
-
-    @Override
-    public String toString() {
-        try {
-            return JSON_MAPPER.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            return "Invalid WebSocketPayload";
-        }
+    public TextMessage toTextMessage(Mappers mappers) {
+        return new TextMessage(mappers.toJson(this, "Invalid message"));
     }
 }
