@@ -127,3 +127,59 @@ CREATE TABLE `score`
     PRIMARY KEY (`problem_id`, `account_id`)
 );
 
+
+############################################################
+#                       Discussion                         #
+############################################################
+DROP TABLE IF EXISTS `discussion`;
+CREATE TABLE `discussion`
+(
+    `id`         int          NOT NULL AUTO_INCREMENT,
+    `type`       int          NOT NULL,
+    `course_id`  int          NOT NULL,
+    `author_id`  int          NOT NULL,
+    `title`      varchar(255) NOT NULL,
+    `content`    text         NOT NULL,
+    `topped`     bool         NOT NULL DEFAULT false,
+    `starred`    bool         NOT NULL DEFAULT false,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `discussion_course_id_index` ON `discussion` (`course_id`);
+
+DROP TABLE IF EXISTS `like_discussion`;
+CREATE TABLE `like_discussion`
+(
+    `account_id`    int NOT NULL,
+    `discussion_id` int NOT NULL,
+    PRIMARY KEY (`discussion_id`, `account_id`)
+);
+
+############################################################
+#                        Reply                             #
+############################################################
+DROP TABLE IF EXISTS `reply`;
+CREATE TABLE `reply`
+(
+    `id`            int      NOT NULL AUTO_INCREMENT,
+    `discussion_id` int      NOT NULL,
+    `parent_id`     int      NOT NULL,
+    `author_id`     int      NOT NULL,
+    `content`       text     NOT NULL,
+    `verified`      bool     NOT NULL DEFAULT false,
+    `created_at`    datetime NOT NULL,
+    `updated_at`    datetime NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `reply_discussion_id_index` ON `reply` (`discussion_id`);
+
+DROP TABLE IF EXISTS `like_reply`;
+CREATE TABLE `like_reply`
+(
+    `account_id` int NOT NULL,
+    `reply_id`   int NOT NULL,
+    PRIMARY KEY (`reply_id`, `account_id`)
+);
