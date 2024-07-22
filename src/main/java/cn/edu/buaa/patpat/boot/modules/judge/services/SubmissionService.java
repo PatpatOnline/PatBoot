@@ -10,7 +10,9 @@ import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.*;
+import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Score;
 import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
+import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.ScoreMapper;
 import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.SubmissionMapper;
 import cn.edu.buaa.patpat.boot.modules.stream.api.StreamApi;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class SubmissionService extends BaseService {
     private final SubmissionMapper submissionMapper;
     private final RabbitTemplate rabbitTemplate;
     private final StreamApi streamApi;
+    private final ScoreMapper scoreMapper;
     @Value("${judge.judge-root}")
     private String judgeRoot;
 
@@ -71,6 +74,9 @@ public class SubmissionService extends BaseService {
         streamApi.send(buaaId, dto.toWebSocketPayload());
 
         Medias.removeSilently(response.getPayload().getSandboxPath());
+
+        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
+        scoreMapper.saveOrUpdate(score);
     }
 
     private Tuple<String, String> saveSubmissionInTemp(MultipartFile file) {

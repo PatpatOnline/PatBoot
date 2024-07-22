@@ -111,3 +111,19 @@ CREATE INDEX `submission_account_id_index` ON `submission` (`account_id`);
 CREATE INDEX `submission_buaa_id_index` ON `submission` (`buaa_id`);
 CREATE INDEX `submission_course_id_index` ON `submission` (`course_id`);
 CREATE INDEX `submission_problem_id_index` ON `submission` (`problem_id`);
+
+
+############################################################
+#                         Score                            #
+############################################################
+DROP TABLE IF EXISTS `score`;
+CREATE TABLE `score`
+(
+    `problem_id` int      NOT NULL,
+    `account_id` int      NOT NULL,
+    `score`      int      NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    PRIMARY KEY (`problem_id`, `account_id`)
+);
+
