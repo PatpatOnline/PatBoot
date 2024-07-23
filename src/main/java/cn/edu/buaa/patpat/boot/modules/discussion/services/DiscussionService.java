@@ -35,7 +35,7 @@ public class DiscussionService extends BaseService {
     }
 
     public Discussion update(int id, UpdateDiscussionRequest request, int courseId, AuthPayload auth) {
-        Discussion discussion = discussionMapper.findUpdateByCourseAndId(courseId, id);
+        Discussion discussion = discussionFilterMapper.findUpdate(courseId, id);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
@@ -49,7 +49,7 @@ public class DiscussionService extends BaseService {
     }
 
     public DiscussionView detail(int courseId, int discussionId, int accountId) {
-        var discussion = discussionFilterMapper.findWithAccount(courseId, discussionId, accountId);
+        var discussion = discussionFilterMapper.find(courseId, discussionId, accountId);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
@@ -59,17 +59,21 @@ public class DiscussionService extends BaseService {
     }
 
     public Discussion delete(int courseId, int discussionId, AuthPayload auth) {
-        Discussion discussion = discussionMapper.findDeleteByCourseAndId(courseId, discussionId);
+        Discussion discussion = discussionFilterMapper.findDelete(courseId, discussionId);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
         if (discussion.getAuthorId() != auth.getId() && auth.isStudent()) {
             throw new ForbiddenException(M("discussion.delete.forbidden"));
         }
-        discussionMapper.deleteById(discussionId);
+        discussionMapper.delete(discussionId);
         int cnt = replyMapper.deleteByDiscussionId(discussionId);
         log.info("Deleted discussion {} and its {} replie(s)", discussionId, cnt);
 
         return discussion;
+    }
+
+    public boolean exists(int courseId, int discussionId) {
+        return discussionFilterMapper.exists(courseId, discussionId);
     }
 }

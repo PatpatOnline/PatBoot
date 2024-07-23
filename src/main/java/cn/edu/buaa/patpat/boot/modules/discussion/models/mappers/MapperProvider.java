@@ -3,7 +3,7 @@ package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 import org.apache.ibatis.annotations.Param;
 
 public class MapperProvider {
-    public String findByIds(@Param("ids") Iterable<Integer> ids) {
+    public String getAllByIds(@Param("ids") Iterable<Integer> ids) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT `id`, `buaa_id`, `name`, `avatar`, `ta`, `teacher`");
         sql.append(" FROM `account`");

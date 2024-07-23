@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
+import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -15,5 +16,20 @@ public interface DiscussionFilterMapper {
             FROM `discussion`
             WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
             """)
-    DiscussionView findWithAccount(int courseId, int discussionId, int accountId);
+    DiscussionView find(int courseId, int discussionId, int accountId);
+
+    @Select("""
+            SELECT `id`, `type`, `title`, `content` FROM `discussion`
+            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
+            """)
+    Discussion findUpdate(int courseId, int discussionId);
+
+    @Select("""
+            SELECT `id`, `course_id`, `author_id`, `title` FROM `discussion`
+            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
+            """)
+    Discussion findDelete(int courseId, int discussionId);
+
+    @Select("SELECT COUNT(*) FROM `discussion` WHERE `id` = #{discussionId} AND `course_id` = #{courseId}")
+    boolean exists(int courseId, int discussionId);
 }

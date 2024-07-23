@@ -14,8 +14,8 @@ public interface DiscussionAccountMapper {
             FROM `account`
             WHERE `id` = #{id}
             """)
-    DiscussionAccountView findById(int id);
+    DiscussionAccountView find(int id);
 
-    @SelectProvider(type = MapperProvider.class, method = "findByIds")
-    List<DiscussionAccountView> findByIds(Iterable<Integer> ids);
+    @SelectProvider(type = MapperProvider.class, method = "getAllByIds")
+    List<DiscussionAccountView> getAll(Iterable<Integer> ids);
 }

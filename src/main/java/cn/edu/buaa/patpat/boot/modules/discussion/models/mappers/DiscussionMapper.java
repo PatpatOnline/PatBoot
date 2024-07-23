@@ -29,17 +29,8 @@ public interface DiscussionMapper {
     int updateStarred(int id, boolean starred);
 
     @Delete("DELETE FROM `discussion` WHERE `id` = #{id}")
-    int deleteById(int id);
+    int delete(int id);
 
-    @Select("""
-            SELECT `id`, `type`, `title`, `content` FROM `discussion`
-            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
-            """)
-    Discussion findUpdateByCourseAndId(int courseId, int discussionId);
 
-    @Select("""
-            SELECT `id`, `course_id`, `author_id`, `title` FROM `discussion`
-            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
-            """)
-    Discussion findDeleteByCourseAndId(int courseId, int discussionId);
+
 }

@@ -13,7 +13,7 @@ public class DiscussionAccountService {
     private final BucketApi bucketApi;
 
     public DiscussionAccountView findBadge(int authorId) {
-        var badge = discussionAccountMapper.findById(authorId);
+        var badge = discussionAccountMapper.find(authorId);
         if (badge != null) {
             badge.setAvatar(bucketApi.recordToUrl(badge.getAvatar()));
         }
