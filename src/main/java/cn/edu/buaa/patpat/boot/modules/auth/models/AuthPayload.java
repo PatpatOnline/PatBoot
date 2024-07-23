@@ -9,7 +9,7 @@ public class AuthPayload {
     private boolean ta;
     private boolean teacher;
 
-    boolean isStudent() {
+    public boolean isStudent() {
         return !ta;
     }
 }
