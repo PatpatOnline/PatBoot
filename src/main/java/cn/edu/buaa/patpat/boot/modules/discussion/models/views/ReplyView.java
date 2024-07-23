@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ReplyView extends HasCreatedAndUpdated {
@@ -21,8 +19,6 @@ public class ReplyView extends HasCreatedAndUpdated {
 
     private String content;
     private boolean verified;
-
-    private List<ReplyView> replies;
 
     private int likeCount;
     private boolean liked;

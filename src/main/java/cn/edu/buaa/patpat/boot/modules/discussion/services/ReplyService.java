@@ -23,36 +23,22 @@ public class ReplyService {
 
     /**
      * Get all replies in a discussion.
-     * <p>
-     * Currently, it supports 2-level nested replies.
      * This method uses some fancy stream operations to build the nested structure.
      */
     public List<ReplyView> getAllInDiscussion(int discussionId, int accountId) {
-        List<ReplyView> allReplies = replyMapper.getAllByDiscussionId(discussionId, accountId);
-        if (allReplies.isEmpty()) {
-            return allReplies;
+        List<ReplyView> replies = replyMapper.getAllByDiscussionId(discussionId, accountId);
+        if (replies.isEmpty()) {
+            return replies;
         }
 
-        Set<Integer> authorIds = allReplies.stream()
+        Set<Integer> authorIds = replies.stream()
                 .map(ReplyView::getAuthorId)
                 .collect(Collectors.toSet());
         Map<Integer, DiscussionAccountView> authorMap = discussionAccountMapper
                 .findByIds(authorIds).stream()
                 .map(badge -> Map.entry(badge.getId(), badge))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        allReplies.forEach(reply -> reply.setAuthor(authorMap.get(reply.getAuthorId())));
-
-        List<ReplyView> replies = allReplies.stream()
-                .filter(reply -> reply.getParentId() == 0)
-                .toList();
-        allReplies.stream()
-                .filter(reply -> reply.getParentId() != 0)
-                .forEach(reply -> {
-                    replies.stream()
-                            .filter(parent -> parent.getId() == reply.getParentId())
-                            .findFirst()
-                            .ifPresent(parent -> parent.getReplies().add(reply));
-                });
+        replies.forEach(reply -> reply.setAuthor(authorMap.get(reply.getAuthorId())));
 
         return replies;
     }
