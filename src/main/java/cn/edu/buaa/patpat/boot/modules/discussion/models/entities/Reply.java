@@ -9,10 +9,10 @@ import lombok.EqualsAndHashCode;
 public class Reply extends HasCreatedAndUpdated {
     private int id;
     private int discussionId;
+    private int parentId;
     private int authorId;
 
     private String content;
 
     private boolean verified;
-    private boolean starred;
 }

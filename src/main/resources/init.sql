@@ -148,6 +148,7 @@ CREATE TABLE `discussion`
 );
 
 CREATE INDEX `discussion_course_id_index` ON `discussion` (`course_id`);
+CREATE INDEX `discussion_id_course_id_index` ON `discussion` (`id`, `course_id`);
 
 DROP TABLE IF EXISTS `like_discussion`;
 CREATE TABLE `like_discussion`

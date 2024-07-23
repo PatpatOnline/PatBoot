@@ -3,6 +3,7 @@ package cn.edu.buaa.patpat.boot.config;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -94,6 +95,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 MessageResponse.badRequest("Missing request part: " + e.getRequestPartName())
+        );
+    }
+
+    @ExceptionHandler(MyBatisSystemException.class)
+    public ResponseEntity<MessageResponse> handleMyBatisSystemException(MyBatisSystemException e) {
+        log.error("MyBatis system error", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                MessageResponse.internalServerError("MyBatis system error")
         );
     }
 
