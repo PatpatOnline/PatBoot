@@ -15,7 +15,6 @@ import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
 import cn.edu.buaa.patpat.boot.modules.judge.services.SubmissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +40,7 @@ public class SubmissionController extends BaseController {
             @RequestParam String language,
             @RequestParam MultipartFile file,
             @CourseId Integer courseId,
-            AuthPayload auth,
-            HttpServletRequest servletRequest
+            AuthPayload auth
     ) {
         if (Strings.isNullOrEmpty(language)) {
             language = "17";

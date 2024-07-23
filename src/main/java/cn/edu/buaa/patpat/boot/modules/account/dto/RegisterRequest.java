@@ -30,7 +30,7 @@ public class RegisterRequest {
     @NotNull
     @Size(min = 1, max = 31)
     private String school;
-    
+
     private boolean teacher;
     private boolean ta;
 }

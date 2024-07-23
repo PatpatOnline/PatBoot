@@ -15,7 +15,6 @@ import cn.edu.buaa.patpat.boot.modules.course.services.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +38,7 @@ public class CourseController extends BaseController {
     @ValidateParameters
     @ValidatePermission(AuthLevel.LOGIN)
     public DataResponse<List<Course>> getAll(
-            AuthPayload auth,
-            HttpServletRequest servletRequest
+            AuthPayload auth
     ) {
         return DataResponse.ok(courseService.getAll(auth));
     }
@@ -52,7 +50,6 @@ public class CourseController extends BaseController {
     public DataResponse<Course> select(
             @PathVariable int id,
             AuthPayload auth,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
         Course course = courseService.tryGetCourse(auth, id);
@@ -73,7 +70,6 @@ public class CourseController extends BaseController {
     @ValidateCourse
     public DataResponse<Course> current(
             @CourseId Integer courseId,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
         Course course = courseService.findById(courseId);

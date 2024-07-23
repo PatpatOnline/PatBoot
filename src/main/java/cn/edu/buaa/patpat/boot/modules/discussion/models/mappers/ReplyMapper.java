@@ -1,10 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
-import cn.edu.buaa.patpat.boot.modules.discussion.models.views.ReplyView;
 import org.apache.ibatis.annotations.*;
-
-import java.util.List;
 
 @Mapper
 public interface ReplyMapper {

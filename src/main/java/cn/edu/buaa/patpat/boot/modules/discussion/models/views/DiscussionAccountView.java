@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class DiscussionAccountView {
     @JsonIgnore
     private int id;
-    
+
     private String buaaId;
     private String name;
     private String avatar;

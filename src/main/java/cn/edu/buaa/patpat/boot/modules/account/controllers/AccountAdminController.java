@@ -13,7 +13,6 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +39,7 @@ public class AccountAdminController extends BaseController {
     @ValidatePermission(AuthLevel.TEACHER)
     public DataResponse<AccountDto> create(
             @RequestBody @Valid CreateAccountRequest request,
-            BindingResult bindingResult,
-            HttpServletRequest servletRequest
+            BindingResult bindingResult
     ) {
         var registerRequest = mappers.map(request, RegisterRequest.class);
         if (registerRequest.isTeacher()) {

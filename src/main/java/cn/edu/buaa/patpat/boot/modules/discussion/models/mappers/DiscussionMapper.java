@@ -32,5 +32,4 @@ public interface DiscussionMapper {
     int delete(int id);
 
 
-
 }

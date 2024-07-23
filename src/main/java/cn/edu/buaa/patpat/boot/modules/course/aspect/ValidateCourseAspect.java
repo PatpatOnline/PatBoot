@@ -1,10 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.course.aspect;
 
 
+import cn.edu.buaa.patpat.boot.common.utils.Requests;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
-import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class ValidateCourseAspect {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
 
         // get HttpServletRequest in args
-        HttpServletRequest request = getRequest(method, args);
+        HttpServletRequest request = Requests.getCurrentRequest();
         String course = courseCookieSetter.get(request);
         if (Strings.isNullOrEmpty(course)) {
             throw new ForbiddenException(M("validation.course.select.not"));
@@ -54,15 +54,5 @@ public class ValidateCourseAspect {
         }
 
         return point.proceed(args);
-    }
-
-    private HttpServletRequest getRequest(Method method, Object[] args) {
-        for (Object arg : args) {
-            if (arg instanceof HttpServletRequest) {
-                return (HttpServletRequest) arg;
-            }
-        }
-        log.error("Require HttpServletRequest in method {}", method.getName());
-        throw new InternalServerErrorException();
     }
 }

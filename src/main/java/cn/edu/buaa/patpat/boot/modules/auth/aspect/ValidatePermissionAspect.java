@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.auth.aspect;
 
 
-import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
+import cn.edu.buaa.patpat.boot.common.utils.Requests;
 import cn.edu.buaa.patpat.boot.exceptions.UnauthorizedException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -31,7 +31,7 @@ public class ValidatePermissionAspect {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         ValidatePermission permission = method.getAnnotation(ValidatePermission.class);
 
-        AuthPayload payload = validatePermission(method, args, permission.value());
+        AuthPayload payload = validatePermission(method, permission.value());
         if (payload != null) {
             for (int i = 0; i < args.length; i++) {
                 if (args[i] instanceof AuthPayload) {
@@ -44,11 +44,11 @@ public class ValidatePermissionAspect {
         return point.proceed(args);
     }
 
-    private AuthPayload validatePermission(Method method, Object[] args, AuthLevel level) {
+    private AuthPayload validatePermission(Method method, AuthLevel level) {
         if (level == AuthLevel.NONE) {
             return null;
         }
-        HttpServletRequest request = getRequest(method, args);
+        HttpServletRequest request = Requests.getCurrentRequest();
         AuthPayload auth = authApi.getAuth(request);
         if (auth == null) {
             log.error("Require authentication for method {}", method.getName());
@@ -61,15 +61,5 @@ public class ValidatePermissionAspect {
             throw new UnauthorizedException(M("auth.permission.denied"));
         }
         return auth;
-    }
-
-    private HttpServletRequest getRequest(Method method, Object[] args) {
-        for (Object arg : args) {
-            if (arg instanceof HttpServletRequest) {
-                return (HttpServletRequest) arg;
-            }
-        }
-        log.error("Require HttpServletRequest in method {}", method.getName());
-        throw new InternalServerErrorException(M("system.error.internal"));
     }
 }

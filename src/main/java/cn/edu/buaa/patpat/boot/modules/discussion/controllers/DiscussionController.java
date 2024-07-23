@@ -19,7 +19,6 @@ import cn.edu.buaa.patpat.boot.modules.discussion.services.DiscussionService;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +45,7 @@ public class DiscussionController extends BaseController {
             @RequestBody @Valid CreateDiscussionRequest request,
             BindingResult bindingResult,
             AuthPayload auth,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         var discussion = discussionService.create(request, courseId, auth.getId());
         if (discussion == null) {
@@ -70,8 +68,7 @@ public class DiscussionController extends BaseController {
             @RequestBody @Valid UpdateDiscussionRequest request,
             BindingResult bindingResult,
             AuthPayload auth,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         var discussion = discussionService.update(id, request, courseId, auth);
 
@@ -89,8 +86,7 @@ public class DiscussionController extends BaseController {
     public MessageResponse delete(
             @PathVariable int id,
             AuthPayload auth,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         Discussion discussion = discussionService.delete(courseId, id, auth);
         log.info("User {} deleted discussion {}: {}", auth.getBuaaId(), discussion.getId(), discussion.getTitle());
@@ -105,8 +101,7 @@ public class DiscussionController extends BaseController {
     public DataResponse<DiscussionWithReplyView> detail(
             @PathVariable int id,
             AuthPayload auth,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         var discussion = discussionService.detail(courseId, id, auth.getId());
         var replies = replyService.getAllInDiscussion(discussion.getId(), auth.getId());

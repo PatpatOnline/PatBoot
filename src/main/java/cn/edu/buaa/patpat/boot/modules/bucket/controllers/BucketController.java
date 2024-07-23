@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
+import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.services.BucketService;
 import cn.edu.buaa.patpat.boot.modules.bucket.services.PathService;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,11 +42,11 @@ public class BucketController {
             @ApiResponse(responseCode = "500", description = "Failed to save file")
     })
     @ValidateMultipartFile(maxSize = 10)
+    @ValidatePermission
     public DataResponse<String> uploadPublic(
             MultipartFile file,
-            HttpServletRequest servletRequest
+            AuthPayload auth
     ) {
-        AuthPayload auth = authApi.getAuth(servletRequest);
         String record;
         try {
             record = bucketService.saveToPublic(auth.getBuaaId(), file.getOriginalFilename(), file);

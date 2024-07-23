@@ -4,7 +4,6 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 

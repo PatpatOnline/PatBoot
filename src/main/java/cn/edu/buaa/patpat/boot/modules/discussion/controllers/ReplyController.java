@@ -14,7 +14,6 @@ import cn.edu.buaa.patpat.boot.modules.discussion.services.DiscussionService;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +42,7 @@ public class ReplyController extends BaseController {
             @RequestBody @Valid CreateReplyRequest request,
             BindingResult bindingResult,
             AuthPayload auth,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         if (!discussionService.exists(courseId, request.getDiscussionId())) {
             throw new NotFoundException(M("discussion.exists.not"));

@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -114,7 +113,6 @@ public class AuthController extends BaseController {
     @ValidatePermission
     public MessageResponse logout(
             AuthPayload auth,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
         servletResponse.addCookie(authApi.cleanJwtCookie());

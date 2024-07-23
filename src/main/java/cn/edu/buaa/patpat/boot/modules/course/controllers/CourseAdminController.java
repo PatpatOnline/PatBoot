@@ -15,7 +15,6 @@ import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
 import cn.edu.buaa.patpat.boot.modules.course.services.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +37,7 @@ public class CourseAdminController extends BaseController {
     @ValidatePermission(AuthLevel.TEACHER)
     public DataResponse<Course> create(
             @RequestBody @Valid CreateCourseRequest request,
-            BindingResult bindingResult,
-            HttpServletRequest servletRequest
+            BindingResult bindingResult
     ) {
         Course course = courseService.create(request);
         log.info("Created course: {}", course);
@@ -55,8 +53,7 @@ public class CourseAdminController extends BaseController {
     @ValidateCourse
     public DataResponse<Course> delete(
             @PathVariable int id,
-            @CourseId Integer courseId,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         if (id == 1) {
             throw new ForbiddenException(M("course.delete.default"));
@@ -81,9 +78,8 @@ public class CourseAdminController extends BaseController {
     @ValidateCourse
     public DataResponse<Course> update(
             @RequestBody @Valid UpdateCourseRequest request,
-            @CourseId Integer courseId,
             BindingResult bindingResult,
-            HttpServletRequest servletRequest
+            @CourseId Integer courseId
     ) {
         if (courseId == 1) {
             throw new ForbiddenException(M("course.update.default"));

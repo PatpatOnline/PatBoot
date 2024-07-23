@@ -1,7 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
