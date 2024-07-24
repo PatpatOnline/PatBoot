@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.bucket.config;
 
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -11,7 +12,7 @@ public class WebBucketConfig implements WebMvcConfigurer {
     private final BucketOptions bucketOptions;
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@Nonnull ResourceHandlerRegistry registry) {
         if (bucketOptions.isServe()) {
             registry.addResourceHandler("/public/**")
                     .addResourceLocations("file:" + bucketOptions.getPublicRoot());
