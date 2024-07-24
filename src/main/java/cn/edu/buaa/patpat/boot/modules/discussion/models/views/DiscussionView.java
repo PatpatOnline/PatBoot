@@ -29,10 +29,4 @@ public class DiscussionView extends HasCreatedAndUpdated {
     private int replyCount;
 
     private DiscussionAccountView author;
-
-    public void summarize() {
-        if (content.length() > SUMMARY_CONTENT_LENGTH) {
-            content = content.substring(0, SUMMARY_CONTENT_LENGTH) + "...";
-        }
-    }
 }

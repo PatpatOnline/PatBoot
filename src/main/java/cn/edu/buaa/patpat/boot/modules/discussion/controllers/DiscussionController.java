@@ -1,8 +1,12 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.controllers;
 
+import cn.edu.buaa.patpat.boot.aspect.Page;
+import cn.edu.buaa.patpat.boot.aspect.PageSize;
+import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -89,6 +93,7 @@ public class DiscussionController extends BaseController {
             @CourseId Integer courseId
     ) {
         Discussion discussion = discussionService.delete(courseId, id, auth);
+
         log.info("User {} deleted discussion {}: {}", auth.getBuaaId(), discussion.getId(), discussion.getTitle());
 
         return MessageResponse.ok(M("discussion.delete.success"));
@@ -126,5 +131,21 @@ public class DiscussionController extends BaseController {
         return MessageResponse.ok(liked
                 ? M("discussion.like.success")
                 : M("discussion.unlike.success"));
+    }
+
+    @GetMapping("all")
+    @Operation(summary = "Get all discussions", description = "Get all discussions in a course")
+    @ValidatePagination
+    @ValidatePermission
+    @ValidateCourse
+    public DataResponse<PageListDto<DiscussionView>> getAll(
+            @RequestParam(value = "p") @Page int page,
+            @RequestParam(value = "ps") @PageSize int pageSize,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        PageListDto<DiscussionView> dto = discussionService.getAll(courseId, auth.getId(), page, pageSize);
+
+        return DataResponse.ok(dto);
     }
 }

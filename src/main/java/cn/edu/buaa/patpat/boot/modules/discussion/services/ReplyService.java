@@ -29,6 +29,7 @@ public class ReplyService extends BaseService {
     private final DiscussionAccountMapper discussionAccountMapper;
     private final ReplyFilterMapper replyFilterMapper;
     private final DiscussionService discussionService;
+    private final DiscussionAccountService discussionAccountService;
 
     /**
      * Get all replies in a discussion.
@@ -43,7 +44,7 @@ public class ReplyService extends BaseService {
         Set<Integer> authorIds = replies.stream()
                 .map(ReplyView::getAuthorId)
                 .collect(Collectors.toSet());
-        Map<Integer, DiscussionAccountView> authorMap = discussionAccountMapper
+        Map<Integer, DiscussionAccountView> authorMap = discussionAccountService
                 .getAll(authorIds).stream()
                 .map(badge -> Map.entry(badge.getId(), badge))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

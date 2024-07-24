@@ -6,6 +6,8 @@ import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionAccount
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DiscussionAccountService {
@@ -18,5 +20,11 @@ public class DiscussionAccountService {
             badge.setAvatar(bucketApi.recordToUrl(badge.getAvatar()));
         }
         return badge;
+    }
+
+    public List<DiscussionAccountView> getAll(Iterable<Integer> ids) {
+        var badges = discussionAccountMapper.getAll(ids);
+        badges.forEach(badge -> badge.setAvatar(bucketApi.recordToUrl(badge.getAvatar())));
+        return badges;
     }
 }

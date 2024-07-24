@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.services;
 
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -10,10 +11,16 @@ import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionMapper;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.ReplyMapper;
+import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionAccountView;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -97,5 +104,25 @@ public class DiscussionService extends BaseService {
         } else {
             discussionMapper.unlike(id, accountId);
         }
+    }
+
+    public PageListDto<DiscussionView> getAll(int courseId, int accountId, int page, int pageSize) {
+        int count = discussionFilterMapper.countAll(courseId);
+        List<DiscussionView> discussions = count == 0
+                ? List.of()
+                : discussionFilterMapper.getAll(courseId, accountId, page, pageSize);
+        fillBadges(discussions);
+        return PageListDto.of(discussions, count, page, pageSize);
+    }
+
+    private void fillBadges(List<DiscussionView> discussions) {
+        Set<Integer> authorIds = discussions.stream()
+                .map(DiscussionView::getAuthorId)
+                .collect(Collectors.toSet());
+        Map<Integer, DiscussionAccountView> authorMap = discussionAccountService
+                .getAll(authorIds).stream()
+                .map(badge -> Map.entry(badge.getId(), badge))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        discussions.forEach(discussion -> discussion.setAuthor(authorMap.get(discussion.getAuthorId())));
     }
 }
