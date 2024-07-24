@@ -1,8 +1,11 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.CreateReplyRequest;
+import cn.edu.buaa.patpat.boot.modules.discussion.dto.UpdateReplyRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionAccountMapper;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.ReplyFilterMapper;
@@ -25,6 +28,7 @@ public class ReplyService extends BaseService {
     private final ReplyMapper replyMapper;
     private final DiscussionAccountMapper discussionAccountMapper;
     private final ReplyFilterMapper replyFilterMapper;
+    private final DiscussionService discussionService;
 
     /**
      * Get all replies in a discussion.
@@ -53,6 +57,37 @@ public class ReplyService extends BaseService {
         reply.setAuthorId(accountId);
         replyMapper.save(reply);
         return reply;
+    }
+
+    public Reply update(int id, UpdateReplyRequest request, int courseId, AuthPayload auth) {
+        Reply reply = replyFilterMapper.findUpdate(id);
+        if (reply == null) {
+            throw new NotFoundException(M("reply.exists.not"));
+        }
+        if (!discussionService.exists(courseId, reply.getDiscussionId())) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+        if (reply.getAuthorId() != auth.getId() && auth.isStudent()) {
+            throw new ForbiddenException(M("reply.update.forbidden"));
+        }
+        mappers.map(request, reply);
+        replyMapper.update(reply);
+
+        return reply;
+    }
+
+    public void delete(int id, int courseId, AuthPayload auth) {
+        Reply reply = replyFilterMapper.findDelete(id);
+        if (reply == null) {
+            throw new NotFoundException(M("reply.exists.not"));
+        }
+        if (!discussionService.exists(courseId, reply.getDiscussionId())) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+        if (reply.getAuthorId() != auth.getId() && auth.isStudent()) {
+            throw new ForbiddenException(M("reply.delete.forbidden"));
+        }
+        replyMapper.deleteById(id);
     }
 
     public ReplyView detail(int replyId, int accountId) {

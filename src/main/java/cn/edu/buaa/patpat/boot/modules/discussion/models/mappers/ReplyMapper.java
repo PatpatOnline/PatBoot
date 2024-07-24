@@ -29,7 +29,7 @@ public interface ReplyMapper {
      * Cascade delete, delete the reply and its children.
      */
     @Delete("DELETE FROM `reply` WHERE `id` = #{id} OR `parent_id` = #{id}")
-    int deleteById(int id);
+    void deleteById(int id);
 
     @Delete("DELETE FROM `reply` WHERE `discussion_id` = #{discussionId}")
     int deleteByDiscussionId(int discussionId);

@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
+import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.ReplyView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -31,6 +32,20 @@ public interface ReplyFilterMapper {
             WHERE `id` = #{replyId}
             """)
     ReplyView find(int replyId, int accountId);
+
+    @Select("""
+            SELECT `id`, `discussion_id`, `author_id`
+            FROM `reply`
+            WHERE `id` = #{replyId}
+            """)
+    Reply findUpdate(int replyId);
+
+    @Select("""
+            SELECT `id`, `discussion_id`, `author_id`
+            FROM `reply`
+            WHERE `id` = #{replyId}
+            """)
+    Reply findDelete(int replyId);
 
     @Select("""
             SELECT COUNT(*) FROM `reply`
