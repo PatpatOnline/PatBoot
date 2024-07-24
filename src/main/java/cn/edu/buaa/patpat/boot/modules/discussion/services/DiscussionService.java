@@ -90,4 +90,12 @@ public class DiscussionService extends BaseService {
             throw new NotFoundException(M("discussion.exists.not"));
         }
     }
+
+    public void like(int id, int accountId, boolean liked) {
+        if (liked) {
+            discussionMapper.like(id, accountId);
+        } else {
+            discussionMapper.unlike(id, accountId);
+        }
+    }
 }

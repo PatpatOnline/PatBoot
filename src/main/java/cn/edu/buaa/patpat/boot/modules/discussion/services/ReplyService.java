@@ -103,4 +103,20 @@ public class ReplyService extends BaseService {
     public boolean exists(int discussionId, int replyId) {
         return replyFilterMapper.exists(discussionId, replyId);
     }
+
+    public void like(int id, int courseId, int accountId, boolean liked) {
+        Reply reply = replyFilterMapper.findLike(id);
+        if (reply == null) {
+            throw new NotFoundException(M("reply.exists.not"));
+        }
+        if (!discussionService.exists(courseId, reply.getDiscussionId())) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+
+        if (liked) {
+            replyMapper.like(id, accountId);
+        } else {
+            replyMapper.unlike(id, accountId);
+        }
+    }
 }

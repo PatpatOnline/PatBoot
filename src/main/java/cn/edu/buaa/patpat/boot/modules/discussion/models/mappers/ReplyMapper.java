@@ -34,5 +34,15 @@ public interface ReplyMapper {
     @Delete("DELETE FROM `reply` WHERE `discussion_id` = #{discussionId}")
     int deleteByDiscussionId(int discussionId);
 
+    @Insert("""
+            INSERT IGNORE INTO `like_reply` (`account_id`, `reply_id`)
+            VALUES (#{accountId}, #{id})
+            """)
+    void like(int id, int accountId);
 
+    @Delete("""
+            DELETE FROM `like_reply`
+            WHERE `account_id` = #{accountId} AND `reply_id` = #{id}
+            """)
+    void unlike(int id, int accountId);
 }

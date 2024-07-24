@@ -95,4 +95,20 @@ public class ReplyController extends BaseController {
 
         return MessageResponse.ok(M("reply.delete.success"));
     }
+
+    @PutMapping("like/{id}")
+    @Operation(summary = "Like a reply", description = "Like a reply in a discussion")
+    @ValidatePermission
+    @ValidateCourse
+    public MessageResponse like(
+            @PathVariable int id,
+            @RequestParam boolean liked,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        replyService.like(id, courseId, auth.getId(), liked);
+        return MessageResponse.ok(liked
+                ? M("reply.like.success")
+                : M("reply.unlike.success"));
+    }
 }

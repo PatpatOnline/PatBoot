@@ -47,6 +47,9 @@ public interface ReplyFilterMapper {
             """)
     Reply findDelete(int replyId);
 
+    @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
+    Reply findLike(int replyId);
+
     @Select("""
             SELECT COUNT(*) FROM `reply`
             WHERE `id` = #{replyId} AND `discussion_id` = #{discussionId}

@@ -5,6 +5,7 @@ import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
@@ -106,5 +107,24 @@ public class DiscussionController extends BaseController {
         var replies = replyService.getAllInDiscussion(discussion.getId(), auth.getId());
 
         return DataResponse.ok(new DiscussionWithReplyView(discussion, replies));
+    }
+
+    @PutMapping("like/{id}")
+    @Operation(summary = "Like/Unlike a discussion", description = "Student like/unlike a discussion")
+    @ValidatePermission
+    @ValidateCourse
+    public MessageResponse like(
+            @PathVariable int id,
+            @RequestParam boolean liked,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        if (!discussionService.exists(courseId, id)) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+        discussionService.like(id, auth.getId(), liked);
+        return MessageResponse.ok(liked
+                ? M("discussion.like.success")
+                : M("discussion.unlike.success"));
     }
 }
