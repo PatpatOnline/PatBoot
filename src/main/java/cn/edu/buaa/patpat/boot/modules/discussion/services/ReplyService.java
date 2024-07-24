@@ -119,4 +119,11 @@ public class ReplyService extends BaseService {
             replyMapper.unlike(id, accountId);
         }
     }
+
+    public void verify(int id, boolean verified) {
+        int updated = replyMapper.updateVerified(id, verified);
+        if (updated == 0) {
+            throw new NotFoundException(M("reply.exists.not"));
+        }
+    }
 }

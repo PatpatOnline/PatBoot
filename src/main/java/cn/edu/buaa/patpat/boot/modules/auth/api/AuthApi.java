@@ -29,10 +29,6 @@ public class AuthApi {
         return authService.issueRefresh(auth);
     }
 
-    public AuthPayload verifyRefresh(String refresh) throws JwtVerifyException {
-        return authService.verifyRefresh(refresh);
-    }
-
     public Cookie setJwtCookie(String jwt) {
         return authService.setJwtCookie(jwt);
     }
