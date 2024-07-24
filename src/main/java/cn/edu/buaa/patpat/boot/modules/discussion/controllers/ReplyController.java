@@ -37,6 +37,7 @@ public class ReplyController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create a new reply", description = "Create a new reply in a discussion")
+    @ValidateParameters
     @ValidateCourse
     @ValidatePermission
     public DataResponse<ReplyView> create(
