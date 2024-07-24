@@ -76,4 +76,18 @@ public class DiscussionService extends BaseService {
     public boolean exists(int courseId, int discussionId) {
         return discussionFilterMapper.exists(courseId, discussionId);
     }
+
+    public void top(int id, boolean topped) {
+        int updated = discussionMapper.updateTopped(id, topped);
+        if (updated == 0) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+    }
+
+    public void star(int id, boolean starred) {
+        int updated = discussionMapper.updateStarred(id, starred);
+        if (updated == 0) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+    }
 }

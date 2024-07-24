@@ -78,7 +78,6 @@ public class DiscussionController extends BaseController {
                 mappers.map(discussion, DiscussionUpdateDto.class));
     }
 
-
     @DeleteMapping("delete/{id}")
     @Operation(summary = "Delete a discussion", description = "Student delete their discussion or T.A. delete any discussion")
     @ValidatePermission

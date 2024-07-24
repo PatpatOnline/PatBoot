@@ -30,6 +30,4 @@ public interface DiscussionMapper {
 
     @Delete("DELETE FROM `discussion` WHERE `id` = #{id}")
     int delete(int id);
-
-
 }
