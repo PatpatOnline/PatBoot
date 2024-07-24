@@ -26,15 +26,15 @@ public class CourseService extends BaseService {
     }
 
     public Course delete(int id) {
-        Course course = courseMapper.findById(id);
+        Course course = courseMapper.find(id);
         if (course != null) {
-            courseMapper.deleteById(course.getId());
+            courseMapper.delete(course.getId());
         }
         return course;
     }
 
     public Course update(int id, UpdateCourseRequest request) {
-        Course course = courseMapper.findById(id);
+        Course course = courseMapper.find(id);
         if (course == null) {
             return null;
         }
@@ -47,17 +47,17 @@ public class CourseService extends BaseService {
         if (auth.isTa()) {
             return courseMapper.getAll();
         }
-        return courseMapper.findAllActiveByAccount(auth.getId());
+        return courseMapper.findAllActive(auth.getId());
     }
 
     public Course findById(int id) {
-        return courseMapper.findById(id);
+        return courseMapper.find(id);
     }
 
     public Course tryGetCourse(AuthPayload auth, int courseId) {
         if (auth.isTa()) {
-            return courseMapper.findById(courseId);
+            return courseMapper.find(courseId);
         }
-        return courseMapper.findActiveByIdAndAccount(courseId, auth.getId());
+        return courseMapper.findActive(courseId, auth.getId());
     }
 }

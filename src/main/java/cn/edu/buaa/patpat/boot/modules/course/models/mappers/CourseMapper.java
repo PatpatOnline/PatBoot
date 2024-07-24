@@ -19,7 +19,7 @@ public interface CourseMapper {
     void save(Course course);
 
     @Select("SELECT * FROM `course` WHERE `id` = #{id}")
-    Course findById(int id);
+    Course find(int id);
 
     @Select("""
             SELECT * FROM `course`
@@ -28,7 +28,7 @@ public interface CourseMapper {
                 WHERE `course_id` = #{id} AND `account_id` = #{accountId}
             ) AND `active` = true
             """)
-    Course findActiveByIdAndAccount(int id, int accountId);
+    Course findActive(int id, int accountId);
 
     @Select("""
             SELECT * FROM `course`
@@ -37,10 +37,10 @@ public interface CourseMapper {
                 WHERE `account_id` = #{accountId}
             )
             """)
-    List<Course> findAllActiveByAccount(int accountId);
+    List<Course> findAllActive(int accountId);
 
     @Delete("DELETE FROM `course` WHERE `id` = #{id}")
-    void deleteById(int id);
+    void delete(int id);
 
     @Update("""
             UPDATE `course`

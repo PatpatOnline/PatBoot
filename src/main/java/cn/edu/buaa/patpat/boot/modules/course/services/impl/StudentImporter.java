@@ -98,7 +98,7 @@ public class StudentImporter {
      */
     private int createOrUpdateStudent(Row row, int courseId, int teacherId) throws ImportException {
         Account account = createOrUpdateAccount(row);
-        Student student = studentMapper.findByAccountAndCourse(account.getId(), courseId);
+        Student student = studentMapper.find(account.getId(), courseId);
         boolean create = student == null;
         if (create) {
             student = new Student();
@@ -133,9 +133,9 @@ public class StudentImporter {
     private void deleteStudent(StudentImportView student, int courseId) {
         var courses = studentImportMapper.getAllCourseId(student.getAccountId());
         if (courses.size() == 1 && courses.get(0) == courseId) {
-            accountMapper.deleteById(student.getAccountId());
+            accountMapper.delete(student.getAccountId());
         }
-        studentMapper.deleteById(student.getId());
+        studentMapper.delete(student.getId());
     }
 
     private Account createOrUpdateAccount(Row row) throws ImportException {

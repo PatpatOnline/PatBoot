@@ -15,7 +15,7 @@ public interface StudentMapper {
     void save(Student student);
 
     @Delete("DELETE FROM `student` WHERE `id` = #{id}")
-    void deleteById(int id);
+    void delete(int id);
 
     @Update("""
             UPDATE `student`
@@ -35,5 +35,5 @@ public interface StudentMapper {
             WHERE `account_id` = #{accountId} AND `course_id` = #{courseId}
             LIMIT 1
             """)
-    Student findByAccountAndCourse(int accountId, int courseId);
+    Student find(int accountId, int courseId);
 }

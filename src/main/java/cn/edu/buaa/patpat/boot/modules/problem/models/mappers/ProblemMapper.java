@@ -26,17 +26,8 @@ public interface ProblemMapper {
     void update(Problem problem);
 
     @Select("SELECT * FROM `problem` WHERE `id` = #{id}")
-    Problem findById(int id);
-
-    @Insert("""
-            UPDATE `problem`
-            SET `data` = #{data}, `updated_at` = #{updatedAt}
-            WHERE `id` = #{id}
-            """)
-    void updateData(Problem problem);
+    Problem find(int id);
 
     @Insert("DELETE FROM `problem` WHERE `id` = #{id}")
-    int deleteById(int id);
-
-
+    int delete(int id);
 }

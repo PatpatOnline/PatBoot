@@ -29,7 +29,7 @@ public interface AccountMapper {
     void save(Account account);
 
     @Select("SELECT COUNT(*) FROM `account` WHERE `buaa_id` = #{buaaId}")
-    boolean existsByBuaaId(String buaaId);
+    boolean exists(String buaaId);
 
     @Select("SELECT * FROM `account` WHERE `id` = #{id} LIMIT 1")
     Account findById(int id);
@@ -51,5 +51,5 @@ public interface AccountMapper {
     int update(Account account);
 
     @Delete("DELETE FROM `account` WHERE `id` = #{id}")
-    int deleteById(int id);
+    void delete(int id);
 }

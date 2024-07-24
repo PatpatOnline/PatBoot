@@ -59,7 +59,7 @@ public class ProblemService extends BaseService {
     }
 
     public Problem updateProblem(int id, UpdateProblemRequest request) {
-        Problem problem = problemMapper.findById(id);
+        Problem problem = problemMapper.find(id);
         if (problem == null) {
             throw new BadRequestException(M("problem.exists.not"));
         }
@@ -84,7 +84,7 @@ public class ProblemService extends BaseService {
     }
 
     public void deleteProblem(int id) {
-        if (problemMapper.deleteById(id) == 0) {
+        if (problemMapper.delete(id) == 0) {
             throw new NotFoundException(M("problem.exists.not"));
         }
 

@@ -11,5 +11,5 @@ public interface AuthMapper {
             FROM `account`
             WHERE `buaa_id` = #{buaaId}
             """)
-    AuthView selectByBuaaId(String buaaId);
+    AuthView find(String buaaId);
 }

@@ -23,7 +23,7 @@ public class AccountService extends BaseService {
     private final BucketApi bucketApi;
 
     public Account register(RegisterRequest request) {
-        if (accountMapper.existsByBuaaId(request.getBuaaId())) {
+        if (accountMapper.exists(request.getBuaaId())) {
             throw new BadRequestException(M("account.exists"));
         }
 
