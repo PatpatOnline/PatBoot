@@ -64,6 +64,7 @@ CREATE TABLE `student`
 
 CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
 CREATE INDEX `student_course_id_index` ON `student` (`course_id`);
+CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
 
 
 ############################################################
@@ -175,7 +176,9 @@ CREATE TABLE `reply`
     PRIMARY KEY (`id`)
 );
 
+CREATE INDEX `reply_id_discussion_id_index` ON `reply` (`id`, `discussion_id`);
 CREATE INDEX `reply_discussion_id_index` ON `reply` (`discussion_id`);
+CREATE INDEX `reply_parent_id_index` ON `reply` (`parent_id`);
 
 DROP TABLE IF EXISTS `like_reply`;
 CREATE TABLE `like_reply`
