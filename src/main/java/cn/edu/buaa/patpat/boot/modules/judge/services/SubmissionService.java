@@ -5,7 +5,6 @@ import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.common.utils.Zips;
 import cn.edu.buaa.patpat.boot.config.Globals;
-import cn.edu.buaa.patpat.boot.config.RabbitMqConfig;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
@@ -15,12 +14,10 @@ import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
 import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.ScoreMapper;
 import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.SubmissionMapper;
 import cn.edu.buaa.patpat.boot.modules.stream.api.StreamApi;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,15 +25,18 @@ import java.nio.file.Path;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
-public class SubmissionService extends BaseService {
-    private final BucketApi bucketApi;
-    private final SubmissionMapper submissionMapper;
-    private final RabbitTemplate rabbitTemplate;
-    private final StreamApi streamApi;
-    private final ScoreMapper scoreMapper;
+public abstract class SubmissionService extends BaseService {
+    @Autowired
+    protected BucketApi bucketApi;
+    @Autowired
+    protected SubmissionMapper submissionMapper;
+    @Autowired
+    protected RabbitTemplate rabbitTemplate;
+    @Autowired
+    protected StreamApi streamApi;
+    @Autowired
+    protected ScoreMapper scoreMapper;
     @Value("${judge.judge-root}")
     private String judgeRoot;
 
@@ -53,30 +53,10 @@ public class SubmissionService extends BaseService {
         payload.setSandboxPath(judgePath);
         dto.setPayload(payload);
 
-        send(dto);
+        log.info("Send judge request: {}", dto.getId());
+        sendImpl(dto);
 
         return submission;
-    }
-
-    @RabbitListener(queues = RabbitMqConfig.RESULT, concurrency = "4")
-    public void receive(JudgeResponseDto response) {
-        log.info("Received judge response: {}", response.getId());
-
-        Submission submission = mappers.map(response, Submission.class);
-        submission.setData(mappers.toJson(response.getResult(), TestResult.DEFAULT));
-        if (submissionMapper.finalize(submission) == 0) {
-            log.error("Missing submission when finalizing: {}", response.getId());
-            return;
-        }
-        SubmitResponse dto = mappers.map(response, SubmitResponse.class);
-        dto.setCourseId(response.getPayload().getCourseId());
-        String buaaId = response.getPayload().getBuaaId();
-        streamApi.send(buaaId, dto.toWebSocketPayload());
-
-        Medias.removeSilently(response.getPayload().getSandboxPath());
-
-        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
-        scoreMapper.saveOrUpdate(score);
     }
 
     private Tuple<String, String> saveSubmissionInTemp(MultipartFile file) {
@@ -126,9 +106,25 @@ public class SubmissionService extends BaseService {
         return sandboxPath;
     }
 
-    private void send(JudgeRequestDto request) {
-        log.info("Send judge request: {}", request.getId());
+    protected abstract void sendImpl(JudgeRequestDto request);
 
-        rabbitTemplate.convertAndSend(RabbitMqConfig.PENDING, request);
+    protected void receiveImpl(JudgeResponseDto response) {
+        log.info("Received judge response: {}", response.getId());
+
+        Submission submission = mappers.map(response, Submission.class);
+        submission.setData(mappers.toJson(response.getResult(), TestResult.DEFAULT));
+        if (submissionMapper.finalize(submission) == 0) {
+            log.error("Missing submission when finalizing: {}", response.getId());
+            return;
+        }
+        SubmitResponse dto = mappers.map(response, SubmitResponse.class);
+        dto.setCourseId(response.getPayload().getCourseId());
+        String buaaId = response.getPayload().getBuaaId();
+        streamApi.send(buaaId, dto.toWebSocketPayload());
+
+        Medias.removeSilently(response.getPayload().getSandboxPath());
+
+        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
+        scoreMapper.saveOrUpdate(score);
     }
 }

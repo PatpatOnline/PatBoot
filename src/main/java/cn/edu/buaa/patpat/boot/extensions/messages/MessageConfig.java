@@ -1,8 +1,8 @@
 package cn.edu.buaa.patpat.boot.extensions.messages;
 
-import cn.edu.buaa.patpat.boot.config.CookiesOptions;
 import cn.edu.buaa.patpat.boot.extensions.cookies.CookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
+import cn.edu.buaa.patpat.boot.options.CookiesOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;

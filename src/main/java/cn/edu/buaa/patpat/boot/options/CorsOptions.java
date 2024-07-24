@@ -1,4 +1,4 @@
-package cn.edu.buaa.patpat.boot.config;
+package cn.edu.buaa.patpat.boot.options;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.config;
 
+import cn.edu.buaa.patpat.boot.options.CorsOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
