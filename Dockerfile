@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 ARG VERSION
 ARG PROFILE
 
-COPY assets/PatBoot-${VERSION}.jar /application.jar
+COPY target/PatBoot-${VERSION}.jar /application.jar
 ENV PROFILE=${PROFILE}
 
 EXPOSE 8080
