@@ -9,8 +9,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ReplyView extends HasCreatedAndUpdated {
     private int id;
-
-    @JsonIgnore
     private int parentId;
 
     @JsonIgnore
