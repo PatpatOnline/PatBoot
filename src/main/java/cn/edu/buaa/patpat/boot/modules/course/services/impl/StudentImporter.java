@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.common.utils.excel.ExcelException;
 import cn.edu.buaa.patpat.boot.common.utils.excel.Excels;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
+import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
@@ -28,11 +29,13 @@ public class StudentImporter {
     private final AccountMapper accountMapper;
     private final StudentMapper studentMapper;
     private final StudentImportMapper studentImportMapper;
+    private final AccountFilterMapper accountFilterMapper;
 
-    public StudentImporter(AccountMapper accountMapper, StudentMapper studentMapper, StudentImportMapper studentImportMapper) {
+    public StudentImporter(AccountMapper accountMapper, StudentMapper studentMapper, StudentImportMapper studentImportMapper, AccountFilterMapper accountFilterMapper) {
         this.accountMapper = accountMapper;
         this.studentMapper = studentMapper;
         this.studentImportMapper = studentImportMapper;
+        this.accountFilterMapper = accountFilterMapper;
     }
 
     @Transactional
@@ -65,7 +68,7 @@ public class StudentImporter {
         try {
             String value = Excels.getNonEmptyCellValue(sheet.getRow(2).getCell(4));
             String name = value.substring(value.lastIndexOf("：") + 1);
-            Account account = accountMapper.findByName(name);
+            Account account = accountFilterMapper.findByName(name);
             if (account == null) {
                 throw new ImportException("Teacher " + name + " not found");
             }
@@ -140,7 +143,7 @@ public class StudentImporter {
 
     private Account createOrUpdateAccount(Row row) throws ImportException {
         String buaaId = row.getCell(1).toString();
-        Account account = accountMapper.findByBuaaId(buaaId);
+        Account account = accountFilterMapper.findByBuaaId(buaaId);
         boolean create = account == null;
         if (create) {
             account = new Account();

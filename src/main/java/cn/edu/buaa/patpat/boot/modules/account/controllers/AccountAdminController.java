@@ -2,6 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
+import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
 import cn.edu.buaa.patpat.boot.modules.account.dto.CreateAccountRequest;
@@ -17,10 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -54,5 +52,15 @@ public class AccountAdminController extends BaseController {
         return DataResponse.ok(
                 M("account.create.success"),
                 dto);
+    }
+
+    @PostMapping("password/reset/{id}")
+    @Operation(summary = "Reset password", description = "Reset any account's password")
+    @ValidatePermission(AuthLevel.TA)
+    public MessageResponse resetPassword(
+            @PathVariable int id
+    ) {
+        accountService.resetPassword(id);
+        return MessageResponse.ok(M("account.password.reset.success"));
     }
 }

@@ -2,11 +2,13 @@ package cn.edu.buaa.patpat.boot.modules.account.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
+import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +23,10 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class AccountService extends BaseService {
     private final AccountMapper accountMapper;
     private final BucketApi bucketApi;
+    private final AccountFilterMapper accountFilterMapper;
 
     public Account register(RegisterRequest request) {
-        if (accountMapper.exists(request.getBuaaId())) {
+        if (accountFilterMapper.exists(request.getBuaaId())) {
             throw new BadRequestException(M("account.exists"));
         }
 
@@ -35,7 +38,7 @@ public class AccountService extends BaseService {
     }
 
     public AccountDto login(LoginRequest request) {
-        Account account = accountMapper.findByBuaaId(request.getBuaaId());
+        Account account = accountFilterMapper.findByBuaaId(request.getBuaaId());
         if (account == null) {
             throw new BadRequestException(M("account.exists.not"));
         }
@@ -48,5 +51,26 @@ public class AccountService extends BaseService {
         accountDto.setAvatar(bucketApi.recordToUrl(accountDto.getAvatar()));
 
         return accountDto;
+    }
+
+    public void updatePassword(int accountId, String oldPassword, String newPassword) {
+        Account account = accountFilterMapper.findUpdatePassword(accountId);
+        if (account == null) {
+            throw new NotFoundException(M("account.exists.not"));
+        }
+        if (!account.getPassword().equals(oldPassword)) {
+            throw new BadRequestException(M("account.password.incorrect"));
+        }
+        account.setPassword(newPassword);
+        accountMapper.updatePassword(account);
+    }
+
+    public void resetPassword(int accountId) {
+        Account account = accountFilterMapper.findUpdatePassword(accountId);
+        if (account == null) {
+            throw new NotFoundException(M("account.exists.not"));
+        }
+        account.setPassword(account.getBuaaId());
+        accountMapper.updatePassword(account);
     }
 }

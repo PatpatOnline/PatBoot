@@ -28,18 +28,6 @@ public interface AccountMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void save(Account account);
 
-    @Select("SELECT COUNT(*) FROM `account` WHERE `buaa_id` = #{buaaId}")
-    boolean exists(String buaaId);
-
-    @Select("SELECT * FROM `account` WHERE `id` = #{id} LIMIT 1")
-    Account findById(int id);
-
-    @Select("SELECT * FROM `account` WHERE `buaa_id` = #{buaaId} LIMIT 1")
-    Account findByBuaaId(String buaaId);
-
-    @Select("SELECT * FROM `account` WHERE `name` = #{name} LIMIT 1")
-    Account findByName(String name);
-
     @Update("""
             UPDATE `account`
             SET `buaa_id` = #{buaaId},
@@ -49,6 +37,9 @@ public interface AccountMapper {
             WHERE `id` = #{id}
             """)
     int update(Account account);
+
+    @Update("UPDATE `account` SET `password` = #{password} WHERE `id` = #{id}")
+    void updatePassword(Account account);
 
     @Delete("DELETE FROM `account` WHERE `id` = #{id}")
     void delete(int id);
