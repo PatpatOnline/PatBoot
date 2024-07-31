@@ -18,6 +18,7 @@ import cn.edu.buaa.patpat.boot.modules.discussion.dto.CreateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.DiscussionUpdateDto;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.UpdateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
+import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionFilter;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionWithReplyView;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.DiscussionService;
@@ -133,18 +134,21 @@ public class DiscussionController extends BaseController {
                 : M("discussion.unlike.success"));
     }
 
-    @GetMapping("all")
-    @Operation(summary = "Get all discussions", description = "Get all discussions in a course")
+    @GetMapping("query")
+    @Operation(summary = "Query discussions", description = "Query discussions in a course")
     @ValidatePagination
     @ValidatePermission
     @ValidateCourse
-    public DataResponse<PageListDto<DiscussionView>> getAll(
+    public DataResponse<PageListDto<DiscussionView>> query(
+            @CourseId Integer courseId,
+            AuthPayload auth,
             @RequestParam(value = "p") @Page int page,
             @RequestParam(value = "ps") @PageSize int pageSize,
-            AuthPayload auth,
-            @CourseId Integer courseId
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Integer type
     ) {
-        PageListDto<DiscussionView> dto = discussionService.getAll(courseId, auth.getId(), page, pageSize);
+        DiscussionFilter filter = new DiscussionFilter(query, type);
+        PageListDto<DiscussionView> dto = discussionService.query(courseId, auth.getId(), page, pageSize, filter);
 
         return DataResponse.ok(dto);
     }

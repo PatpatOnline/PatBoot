@@ -8,6 +8,7 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.CreateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.UpdateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
+import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionFilter;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionMapper;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.ReplyMapper;
@@ -106,11 +107,11 @@ public class DiscussionService extends BaseService {
         }
     }
 
-    public PageListDto<DiscussionView> getAll(int courseId, int accountId, int page, int pageSize) {
-        int count = discussionFilterMapper.countAll(courseId);
+    public PageListDto<DiscussionView> query(int courseId, int accountId, int page, int pageSize, DiscussionFilter filter) {
+        int count = discussionFilterMapper.count(courseId, filter);
         List<DiscussionView> discussions = count == 0
                 ? List.of()
-                : discussionFilterMapper.getAll(courseId, accountId, page, pageSize);
+                : discussionFilterMapper.query(courseId, accountId, page, pageSize, filter);
         fillBadges(discussions);
         return PageListDto.of(discussions, count, page, pageSize);
     }
