@@ -6,7 +6,7 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
-import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentView;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ public class StudentController extends BaseController {
     @Operation(summary = "Get student detail", description = "Get student detail of the current user")
     @ValidatePermission
     @ValidateCourse
-    public DataResponse<StudentView> detail(
+    public DataResponse<StudentDetailView> detail(
             AuthPayload auth,
             @CourseId Integer courseId
     ) {

@@ -1,9 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
+import cn.edu.buaa.patpat.boot.aspect.*;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
@@ -13,7 +13,9 @@ import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
+import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilter;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentListView;
 import cn.edu.buaa.patpat.boot.modules.course.services.ImportService;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,5 +102,24 @@ public class StudentAdminController {
     ) {
         var view = studentService.getDetail(id);
         return DataResponse.ok(view);
+    }
+
+
+    @GetMapping("query")
+    @Operation(summary = "Query students", description = "Query students in current course with filters")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    @ValidatePagination
+    public DataResponse<PageListDto<StudentListView>> query(
+            @CourseId Integer courseId,
+            @RequestParam(name = "p") @Page int page,
+            @RequestParam(name = "ps") @PageSize int pageSize,
+            @RequestParam(required = false) String buaaId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer teacherId
+    ) {
+        StudentFilter filter = new StudentFilter(buaaId, name, teacherId);
+        var response = studentService.query(courseId, page, pageSize, filter);
+        return DataResponse.ok(response);
     }
 }

@@ -1,13 +1,18 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
+import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilter;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentListView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -40,5 +45,13 @@ public class StudentService extends BaseService {
         }
         view.setAvatar(bucketApi.recordToUrl(view.getAvatar()));
         return view;
+    }
+
+    public PageListDto<StudentListView> query(int courseId, int page, int pageSize, StudentFilter filter) {
+        var count = studentFilterMapper.count(courseId, filter);
+        List<StudentListView> students = count == 0
+                ? List.of()
+                : studentFilterMapper.query(courseId, page, pageSize, filter);
+        return PageListDto.of(students, count, page, pageSize);
     }
 }

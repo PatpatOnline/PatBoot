@@ -6,13 +6,16 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class StudentView extends HasCreated {
+public class StudentListView extends HasCreated {
     private int id;
     private int accountId;
     private String buaaId;
 
     private String studentName;
-    private String teacherName;
+    private int teacherId;
 
     private String school;
+    private String major;
+    private String className;
+    private boolean repeat;
 }
