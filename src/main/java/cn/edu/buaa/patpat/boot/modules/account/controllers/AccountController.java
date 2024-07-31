@@ -29,7 +29,7 @@ public class AccountController extends BaseController {
     private final AccountService accountService;
 
     @PutMapping("password")
-    @Operation(summary = "Change password", description = "Change password")
+    @Operation(summary = "Update password", description = "Update password of the current account")
     @ValidateParameters
     @ValidatePermission
     public MessageResponse updatePassword(

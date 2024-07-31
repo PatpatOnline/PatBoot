@@ -6,6 +6,7 @@ import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
+import cn.edu.buaa.patpat.boot.modules.account.dto.UpdateAccountRequest;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
@@ -72,5 +73,35 @@ public class AccountService extends BaseService {
         }
         account.setPassword(account.getBuaaId());
         accountMapper.updatePassword(account);
+    }
+
+    public AccountDto update(int accountId, UpdateAccountRequest request) {
+        Account account = accountFilterMapper.findById(accountId);
+        if (account == null) {
+            throw new NotFoundException(M("account.exists.not"));
+        }
+        mappers.map(request, account);
+        if (request.getRole() != null) {
+            switch (request.getRole()) {
+                case 0:
+                    account.setTa(false);
+                    account.setTeacher(false);
+                    break;
+                case 1:
+                    account.setTa(true);
+                    account.setTeacher(false);
+                    break;
+                case 2:
+                    account.setTa(true);
+                    account.setTeacher(true);
+                    break;
+            }
+        }
+        accountMapper.update(account);
+
+        AccountDto accountDto = mappers.map(account, AccountDto.class);
+        accountDto.setAvatar(bucketApi.recordToUrl(accountDto.getAvatar()));
+
+        return accountDto;
     }
 }

@@ -156,7 +156,7 @@ public class StudentImporter {
             if (create) {
                 accountMapper.save(account);
             } else {
-                accountMapper.update(account);
+                accountMapper.updateInfo(account);
             }
         } catch (ExcelException e) {
             log.error("Failed to extract account from row.", e);

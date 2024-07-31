@@ -4,15 +4,16 @@
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account`
 (
-    `id`       int         NOT NULL AUTO_INCREMENT,
-    `buaa_id`  varchar(10) NOT NULL UNIQUE,
-    `name`     varchar(31) NOT NULL,
-    `password` varchar(31) NOT NULL,
-    `gender`   int         NOT NULL default 0,
-    `school`   varchar(63) NOT NULL,
-    `teacher`  bool        NOT NULL default false,
-    `ta`       bool        NOT NULL default false,
-    `avatar`   varchar(63) NOT NULL,
+    `id`         int         NOT NULL AUTO_INCREMENT,
+    `buaa_id`    varchar(10) NOT NULL UNIQUE,
+    `name`       varchar(31) NOT NULL,
+    `password`   varchar(31) NOT NULL,
+    `gender`     int         NOT NULL default 0,
+    `school`     varchar(63) NOT NULL,
+    `teacher`    bool        NOT NULL default false,
+    `ta`         bool        NOT NULL default false,
+    `avatar`     varchar(63) NOT NULL,
+    `created_at` timestamp   NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -20,8 +21,8 @@ CREATE INDEX `account_buaa_id_index` ON `account` (`buaa_id`);
 CREATE INDEX `account_name_index` ON `account` (`name`);
 
 # Insert super user.
-INSERT INTO `account` (`buaa_id`, `name`, `password`, `gender`, `school`, `teacher`, `ta`, `avatar`)
-VALUES ('java', 'Java', 'password', 0, 'Oracle', true, true, 'default.svg');
+INSERT INTO `account` (`buaa_id`, `name`, `password`, `gender`, `school`, `teacher`, `ta`, `avatar`, `created_at`)
+VALUES ('java', 'Java', 'password', 0, 'Oracle', true, true, 'default.svg', NOW());
 
 
 ############################################################

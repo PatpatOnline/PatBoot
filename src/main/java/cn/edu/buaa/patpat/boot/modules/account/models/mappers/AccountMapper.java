@@ -14,7 +14,8 @@ public interface AccountMapper {
                        `school`,
                        `ta`,
                        `teacher`,
-                       `avatar`)
+                       `avatar`,
+                       `created`)
             VALUES (
                 #{buaaId},
                 #{name},
@@ -23,7 +24,8 @@ public interface AccountMapper {
                 #{school},
                 #{ta},
                 #{teacher},
-                #{avatar})
+                #{avatar},
+                #{createdAt})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void save(Account account);
@@ -36,7 +38,19 @@ public interface AccountMapper {
                 `school` = #{school}
             WHERE `id` = #{id}
             """)
-    int update(Account account);
+    void updateInfo(Account account);
+
+    @Update("""
+            UPDATE `account`
+            SET `buaa_id` = #{buaaId},
+                `name` = #{name},
+                `gender` = #{gender},
+                `school` = #{school},
+                `teacher` = #{teacher},
+                `ta` = #{ta}
+            WHERE `id` = #{id}
+            """)
+    void update(Account account);
 
     @Update("UPDATE `account` SET `password` = #{password} WHERE `id` = #{id}")
     void updatePassword(Account account);
