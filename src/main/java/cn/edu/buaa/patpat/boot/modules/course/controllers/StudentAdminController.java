@@ -12,6 +12,7 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
+import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
 import cn.edu.buaa.patpat.boot.modules.course.services.ImportService;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
@@ -37,13 +38,13 @@ public class StudentAdminController {
     private final ImportService importService;
     private final StudentService studentService;
 
-    @PostMapping("/import")
-    @Operation(summary = "Import students from an Excel file", description = "T.A. imports students from an Excel file, results will be returned via WebSocket.")
+    @PostMapping("/import/async")
+    @Operation(summary = "Import students asynchronously", description = "T.A. imports students from an Excel file, results will be returned via WebSocket.")
     @ValidateParameters
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
-    public MessageResponse importStudents(
+    public MessageResponse importStudentsAsync(
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
             @CourseId Integer courseId,
@@ -59,9 +60,36 @@ public class StudentAdminController {
         }
 
         // Import students asynchronously.
-        importService.importStudents(auth.getBuaaId(), courseId, path, clean);
+        importService.importStudentsAsync(auth.getBuaaId(), courseId, path, clean);
 
         return MessageResponse.ok(M("student.import.progress"));
+    }
+
+    @PostMapping("/import")
+    @Operation(summary = "Import students synchronously", description = "T.A. imports students from an Excel file results will be returned synchronously.")
+    @ValidateParameters
+    @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public DataResponse<ImportStudentResponse> importStudents(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam boolean clean,
+            @CourseId Integer courseId,
+            AuthPayload auth,
+            HttpServletRequest request
+    ) {
+        String record = bucketApi.toRandomRecord(file.getOriginalFilename());
+        String path = bucketApi.recordToPrivatePath(record);
+        try {
+            Medias.save(path, file);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Failed to save the file");
+        }
+
+        // Import students synchronously.
+        var response = importService.importStudents(auth.getBuaaId(), courseId, path, clean);
+
+        return DataResponse.ok(response);
     }
 
     @GetMapping("{id}")
