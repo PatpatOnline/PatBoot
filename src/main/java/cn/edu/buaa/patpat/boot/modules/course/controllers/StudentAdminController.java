@@ -20,7 +20,6 @@ import cn.edu.buaa.patpat.boot.modules.course.services.ImportService;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +49,7 @@ public class StudentAdminController {
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
             @CourseId Integer courseId,
-            AuthPayload auth,
-            HttpServletRequest request
+            AuthPayload auth
     ) {
         String record = bucketApi.toRandomRecord(file.getOriginalFilename());
         String path = bucketApi.recordToPrivatePath(record);
@@ -77,8 +75,7 @@ public class StudentAdminController {
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
             @CourseId Integer courseId,
-            AuthPayload auth,
-            HttpServletRequest request
+            AuthPayload auth
     ) {
         String record = bucketApi.toRandomRecord(file.getOriginalFilename());
         String path = bucketApi.recordToPrivatePath(record);

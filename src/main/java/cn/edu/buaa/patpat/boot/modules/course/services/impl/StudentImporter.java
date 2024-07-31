@@ -12,6 +12,7 @@ import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilterMapper
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentImportMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentImportView;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,10 +22,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class StudentImporter {
     private final AccountMapper accountMapper;
@@ -32,14 +37,6 @@ public class StudentImporter {
     private final StudentImportMapper studentImportMapper;
     private final AccountFilterMapper accountFilterMapper;
     private final StudentFilterMapper studentFilterMapper;
-
-    public StudentImporter(AccountMapper accountMapper, StudentMapper studentMapper, StudentImportMapper studentImportMapper, AccountFilterMapper accountFilterMapper, StudentFilterMapper studentFilterMapper) {
-        this.accountMapper = accountMapper;
-        this.studentMapper = studentMapper;
-        this.studentImportMapper = studentImportMapper;
-        this.accountFilterMapper = accountFilterMapper;
-        this.studentFilterMapper = studentFilterMapper;
-    }
 
     @Transactional
     public ImportStudentResponse importStudents(int courseId, String excelPath, boolean clean) {
@@ -62,8 +59,8 @@ public class StudentImporter {
             }
             return ImportStudentResponse.of(created, updated, deleted);
         } catch (Exception e) {
-            log.error("Failed to import students.", e);
-            return ImportStudentResponse.of(e.getMessage());
+            log.error("Failed to import students: {}", e.getMessage());
+            return ImportStudentResponse.of(MessageFormat.format(M("student.import.error"), e.getMessage()));
         }
     }
 
@@ -73,7 +70,7 @@ public class StudentImporter {
             String name = value.substring(value.lastIndexOf("：") + 1);
             Account account = accountFilterMapper.findByName(name);
             if (account == null) {
-                throw new ImportException("Teacher " + name + " not found");
+                throw new ImportException(MessageFormat.format(M("student.import.error.teacher"), name));
             }
             return account;
         } catch (ExcelException e) {
@@ -162,7 +159,7 @@ public class StudentImporter {
                 accountMapper.updateInfo(account);
             }
         } catch (ExcelException e) {
-            log.error("Failed to extract account from row.", e);
+            log.error("Failed to extract account from row: {}", e.getMessage());
             throw new ImportException(e.getMessage());
         }
         return account;

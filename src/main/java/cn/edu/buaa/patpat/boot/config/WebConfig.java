@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.config;
 
+import cn.edu.buaa.patpat.boot.extensions.messages.LocaleInterceptor;
 import cn.edu.buaa.patpat.boot.options.CorsOptions;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;

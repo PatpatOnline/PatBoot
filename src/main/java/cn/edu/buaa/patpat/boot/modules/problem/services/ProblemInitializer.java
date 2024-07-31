@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -113,7 +114,7 @@ public class ProblemInitializer {
         // Read problem.yaml
         Path problemYamlPath = Path.of(path, "problem.yaml");
         if (!Medias.exists(problemYamlPath)) {
-            throw new ProblemInitializeException("problem.yaml not found");
+            throw new ProblemInitializeException(M("problem.init.error.format.exists.not"));
         }
 
         // Read problem.yaml
@@ -122,14 +123,14 @@ public class ProblemInitializer {
             descriptor = ProblemDescriptor.loadFromYamlFile(problemYamlPath.toString(), mappers);
         } catch (IOException e) {
             log.error("Failed to load problem.yaml: {}", e.getMessage());
-            throw new ProblemInitializeException("Invalid format of problem.yaml");
+            throw new ProblemInitializeException(M("problem.init.error.format.invalid"));
         }
         descriptor.validate();
 
         // Check init.
         if (descriptor.isInit()) {
             if (!Medias.exists(Path.of(path, "init"))) {
-                throw new ProblemInitializeException("Enabled init but init directory not found");
+                throw new ProblemInitializeException(M("problem.init.error.format.init"));
             }
         }
 
@@ -137,10 +138,10 @@ public class ProblemInitializer {
         for (var testCase : descriptor.getCases()) {
             String baseName = Path.of(path, "tests", String.valueOf(testCase.getId())).toString();
             if (!Medias.exists(baseName + ".in")) {
-                throw new ProblemInitializeException("Missing input file for test case " + testCase.getId());
+                throw new ProblemInitializeException(MessageFormat.format(M("problem.init.error.missing"), ".in", testCase.getId()));
             }
             if (!Medias.exists(baseName + ".out")) {
-                throw new ProblemInitializeException("Missing output file for test case " + testCase.getId());
+                throw new ProblemInitializeException(MessageFormat.format(M("problem.init.error.missing"), ".out", testCase.getId()));
             }
         }
 
