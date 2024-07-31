@@ -1,7 +1,8 @@
 package cn.edu.buaa.patpat.boot.common.models;
 
+import cn.edu.buaa.patpat.boot.config.Globals;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class HasCreated {
-    @DateTimeFormat
+    @JsonFormat(pattern = Globals.DATE_FORMAT)
     protected LocalDateTime createdAt;
 
     public HasCreated() {

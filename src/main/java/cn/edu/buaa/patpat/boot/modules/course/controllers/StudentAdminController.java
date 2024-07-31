@@ -2,6 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
+import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
@@ -11,16 +12,15 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
+import cn.edu.buaa.patpat.boot.modules.course.services.ImportService;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,6 +34,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @Tag(name = "Student Admin", description = "Admin student management API")
 public class StudentAdminController {
     private final BucketApi bucketApi;
+    private final ImportService importService;
     private final StudentService studentService;
 
     @PostMapping("/import")
@@ -58,8 +59,18 @@ public class StudentAdminController {
         }
 
         // Import students asynchronously.
-        studentService.importStudents(auth.getBuaaId(), courseId, path, clean);
+        importService.importStudents(auth.getBuaaId(), courseId, path, clean);
 
         return MessageResponse.ok(M("student.import.progress"));
+    }
+
+    @GetMapping("{id}")
+    @Operation(summary = "Get student detail", description = "Get student detail by student ID")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<StudentDetailView> detail(
+            @PathVariable int id
+    ) {
+        var view = studentService.getDetail(id);
+        return DataResponse.ok(view);
     }
 }

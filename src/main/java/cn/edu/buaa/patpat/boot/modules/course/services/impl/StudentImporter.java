@@ -8,6 +8,7 @@ import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMappe
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
+import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentImportMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentImportView;
@@ -30,12 +31,14 @@ public class StudentImporter {
     private final StudentMapper studentMapper;
     private final StudentImportMapper studentImportMapper;
     private final AccountFilterMapper accountFilterMapper;
+    private final StudentFilterMapper studentFilterMapper;
 
-    public StudentImporter(AccountMapper accountMapper, StudentMapper studentMapper, StudentImportMapper studentImportMapper, AccountFilterMapper accountFilterMapper) {
+    public StudentImporter(AccountMapper accountMapper, StudentMapper studentMapper, StudentImportMapper studentImportMapper, AccountFilterMapper accountFilterMapper, StudentFilterMapper studentFilterMapper) {
         this.accountMapper = accountMapper;
         this.studentMapper = studentMapper;
         this.studentImportMapper = studentImportMapper;
         this.accountFilterMapper = accountFilterMapper;
+        this.studentFilterMapper = studentFilterMapper;
     }
 
     @Transactional
@@ -101,7 +104,7 @@ public class StudentImporter {
      */
     private int createOrUpdateStudent(Row row, int courseId, int teacherId) throws ImportException {
         Account account = createOrUpdateAccount(row);
-        Student student = studentMapper.find(account.getId(), courseId);
+        Student student = studentFilterMapper.find(account.getId(), courseId);
         boolean create = student == null;
         if (create) {
             student = new Student();

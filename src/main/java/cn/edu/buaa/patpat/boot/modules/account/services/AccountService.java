@@ -11,6 +11,7 @@ import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -103,5 +104,14 @@ public class AccountService extends BaseService {
         accountDto.setAvatar(bucketApi.recordToUrl(accountDto.getAvatar()));
 
         return accountDto;
+    }
+
+    public AccountDetailView findDetailView(int id) {
+        var view = accountFilterMapper.findDetailView(id);
+        if (view == null) {
+            throw new NotFoundException(M("account.exists.not"));
+        }
+        view.setAvatar(bucketApi.recordToUrl(view.getAvatar()));
+        return view;
     }
 }

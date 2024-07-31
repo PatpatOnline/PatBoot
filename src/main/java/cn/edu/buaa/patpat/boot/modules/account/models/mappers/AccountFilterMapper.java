@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -20,4 +21,11 @@ public interface AccountFilterMapper {
 
     @Select("SELECT `id`, `buaa_id`, `password` FROM `account` WHERE `id` = #{id} LIMIT 1")
     Account findUpdatePassword(int id);
+
+    @Select("""
+            SELECT `id`, `buaa_id`, `name`, `gender`, `school`, `teacher`, `ta`, `avatar`
+            FROM `account`
+            WHERE `id` = #{id}
+            """)
+    AccountDetailView findDetailView(int id);
 }

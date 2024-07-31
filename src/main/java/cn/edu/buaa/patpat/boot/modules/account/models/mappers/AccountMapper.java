@@ -15,7 +15,7 @@ public interface AccountMapper {
                        `ta`,
                        `teacher`,
                        `avatar`,
-                       `created`)
+                       `created_at`)
             VALUES (
                 #{buaaId},
                 #{name},

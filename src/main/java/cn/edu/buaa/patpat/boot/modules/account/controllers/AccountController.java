@@ -1,9 +1,11 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
+import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.account.dto.UpdatePasswordRequest;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -13,10 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -39,5 +38,14 @@ public class AccountController extends BaseController {
     ) {
         accountService.updatePassword(auth.getId(), request.getOldPassword(), request.getNewPassword());
         return MessageResponse.ok(M("account.password.update.success"));
+    }
+
+    @GetMapping("detail")
+    @Operation(summary = "Get account detail", description = "Get detail of the current account")
+    @ValidateParameters
+    @ValidatePermission
+    public DataResponse<AccountDetailView> detail(AuthPayload auth) {
+        var view = accountService.findDetailView(auth.getId());
+        return DataResponse.ok(view);
     }
 }
