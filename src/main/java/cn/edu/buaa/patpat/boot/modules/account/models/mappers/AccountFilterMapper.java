@@ -2,8 +2,12 @@ package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
+
+import java.util.List;
 
 @Mapper
 public interface AccountFilterMapper {
@@ -28,4 +32,14 @@ public interface AccountFilterMapper {
             WHERE `id` = #{id}
             """)
     AccountDetailView findDetailView(int id);
+
+    @SelectProvider(type = MapperProvider.class, method = "count")
+    int count(AccountFilter filter);
+
+    default List<AccountListView> query(int page, int pageSize, AccountFilter filter) {
+        return queryImpl(pageSize, (page - 1) * pageSize, filter);
+    }
+
+    @SelectProvider(type = MapperProvider.class, method = "query")
+    List<AccountListView> queryImpl(int pageSize, int offset, AccountFilter filter);
 }

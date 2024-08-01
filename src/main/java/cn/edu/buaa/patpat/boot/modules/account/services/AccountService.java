@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.account.services;
 
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -9,13 +10,17 @@ import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.UpdateAccountRequest;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
+import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilter;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -113,5 +118,22 @@ public class AccountService extends BaseService {
         }
         view.setAvatar(bucketApi.recordToUrl(view.getAvatar()));
         return view;
+    }
+
+    public PageListDto<AccountListView> query(int page, int pageSize, AccountFilter filter) {
+        if (filter.getId() != null) {
+            var account = accountFilterMapper.findById(filter.getId());
+            if (account == null) {
+                return PageListDto.of(List.of(), 0, page, pageSize);
+            } else {
+                return PageListDto.of(List.of(mappers.map(account, AccountListView.class)), 1, page, pageSize);
+            }
+        }
+
+        int count = accountFilterMapper.count(filter);
+        List<AccountListView> accounts = count == 0
+                ? List.of()
+                : accountFilterMapper.query(page, pageSize, filter);
+        return PageListDto.of(accounts, count, page, pageSize);
     }
 }

@@ -1,16 +1,23 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
+import cn.edu.buaa.patpat.boot.aspect.Page;
+import cn.edu.buaa.patpat.boot.aspect.PageSize;
+import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
 import cn.edu.buaa.patpat.boot.modules.account.dto.CreateAccountRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.UpdateAccountRequest;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
+import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilter;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
@@ -95,5 +102,25 @@ public class AccountAdminController extends BaseController {
     ) {
         var view = accountService.findDetailView(id);
         return DataResponse.ok(view);
+    }
+
+    @GetMapping("query")
+    @Operation(summary = "Query accounts", description = "Query all accounts")
+    @ValidatePagination
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<PageListDto<AccountListView>> query(
+            @RequestParam(name = "p") @Page int page,
+            @RequestParam(name = "ps") @PageSize int pageSize,
+            @RequestParam(required = false) Integer id,
+            @RequestParam(required = false) String buaaId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer role
+    ) {
+        if ((role != null) && (role < 0 || role > 2)) {
+            throw new BadRequestException(M("account.role.invalid"));
+        }
+        AccountFilter filter = new AccountFilter(id, buaaId, name, role);
+        var pageList = accountService.query(page, pageSize, filter);
+        return DataResponse.ok(pageList);
     }
 }
