@@ -12,11 +12,11 @@ cookies:
   domain: ${DOMAIN:localhost}
 bucket:
   serve: true
-  public-root: ./volume/wwwroot/
-  private-root: ./volume/bucket/
+  public-root: ../volume/wwwroot/
+  private-root: ../volume/bucket/
 config:
   allow-register: true
   http: http://localhost:8080
   websocket: ws://localhost:8080
 judge:
-  judge-root: ./volume/judge/
+  judge-root: ../volume/judge/
