@@ -40,7 +40,7 @@ public class AccountController extends BaseController {
         return MessageResponse.ok(M("account.password.update.success"));
     }
 
-    @GetMapping("detail")
+    @GetMapping("self")
     @Operation(summary = "Get account detail", description = "Get detail of the current account")
     @ValidateParameters
     @ValidatePermission

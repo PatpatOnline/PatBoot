@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -106,10 +107,12 @@ public class StudentAdminController extends BaseController {
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update student", description = "Update student information by student ID")
+    @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<StudentListView> update(
             @PathVariable int id,
-            @RequestBody @Valid UpdateStudentRequest request
+            @RequestBody @Valid UpdateStudentRequest request,
+            BindingResult bindingResult
     ) {
         var student = studentService.update(id, request);
         var view = studentService.query(student.getId());

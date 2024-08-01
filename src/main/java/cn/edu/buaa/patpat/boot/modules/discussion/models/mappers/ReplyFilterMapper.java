@@ -1,9 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
-import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.ReplyView;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;

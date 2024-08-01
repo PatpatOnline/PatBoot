@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
-import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

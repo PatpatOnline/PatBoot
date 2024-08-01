@@ -65,7 +65,7 @@ public class CourseController extends BaseController {
                 course);
     }
 
-    @GetMapping("current")
+    @GetMapping("")
     @Operation(summary = "Get the current course", description = "Get the current course")
     @ValidateCourse
     public DataResponse<Course> current(
