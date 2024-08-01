@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.aspect.*;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
+import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
@@ -13,6 +14,7 @@ import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
+import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateStudentRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentFilter;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentDetailView;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentListView;
@@ -20,6 +22,7 @@ import cn.edu.buaa.patpat.boot.modules.course.services.ImportService;
 import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +37,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Student Admin", description = "Admin student management API")
-public class StudentAdminController {
+public class StudentAdminController extends BaseController {
     private final BucketApi bucketApi;
     private final ImportService importService;
     private final StudentService studentService;
@@ -101,6 +104,17 @@ public class StudentAdminController {
         return DataResponse.ok(view);
     }
 
+    @PutMapping("update/{id}")
+    @Operation(summary = "Update student", description = "Update student information by student ID")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<StudentListView> update(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateStudentRequest request
+    ) {
+        var student = studentService.update(id, request);
+        var view = studentService.query(student.getId());
+        return DataResponse.ok(M("student.update.success"), view);
+    }
 
     @GetMapping("query")
     @Operation(summary = "Query students", description = "Query students in current course with filters")

@@ -23,6 +23,9 @@ public interface AccountFilterMapper {
     @Select("SELECT * FROM `account` WHERE `name` = #{name} LIMIT 1")
     Account findByName(String name);
 
+    @Select("SELECT `id`, `teacher`, `ta` FROM `account` WHERE `id` = #{id} LIMIT 1")
+    Account findRole(int id);
+
     @Select("""
             SELECT `id`, `buaa_id`, `name`, `gender`, `school`, `teacher`, `ta`, `avatar`
             FROM `account`

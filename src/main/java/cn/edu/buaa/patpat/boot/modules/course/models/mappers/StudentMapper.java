@@ -31,5 +31,16 @@ public interface StudentMapper {
                 `repeat` = #{repeat}
             WHERE `id` = #{id}
             """)
+    void importUpdate(Student student);
+
+    @Update("""
+            UPDATE `student`
+            SET
+                `teacher_id` = #{teacherId},
+                `major` = #{major},
+                `class_name` = #{className},
+                `repeat` = #{repeat}
+            WHERE `id` = #{id}
+            """)
     void update(Student student);
 }

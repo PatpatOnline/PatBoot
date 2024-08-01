@@ -11,12 +11,15 @@ import java.util.List;
 
 @Mapper
 public interface StudentFilterMapper {
+    @Select("SELECT * FROM `student` WHERE `id` = #{id} LIMIT 1")
+    Student findById(int id);
+
     @Select("""
             SELECT * FROM `student`
             WHERE `account_id` = #{accountId} AND `course_id` = #{courseId}
             LIMIT 1
             """)
-    Student find(int accountId, int courseId);
+    Student findByAccountAndCourse(int accountId, int courseId);
 
     @Select("""
             SELECT
@@ -68,6 +71,27 @@ public interface StudentFilterMapper {
 
     @SelectProvider(type = MapperProvider.class, method = "count")
     int count(int courseId, StudentFilter filter);
+
+    @Select("""
+            SELECT
+                `stu`.`id`,
+                `stu`.`account_id`,
+                `as`.`buaa_id`,
+                `as`.`name` AS `student_name`,
+                `stu`.`teacher_id`,
+                `as`.`school`,
+                `stu`.`major`,
+                `stu`.`class_name`,
+                `stu`.`repeat`,
+                `stu`.`created_at`
+            FROM (
+                SELECT * FROM `student`
+                WHERE `id` = #{id}
+            ) AS `stu` JOIN (
+                SELECT `id`, `buaa_id`, `name`, `school` FROM `account`
+            ) AS `as` ON `stu`.account_id = `as`.`id`
+            """)
+    StudentListView queryById(int id);
 
     default List<StudentListView> query(int courseId, int page, int pageSize, StudentFilter filter) {
         return queryImpl(courseId, pageSize, (page - 1) * pageSize, filter);

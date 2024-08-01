@@ -101,7 +101,7 @@ public class StudentImporter {
      */
     private int createOrUpdateStudent(Row row, int courseId, int teacherId) throws ImportException {
         Account account = createOrUpdateAccount(row);
-        Student student = studentFilterMapper.find(account.getId(), courseId);
+        Student student = studentFilterMapper.findByAccountAndCourse(account.getId(), courseId);
         boolean create = student == null;
         if (create) {
             student = new Student();
@@ -115,7 +115,7 @@ public class StudentImporter {
             if (create) {
                 studentMapper.save(student);
             } else {
-                studentMapper.update(student);
+                studentMapper.importUpdate(student);
             }
         } catch (ExcelException e) {
             throw new ImportException(e.getMessage());
