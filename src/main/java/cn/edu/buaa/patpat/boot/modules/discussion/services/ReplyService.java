@@ -61,7 +61,7 @@ public class ReplyService extends BaseService {
     }
 
     public Reply update(int id, UpdateReplyRequest request, int courseId, AuthPayload auth) {
-        Reply reply = replyFilterMapper.findUpdate(id);
+        Reply reply = replyMapper.findUpdate(id);
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));
         }
@@ -78,7 +78,7 @@ public class ReplyService extends BaseService {
     }
 
     public void delete(int id, int courseId, AuthPayload auth) {
-        Reply reply = replyFilterMapper.findDelete(id);
+        Reply reply = replyMapper.findDelete(id);
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));
         }
@@ -106,7 +106,7 @@ public class ReplyService extends BaseService {
     }
 
     public void like(int id, int courseId, int accountId, boolean liked) {
-        Reply reply = replyFilterMapper.findLike(id);
+        Reply reply = replyMapper.findLike(id);
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));
         }

@@ -52,6 +52,9 @@ public interface AccountMapper {
             """)
     void update(Account account);
 
+    @Select("SELECT `id`, `buaa_id`, `password` FROM `account` WHERE `id` = #{id} LIMIT 1")
+    Account findUpdatePassword(int id);
+
     @Update("UPDATE `account` SET `password` = #{password} WHERE `id` = #{id}")
     void updatePassword(Account account);
 

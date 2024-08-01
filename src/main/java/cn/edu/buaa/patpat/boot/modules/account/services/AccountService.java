@@ -61,7 +61,7 @@ public class AccountService extends BaseService {
     }
 
     public void updatePassword(int accountId, String oldPassword, String newPassword) {
-        Account account = accountFilterMapper.findUpdatePassword(accountId);
+        Account account = accountMapper.findUpdatePassword(accountId);
         if (account == null) {
             throw new NotFoundException(M("account.exists.not"));
         }
@@ -73,7 +73,7 @@ public class AccountService extends BaseService {
     }
 
     public void resetPassword(int accountId) {
-        Account account = accountFilterMapper.findUpdatePassword(accountId);
+        Account account = accountMapper.findUpdatePassword(accountId);
         if (account == null) {
             throw new NotFoundException(M("account.exists.not"));
         }

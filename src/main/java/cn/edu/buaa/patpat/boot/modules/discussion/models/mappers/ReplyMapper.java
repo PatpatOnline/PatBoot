@@ -45,4 +45,24 @@ public interface ReplyMapper {
             WHERE `account_id` = #{accountId} AND `reply_id` = #{id}
             """)
     void unlike(int id, int accountId);
+
+    @Select("""
+            SELECT `id`, `discussion_id`, `author_id`
+            FROM `reply`
+            WHERE `id` = #{replyId}
+            """)
+    @Options(useCache = true)
+    Reply findUpdate(int replyId);
+
+    @Select("""
+            SELECT `id`, `discussion_id`, `author_id`
+            FROM `reply`
+            WHERE `id` = #{replyId}
+            """)
+    @Options(useCache = true)
+    Reply findDelete(int replyId);
+
+    @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
+    @Options(useCache = true)
+    Reply findLike(int replyId);
 }

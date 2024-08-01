@@ -43,7 +43,7 @@ public class DiscussionService extends BaseService {
     }
 
     public Discussion update(int id, UpdateDiscussionRequest request, int courseId, AuthPayload auth) {
-        Discussion discussion = discussionFilterMapper.findUpdate(courseId, id);
+        Discussion discussion = discussionMapper.findUpdate(courseId, id);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
@@ -67,7 +67,7 @@ public class DiscussionService extends BaseService {
     }
 
     public Discussion delete(int courseId, int discussionId, AuthPayload auth) {
-        Discussion discussion = discussionFilterMapper.findDelete(courseId, discussionId);
+        Discussion discussion = discussionMapper.findDelete(courseId, discussionId);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));
         }

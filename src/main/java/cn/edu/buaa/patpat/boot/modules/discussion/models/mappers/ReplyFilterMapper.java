@@ -35,26 +35,6 @@ public interface ReplyFilterMapper {
     ReplyView find(int replyId, int accountId);
 
     @Select("""
-            SELECT `id`, `discussion_id`, `author_id`
-            FROM `reply`
-            WHERE `id` = #{replyId}
-            """)
-    @Options(useCache = true)
-    Reply findUpdate(int replyId);
-
-    @Select("""
-            SELECT `id`, `discussion_id`, `author_id`
-            FROM `reply`
-            WHERE `id` = #{replyId}
-            """)
-    @Options(useCache = true)
-    Reply findDelete(int replyId);
-
-    @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
-    @Options(useCache = true)
-    Reply findLike(int replyId);
-
-    @Select("""
             SELECT COUNT(*) FROM `reply`
             WHERE `id` = #{replyId} AND `discussion_id` = #{discussionId}
             """)

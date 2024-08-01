@@ -15,6 +15,12 @@ public interface DiscussionMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void save(Discussion discussion);
 
+    @Select("""
+            SELECT `id`, `type`, `title`, `content` FROM `discussion`
+            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
+            """)
+    Discussion findUpdate(int courseId, int discussionId);
+
     @Update("""
             UPDATE `discussion`
             SET `type` = #{type}, `title` = #{title}, `content` = #{content}, `updated_at` = #{updatedAt}
@@ -27,6 +33,12 @@ public interface DiscussionMapper {
 
     @Update("UPDATE `discussion` SET `starred` = #{starred} WHERE `id` = #{id}")
     int updateStarred(int id, boolean starred);
+
+    @Select("""
+            SELECT `id`, `course_id`, `author_id`, `title` FROM `discussion`
+            WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
+            """)
+    Discussion findDelete(int courseId, int discussionId);
 
     @Delete("DELETE FROM `discussion` WHERE `id` = #{id}")
     int delete(int id);
