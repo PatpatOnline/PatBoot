@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -35,7 +34,6 @@ public class CourseController extends BaseController {
 
     @GetMapping("all")
     @Operation(summary = "Get all courses", description = "T.A. gets all courses")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.LOGIN)
     public DataResponse<List<Course>> getAll(
             AuthPayload auth
@@ -45,7 +43,6 @@ public class CourseController extends BaseController {
 
     @PostMapping("select/{id}")
     @Operation(summary = "Select a course", description = "User selects the current course")
-    @ValidateParameters
     @ValidatePermission
     public DataResponse<Course> select(
             @PathVariable int id,

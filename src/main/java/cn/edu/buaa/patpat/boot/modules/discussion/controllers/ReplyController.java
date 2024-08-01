@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -21,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -37,12 +35,10 @@ public class ReplyController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create a new reply", description = "Create a new reply in a discussion")
-    @ValidateParameters
     @ValidateCourse
     @ValidatePermission
     public DataResponse<ReplyView> create(
             @RequestBody @Valid CreateReplyRequest request,
-            BindingResult bindingResult,
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
@@ -66,13 +62,11 @@ public class ReplyController extends BaseController {
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update a reply", description = "Student update their reply in a discussion, T.A. can update any reply")
-    @ValidateParameters
     @ValidatePermission
     @ValidateCourse
     public DataResponse<ReplyUpdateDto> update(
             @PathVariable int id,
             @RequestBody @Valid UpdateReplyRequest request,
-            BindingResult bindingResult,
             AuthPayload auth,
             @CourseId Integer courseId
     ) {

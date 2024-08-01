@@ -18,7 +18,7 @@ public class LocaleInterceptor implements HandlerInterceptor {
     private final ICookieSetter localeCookieSetter;
 
     @Override
-    public boolean preHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) throws Exception {
+    public boolean preHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) {
         String language = localeCookieSetter.get(request);
         if (Strings.isNullOrEmpty(language)) {
             language = "zh";

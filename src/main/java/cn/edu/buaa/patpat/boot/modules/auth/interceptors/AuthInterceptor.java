@@ -27,7 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final ICookieSetter refreshCookieSetter;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String jwt = jwtCookieSetter.get(request);
         if (jwt == null) {
             throw new UnauthorizedException(M("auth.permission.jwt.missing"));

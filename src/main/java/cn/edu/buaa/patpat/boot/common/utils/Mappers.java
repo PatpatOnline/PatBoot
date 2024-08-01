@@ -109,8 +109,7 @@ public class Mappers {
         return modelMapper.map(source, destinationType);
     }
 
-    public <T> T map(Object source, T destination) {
+    public <T> void map(Object source, T destination) {
         modelMapper.map(source, destination);
-        return destination;
     }
 }

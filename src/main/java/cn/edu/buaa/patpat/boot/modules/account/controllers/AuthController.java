@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -11,6 +10,7 @@ import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginResponse;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
+import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.api.CourseApi;
@@ -24,7 +24,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +41,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class AuthController extends BaseController {
     private final AccountService accountService;
     private final CourseApi courseApi;
+    private final AuthApi authApi;
 
     @Value("${config.allow-register}")
     private boolean allowRegister;
@@ -52,10 +52,8 @@ public class AuthController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Register successfully"),
             @ApiResponse(responseCode = "400", description = "BUAA ID already exists")
     })
-    @ValidateParameters
     public MessageResponse register(
-            @RequestBody @Valid RegisterRequest request,
-            BindingResult bindingResult
+            @RequestBody @Valid RegisterRequest request
     ) {
         if (allowRegister) {
             accountService.register(request);
@@ -72,10 +70,8 @@ public class AuthController extends BaseController {
             @ApiResponse(responseCode = "400", description = "Account not found or password incorrect"),
             @ApiResponse(responseCode = "403", description = "You are not in any course")
     })
-    @ValidateParameters
     public DataResponse<LoginResponse> login(
             @RequestBody @Valid LoginRequest request,
-            BindingResult bindingResult,
             HttpServletResponse servletResponse
     ) {
         var account = accountService.login(request);
@@ -109,10 +105,8 @@ public class AuthController extends BaseController {
 
     @PostMapping("logout")
     @Operation(summary = "Logout", description = "Logout and clear the session")
-    @ValidateParameters
     @ValidatePermission
     public MessageResponse logout(
-            AuthPayload auth,
             HttpServletResponse servletResponse
     ) {
         servletResponse.addCookie(authApi.cleanJwtCookie());

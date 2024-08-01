@@ -89,7 +89,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@Nonnull WebSocketSession session, @Nonnull CloseStatus status) {
         String tag = dispatcher.removeSession(session);
         // only log successful close
         if (tag != null) {

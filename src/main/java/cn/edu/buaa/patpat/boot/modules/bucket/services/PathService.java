@@ -48,7 +48,7 @@ public class PathService {
     /**
      * Get the record of the content in the database.
      *
-     * @param tag        The tag of the content. If is null or empty, will
+     * @param tag        The tag of the content. If is null or empty, it will
      *                   be stored to the shared bucket.
      * @param filename   The filename of the content.
      * @param randomName Whether to generate a random name for the content.

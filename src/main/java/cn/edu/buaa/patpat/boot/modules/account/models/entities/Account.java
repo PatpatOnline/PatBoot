@@ -46,7 +46,7 @@ public class Account extends HasCreated {
 
     /**
      * Whether the account is a teacher assistant.
-     * A teacher is also a teacher assistant.
+     * A teacher is also a teacher's assistant.
      */
     private boolean ta;
 

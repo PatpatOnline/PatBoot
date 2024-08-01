@@ -1,6 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.*;
+import cn.edu.buaa.patpat.boot.aspect.Page;
+import cn.edu.buaa.patpat.boot.aspect.PageSize;
+import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
+import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
@@ -25,7 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +47,6 @@ public class StudentAdminController extends BaseController {
 
     @PostMapping("/import/async")
     @Operation(summary = "Import students asynchronously", description = "T.A. imports students from an Excel file, results will be returned via WebSocket.")
-    @ValidateParameters
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -71,7 +72,6 @@ public class StudentAdminController extends BaseController {
 
     @PostMapping("/import")
     @Operation(summary = "Import students synchronously", description = "T.A. imports students from an Excel file results will be returned synchronously.")
-    @ValidateParameters
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -90,7 +90,7 @@ public class StudentAdminController extends BaseController {
         }
 
         // Import students synchronously.
-        var response = importService.importStudents(auth.getBuaaId(), courseId, path, clean);
+        var response = importService.importStudents(courseId, path, clean);
 
         return DataResponse.ok(response);
     }
@@ -107,12 +107,10 @@ public class StudentAdminController extends BaseController {
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update student", description = "Update student information by student ID")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<StudentListView> update(
             @PathVariable int id,
-            @RequestBody @Valid UpdateStudentRequest request,
-            BindingResult bindingResult
+            @RequestBody @Valid UpdateStudentRequest request
     ) {
         var student = studentService.update(id, request);
         var view = studentService.query(student.getId());

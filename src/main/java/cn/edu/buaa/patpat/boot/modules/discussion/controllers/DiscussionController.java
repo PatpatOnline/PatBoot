@@ -3,7 +3,6 @@ package cn.edu.buaa.patpat.boot.modules.discussion.controllers;
 import cn.edu.buaa.patpat.boot.aspect.Page;
 import cn.edu.buaa.patpat.boot.aspect.PageSize;
 import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
@@ -28,7 +27,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -44,12 +42,10 @@ public class DiscussionController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create a new discussion", description = "Student create a new discussion in a course")
-    @ValidateParameters
     @ValidatePermission
     @ValidateCourse
     public DataResponse<DiscussionView> create(
             @RequestBody @Valid CreateDiscussionRequest request,
-            BindingResult bindingResult,
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
@@ -66,13 +62,11 @@ public class DiscussionController extends BaseController {
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update a discussion", description = "Student update their discussion or T.A. update any discussion")
-    @ValidateParameters
     @ValidatePermission
     @ValidateCourse
     public DataResponse<DiscussionUpdateDto> update(
             @PathVariable int id,
             @RequestBody @Valid UpdateDiscussionRequest request,
-            BindingResult bindingResult,
             AuthPayload auth,
             @CourseId Integer courseId
     ) {

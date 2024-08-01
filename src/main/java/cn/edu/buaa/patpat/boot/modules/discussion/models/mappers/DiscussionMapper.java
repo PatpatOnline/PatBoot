@@ -41,7 +41,7 @@ public interface DiscussionMapper {
     Discussion findDelete(int courseId, int discussionId);
 
     @Delete("DELETE FROM `discussion` WHERE `id` = #{id}")
-    int delete(int id);
+    void delete(int id);
 
     @Insert("""
             INSERT IGNORE INTO `like_discussion` (`account_id`, `discussion_id`)

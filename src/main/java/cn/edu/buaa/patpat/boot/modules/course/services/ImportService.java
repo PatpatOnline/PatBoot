@@ -20,17 +20,11 @@ public class ImportService {
 
     @Async
     public void importStudentsAsync(String buaaId, int courseId, String excelPath, boolean clean) {
-        var response = studentImporter.importStudents(courseId, excelPath, clean);
-        log.info("Student imported for course {}: {}", courseId, response);
+        var response = importStudents(courseId, excelPath, clean);
         streamApi.send(buaaId, response.toWebSocketPayload());
-        try {
-            Medias.remove(excelPath);
-        } catch (IOException e) {
-            log.error("IO exception when importing students: {}", e.getMessage());
-        }
     }
 
-    public ImportStudentResponse importStudents(String buaaId, int courseId, String excelPath, boolean clean) {
+    public ImportStudentResponse importStudents(int courseId, String excelPath, boolean clean) {
         ImportStudentResponse response = studentImporter.importStudents(courseId, excelPath, clean);
         log.info("Student imported for course {}: {}", courseId, response);
         try {

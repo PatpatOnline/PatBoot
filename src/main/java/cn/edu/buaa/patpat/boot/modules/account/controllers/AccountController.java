@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -29,11 +27,9 @@ public class AccountController extends BaseController {
 
     @PutMapping("password")
     @Operation(summary = "Update password", description = "Update password of the current account")
-    @ValidateParameters
     @ValidatePermission
     public MessageResponse updatePassword(
             @RequestBody @Valid UpdatePasswordRequest request,
-            BindingResult bindingResult,
             AuthPayload auth
     ) {
         accountService.updatePassword(auth.getId(), request.getOldPassword(), request.getNewPassword());
@@ -42,7 +38,6 @@ public class AccountController extends BaseController {
 
     @GetMapping("self")
     @Operation(summary = "Get account detail", description = "Get detail of the current account")
-    @ValidateParameters
     @ValidatePermission
     public DataResponse<AccountDetailView> detail(AuthPayload auth) {
         var view = accountService.findDetailView(auth.getId());

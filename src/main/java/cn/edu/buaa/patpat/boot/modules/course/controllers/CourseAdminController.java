@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
@@ -18,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -33,11 +31,9 @@ public class CourseAdminController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create a new course", description = "Teacher creates a new course")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.TEACHER)
     public DataResponse<Course> create(
-            @RequestBody @Valid CreateCourseRequest request,
-            BindingResult bindingResult
+            @RequestBody @Valid CreateCourseRequest request
     ) {
         Course course = courseService.create(request);
         log.info("Created course: {}", course);
@@ -48,7 +44,6 @@ public class CourseAdminController extends BaseController {
 
     @DeleteMapping("delete/{id}")
     @Operation(summary = "Delete a course", description = "Teacher deletes a course")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.TEACHER)
     @ValidateCourse
     public DataResponse<Course> delete(
@@ -73,12 +68,10 @@ public class CourseAdminController extends BaseController {
 
     @PutMapping("update")
     @Operation(summary = "Update a course", description = "Teacher updates a course, use null to keep the original value")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.TEACHER)
     @ValidateCourse
     public DataResponse<Course> update(
             @RequestBody @Valid UpdateCourseRequest request,
-            BindingResult bindingResult,
             @CourseId Integer courseId
     ) {
         if (courseId == 1) {

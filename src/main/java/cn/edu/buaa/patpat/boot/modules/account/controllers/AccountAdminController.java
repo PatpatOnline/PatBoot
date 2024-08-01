@@ -3,7 +3,6 @@ package cn.edu.buaa.patpat.boot.modules.account.controllers;
 import cn.edu.buaa.patpat.boot.aspect.Page;
 import cn.edu.buaa.patpat.boot.aspect.PageSize;
 import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
@@ -28,7 +27,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -44,11 +42,9 @@ public class AccountAdminController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create an account", description = "Teacher creates an account")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.TEACHER)
     public DataResponse<AccountDto> create(
-            @RequestBody @Valid CreateAccountRequest request,
-            BindingResult bindingResult
+            @RequestBody @Valid CreateAccountRequest request
     ) {
         var registerRequest = mappers.map(request, RegisterRequest.class);
         if (registerRequest.isTeacher()) {
@@ -81,7 +77,6 @@ public class AccountAdminController extends BaseController {
     public DataResponse<AccountDto> update(
             @PathVariable int id,
             @RequestBody @Valid UpdateAccountRequest request,
-            BindingResult bindingResult,
             AuthPayload auth
     ) {
         if (id == 1) {

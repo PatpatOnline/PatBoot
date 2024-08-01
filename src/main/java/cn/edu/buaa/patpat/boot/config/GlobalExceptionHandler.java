@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException() {
         return ResponseEntity.badRequest().body(MessageResponse.badRequest(M("validation.params.error")));
     }
 

@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -37,7 +36,6 @@ public class AnnouncementAdminController extends BaseController {
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<AnnouncementView> create(
             @RequestBody @Valid CreateAnnouncementRequest request,
-            BindingResult bindingResult,
             AuthPayload auth,
             @CourseId Integer courseId
     ) {

@@ -20,7 +20,7 @@ public interface ReplyMapper {
             SET `content` = #{content}, `updated_at` = #{updatedAt}
             WHERE `id` = #{id}
             """)
-    int update(Reply reply);
+    void update(Reply reply);
 
     @Update("UPDATE `reply` SET `verified` = #{verified} WHERE `id` = #{id}")
     int updateVerified(int id, boolean verified);

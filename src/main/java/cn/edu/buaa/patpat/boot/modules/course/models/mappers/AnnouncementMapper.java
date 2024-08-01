@@ -27,7 +27,7 @@ public interface AnnouncementMapper {
                 #{updatedAt})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int save(Announcement announcement);
+    void save(Announcement announcement);
 
     @Select("""
             SELECT `id`, `title`, `content`, `topped`
