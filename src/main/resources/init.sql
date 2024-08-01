@@ -43,7 +43,7 @@ CREATE TABLE `course`
 
 # Insert root course to ensure at least one course exists.
 INSERT INTO `course` (`name`, `code`, `semester`, `active`, `created_at`, `updated_at`)
-VALUES ('Object-oriented Programming (Java)', 'root', '2023 Autumn', true, NOW(), NOW());
+VALUES ('Root', 'root', '1952', false, NOW(), NOW());
 
 
 ############################################################
@@ -66,6 +66,27 @@ CREATE TABLE `student`
 CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
 CREATE INDEX `student_course_id_index` ON `student` (`course_id`);
 CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
+CREATE INDEX `student_teacher_id_index` ON `student` (`teacher_id`);
+
+
+############################################################
+#                       Announcement                       #
+############################################################
+DROP TABLE IF EXISTS `announcement`;
+CREATE TABLE `announcement`
+(
+    `id`         int          NOT NULL AUTO_INCREMENT,
+    `course_id`  int          NOT NULL,
+    `account_id` int          NOT NULL,
+    `title`      varchar(255) NOT NULL,
+    `content`    text         NOT NULL,
+    `topped`     bool         NOT NULL DEFAULT false,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `announcement_course_id_index` ON `announcement` (`course_id`);
 
 
 ############################################################
