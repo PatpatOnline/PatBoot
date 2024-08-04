@@ -1,13 +1,20 @@
 package cn.edu.buaa.patpat.boot.modules.task.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.task.dto.CreateTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.UpdateTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
+import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskMapper;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -44,6 +51,31 @@ public class TaskService extends BaseService {
         int updated = taskMapper.delete(id, courseId, type);
         if (updated == 0) {
             throw new NotFoundException(M("task.exists.not"));
+        }
+    }
+
+    public List<TaskListView> query(int courseId, int type, boolean visibleOnly) {
+        return taskMapper.query(courseId, type, visibleOnly);
+    }
+
+    public TaskView query(int id, int courseId, int type, boolean validateTime) {
+        TaskView task = taskMapper.query(id, courseId, type);
+        if (task == null) {
+            throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
+        }
+        if (validateTime) {
+            validateTime(type, task);
+        }
+        return task;
+    }
+
+    private void validateTime(int type, TaskView task) {
+        var now = LocalDateTime.now();
+        if (task.getStartTime().isAfter(now)) {
+            throw new ForbiddenException(M("task.started.not", TaskTypes.toString(type)));
+        }
+        if (now.isAfter(task.getEndTime())) {
+            throw new ForbiddenException(M("task.ended", TaskTypes.toString(type)));
         }
     }
 }
