@@ -90,6 +90,27 @@ CREATE INDEX `announcement_course_id_index` ON `announcement` (`course_id`);
 
 
 ############################################################
+#                          Task                            #
+############################################################
+DROP TABLE IF EXISTS task;
+CREATE TABLE task
+(
+    `id`            int          NOT NULL AUTO_INCREMENT,
+    `course_id`     int          NOT NULL,
+    `type`          smallint     NOT NULL,
+    `title`         varchar(255) NOT NULL,
+    `content`       text         NOT NULL,
+    `visible`       bool         NOT NULL DEFAULT false,
+    `start_time`    datetime     NOT NULL,
+    `deadline_time` datetime     NOT NULL,
+    `end_time`      datetime     NOT NULL,
+    `created_at`    datetime     NOT NULL,
+    `updated_at`    datetime     NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+
+############################################################
 #                        Problem                           #
 ############################################################
 DROP TABLE IF EXISTS `problem`;
