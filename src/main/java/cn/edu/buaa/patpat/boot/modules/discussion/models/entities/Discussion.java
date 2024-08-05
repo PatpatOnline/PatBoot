@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Discussion extends HasCreatedAndUpdated {
     private int id;
-    private Integer type;
+    private int type;
 
     private int courseId;
     private int authorId;

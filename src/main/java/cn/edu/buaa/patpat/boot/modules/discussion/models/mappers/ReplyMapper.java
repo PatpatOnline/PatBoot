@@ -7,9 +7,11 @@ import org.apache.ibatis.annotations.*;
 public interface ReplyMapper {
     @Insert("""
             INSERT INTO `reply` (
-                `discussion_id`, `parent_id`, `author_id`, `content`, `created_at`, `updated_at`
+                `discussion_id`, `parent_id`, `to_id`, `author_id`,
+                `content`, `created_at`, `updated_at`
             ) VALUES (
-                #{discussionId}, #{parentId}, #{authorId}, #{content}, #{createdAt}, #{updatedAt}
+                #{discussionId}, #{parentId}, #{toId}, #{authorId},
+                #{content}, #{createdAt}, #{updatedAt}
             )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -65,4 +67,11 @@ public interface ReplyMapper {
     @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
     @Options(useCache = true)
     Reply findLike(int replyId);
+
+    @Select("""
+            SELECT `id`, `parent_id`, `to_id`
+            FROM `reply`
+            WHERE `id` = #{replyId} AND `discussion_id` = #{discussionId}
+            """)
+    Reply findTo(int discussionId, int replyId);
 }

@@ -104,7 +104,7 @@ public class DiscussionController extends BaseController {
             @CourseId Integer courseId
     ) {
         var discussion = discussionService.detail(courseId, id, auth.getId());
-        var replies = replyService.getAllInDiscussion(discussion.getId(), auth.getId());
+        var replies = replyService.query(discussion.getId(), auth.getId());
 
         return DataResponse.ok(new DiscussionWithReplyView(discussion, replies));
     }

@@ -35,26 +35,48 @@ public class ReplyService extends BaseService {
      * Get all replies in a discussion.
      * This method uses some fancy stream operations to build the nested structure.
      */
-    public List<ReplyView> getAllInDiscussion(int discussionId, int accountId) {
-        List<ReplyView> replies = replyFilterMapper.getAll(discussionId, accountId);
-        if (replies.isEmpty()) {
-            return replies;
+    public List<ReplyView> query(int discussionId, int accountId) {
+        List<ReplyView> flatReplies = replyFilterMapper.query(discussionId, accountId);
+        if (flatReplies.isEmpty()) {
+            return flatReplies;
         }
 
-        Set<Integer> authorIds = replies.stream()
+        Set<Integer> authorIds = flatReplies.stream()
                 .map(ReplyView::getAuthorId)
                 .collect(Collectors.toSet());
         Map<Integer, DiscussionAccountView> authorMap = discussionAccountService
                 .getAll(authorIds).stream()
                 .map(badge -> Map.entry(badge.getId(), badge))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        replies.forEach(reply -> reply.setAuthor(authorMap.get(reply.getAuthorId())));
+        flatReplies.forEach(reply -> reply.setAuthor(authorMap.get(reply.getAuthorId())));
+        Map<Integer, String> toNameMap = flatReplies.stream()
+                .collect(Collectors.toMap(ReplyView::getId, ReplyView::getAuthorName));
+        flatReplies.forEach(reply -> reply.setToName(toNameMap.get(reply.getToId())));
 
-        return replies;
+        return flatReplies.stream()
+                .filter(reply -> reply.getParentId() == 0)
+                .peek(reply -> {
+                    List<ReplyView> children = flatReplies.stream()
+                            .filter(child -> child.getParentId() == reply.getId())
+                            .collect(Collectors.toList());
+                    reply.setReplies(children);
+                })
+                .toList();
     }
 
     public Reply create(CreateReplyRequest request, int accountId) {
         Reply reply = mappers.map(request, Reply.class);
+        if (request.getToId() != 0) {
+            Reply target = replyMapper.findTo(request.getDiscussionId(), request.getToId());
+            if (target == null) {
+                throw new NotFoundException(M("reply.exists.not"));
+            }
+            if (target.getParentId() == 0) {
+                reply.setParentId(target.getId());
+            } else {
+                reply.setParentId(target.getParentId());
+            }
+        }
         reply.setAuthorId(accountId);
         replyMapper.save(reply);
         return reply;

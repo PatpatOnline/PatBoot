@@ -11,10 +11,11 @@ public class CreateReplyRequest {
     private int discussionId;
 
     /**
-     * 0 for root reply, otherwise the parent reply id.
+     * 0 for root reply, the id of the reply to which this reply is replying to.
+     * (So many replies in one sentence, I know.)
      */
     @Min(0)
-    private int parentId;
+    private int toId;
 
     @Size(min = 1, max = 65535)
     @NotNull

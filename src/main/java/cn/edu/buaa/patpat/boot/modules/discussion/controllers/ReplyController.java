@@ -45,12 +45,6 @@ public class ReplyController extends BaseController {
         if (!discussionService.exists(courseId, request.getDiscussionId())) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
-        if (request.getParentId() != 0) {
-            if (!replyService.exists(request.getDiscussionId(), request.getParentId())) {
-                throw new NotFoundException(M("reply.exists.not"));
-            }
-        }
-
         Reply reply = replyService.create(request, auth.getId());
         if (reply == null) {
             throw new NotFoundException(M("reply.create.error"));

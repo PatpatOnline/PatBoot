@@ -211,6 +211,7 @@ CREATE TABLE `reply`
     `id`            int      NOT NULL AUTO_INCREMENT,
     `discussion_id` int      NOT NULL,
     `parent_id`     int      NOT NULL,
+    `to_id`         int      NOT NULL,
     `author_id`     int      NOT NULL,
     `content`       text     NOT NULL,
     `verified`      bool     NOT NULL DEFAULT false,
