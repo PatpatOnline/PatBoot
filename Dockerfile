@@ -3,7 +3,6 @@
 FROM openjdk:17-jdk-slim
 
 ARG VERSION
-ARG PROFILE
 
 COPY target/PatBoot-${VERSION}.jar /application.jar
 
