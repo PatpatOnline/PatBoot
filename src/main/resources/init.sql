@@ -285,4 +285,4 @@ CREATE TABLE `task_score`
     PRIMARY KEY (`task_id`, `course_id`, `account_id`)
 );
 
-CREATE INDEX `task_score_student_id_index` ON `task_score` (`student_id`);
+CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `student_id`);

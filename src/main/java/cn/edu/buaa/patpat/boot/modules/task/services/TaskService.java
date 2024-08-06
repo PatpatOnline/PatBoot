@@ -70,7 +70,15 @@ public class TaskService extends BaseService {
         return task;
     }
 
-    void validateTime(int type, IHasTimeRange range) {
+    public boolean exists(int id, int courseId) {
+        return taskMapper.exists(id, courseId);
+    }
+
+    public boolean exists(int id, int courseId, int type) {
+        return taskMapper.existsByType(id, courseId, type);
+    }
+
+    private void validateTime(int type, IHasTimeRange range) {
         var now = LocalDateTime.now();
         if (range.getStartTime().isAfter(now)) {
             throw new ForbiddenException(M("task.started.not", TaskTypes.toString(type)));

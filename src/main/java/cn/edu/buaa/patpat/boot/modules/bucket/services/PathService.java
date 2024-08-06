@@ -8,7 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
@@ -99,7 +101,7 @@ public class PathService {
      * @return The URL of the content.
      */
     public String recordToUrl(String record) {
-        return httpUrl + "/public/" + record;
+        return UriUtils.encodePath(httpUrl + "/public/" + record, StandardCharsets.UTF_8);
     }
 
     /**

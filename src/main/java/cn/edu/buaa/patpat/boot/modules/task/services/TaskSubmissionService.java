@@ -7,10 +7,14 @@ import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
+import cn.edu.buaa.patpat.boot.modules.task.dto.DownloadTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
+import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskMapper;
+import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskScoreMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,11 +22,23 @@ import java.time.LocalDateTime;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
-public abstract class TaskSubmissionService extends BaseService {
+public class TaskSubmissionService extends BaseService {
     @Autowired
     protected TaskMapper taskMapper;
     @Autowired
     protected BucketApi bucketApi;
+    @Autowired
+    protected TaskScoreMapper taskScoreMapper;
+
+    public Resource download(int taskId, int studentId) {
+        String path = getSubmissionPath(taskId, studentId);
+        return download(path);
+    }
+
+    public Resource download(DownloadTaskRequest request) {
+        String path = getSubmissionPath(request.getId(), request.getCourse().getCourseId(), request.getAuth().getId());
+        return download(path);
+    }
 
     protected Task findTask(int taskId, int courseId, int type) {
         Task task = taskMapper.findSubmit(taskId, courseId, type);
@@ -67,6 +83,35 @@ public abstract class TaskSubmissionService extends BaseService {
         return record;
     }
 
+    protected String getSubmissionPath(int taskId, int courseId, int accountId) {
+        TaskScore score = taskScoreMapper.find(taskId, courseId, accountId);
+        if (score == null) {
+            throw new NotFoundException(M("task.submit.exists.not"));
+        }
+        return bucketApi.recordToPrivatePath(score.getRecord());
+    }
+
+    protected String getSubmissionPath(int taskId, int studentId) {
+        TaskScore score = taskScoreMapper.findByTaskIdAndStudentId(taskId, studentId);
+        if (score == null) {
+            throw new NotFoundException(M("task.submit.exists.not"));
+        }
+        return bucketApi.recordToPrivatePath(score.getRecord());
+    }
+
+    protected String getSubmissionRootPath(int taskId, String tag) {
+        String record = bucketApi.toRecord(tag, String.valueOf(taskId));
+        return bucketApi.recordToPrivatePath(record);
+    }
+
+    private Resource download(String path) {
+        try {
+            return Medias.loadAsResource(path);
+        } catch (IOException e) {
+            throw new NotFoundException(M("task.download.error", TaskTypes.toString(TaskTypes.LAB)));
+        }
+    }
+
     private TaskStatus validateStatus(Task task) {
         var now = LocalDateTime.now();
         if (task.getStartTime().isAfter(now)) {
@@ -82,8 +127,8 @@ public abstract class TaskSubmissionService extends BaseService {
 
     private boolean isEarlyOrLate(TaskStatus status, AuthPayload auth) {
         if (auth.isTa()) {
-            return true;
+            return false;
         }
-        return status == TaskStatus.PUNCTUAL || status == TaskStatus.OVERDUE;
+        return status == TaskStatus.EARLY || status == TaskStatus.LATE;
     }
 }

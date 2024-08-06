@@ -4,14 +4,12 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
-public class SubmitLabRequest {
-    private int labId;
+public class DownloadTaskRequest {
+    private int id;
+
     private AuthPayload auth;
     private CoursePayload course;
-
-    private MultipartFile file;
 }

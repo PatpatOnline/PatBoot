@@ -4,6 +4,9 @@ import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 @Mapper
 public interface TaskScoreMapper {
@@ -27,4 +30,29 @@ public interface TaskScoreMapper {
             WHERE `task_id` = #{taskId} AND `course_id` = #{courseId} AND `account_id` = #{accountId}
             """)
     TaskScore find(int taskId, int courseId, int accountId);
+
+    @Select("""
+            SELECT * FROM `task_score`
+            WHERE `task_id` = #{taskId} AND `student_id` = #{studentId}
+            """)
+    TaskScore findByTaskIdAndStudentId(int taskId, int studentId);
+
+    @Update("""
+            UPDATE `task_score`
+            SET `score` = #{score}
+            WHERE `task_id` = #{taskId} AND `student_id` IN (
+                <foreach collection="studentIds" item="studentId" separator="," open="(" close=")">
+                    #{studentId}
+                </foreach>
+            )
+            """)
+    int batchUpdateScore(int taskId, int score, List<Integer> studentIds);
+
+    @Update("""
+            UPDATE `task_score`
+            SET `score` = #{score}
+            WHERE `task_id` = #{taskId} AND `student_id` = #{studentId}
+            """)
+    int updateScore(int taskId, int score, int studentId);
 }
+

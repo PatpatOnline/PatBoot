@@ -2,9 +2,12 @@ package cn.edu.buaa.patpat.boot.common.utils;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -120,5 +123,22 @@ public class Medias {
 
     public static void copyDirectory(Path src, Path dest) throws IOException {
         FileUtils.copyDirectory(src.toFile(), dest.toFile());
+    }
+
+    public static Resource loadAsResource(String path) throws IOException {
+        return loadAsResource(Path.of(path));
+    }
+
+    public static Resource loadAsResource(Path path) throws IOException {
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new IOException("Resource not found: " + path);
+            }
+        } catch (MalformedURLException e) {
+            throw new IOException("Failed to load resource: " + path);
+        }
     }
 }

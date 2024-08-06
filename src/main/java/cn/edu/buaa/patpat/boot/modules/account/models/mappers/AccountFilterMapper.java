@@ -43,6 +43,9 @@ public interface AccountFilterMapper {
     @Select("SELECT `id`, `name` FROM `account` WHERE `teacher` = 1 AND `id` != 1")
     List<TeacherView> queryTeachers();
 
+    @Select("SELECT `id`, `name` FROM `account` WHERE `teacher` = 1 AND `id` = #{id}")
+    TeacherView queryTeacher(int id);
+
     default List<AccountListView> query(int page, int pageSize, AccountFilter filter) {
         return queryImpl(pageSize, (page - 1) * pageSize, filter);
     }
