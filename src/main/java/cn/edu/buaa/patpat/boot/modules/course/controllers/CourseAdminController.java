@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
+import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -8,9 +9,12 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
+import cn.edu.buaa.patpat.boot.modules.course.dto.CourseTutorialDto;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CreateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseRequest;
+import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseTutorialRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
 import cn.edu.buaa.patpat.boot.modules.course.services.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -85,5 +89,41 @@ public class CourseAdminController extends BaseController {
         return DataResponse.ok(
                 M("course.update.success"),
                 course);
+    }
+
+    @PostMapping("tutorial/update")
+    @Operation(summary = "Update course tutorial", description = "T.A. updates the course tutorial")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public DataResponse<CourseTutorialDto> updateTutorial(
+            @RequestBody @Valid UpdateCourseTutorialRequest request,
+            @CourseId Integer courseId
+    ) {
+        CourseTutorial tutorial = courseService.updateTutorial(courseId, request.getUrl());
+        return DataResponse.ok(
+                M("course.tutorial.update.success"),
+                mappers.map(tutorial, CourseTutorialDto.class));
+    }
+
+    @DeleteMapping("tutorial/delete")
+    @Operation(summary = "Delete course tutorial", description = "T.A. deletes the course tutorial")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public MessageResponse deleteTutorial(
+            @CourseId Integer courseId
+    ) {
+        courseService.deleteTutorial(courseId);
+        return MessageResponse.ok(M("course.tutorial.delete.success"));
+    }
+
+    @GetMapping("tutorial")
+    @Operation(summary = "Get course tutorial", description = "T.A. gets the current course tutorial")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public DataResponse<CourseTutorialDto> findTutorial(
+            @CourseId Integer courseId
+    ) {
+        CourseTutorial tutorial = courseService.findTutorial(courseId);
+        return DataResponse.ok(mappers.map(tutorial, CourseTutorialDto.class));
     }
 }

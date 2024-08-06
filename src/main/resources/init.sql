@@ -127,6 +127,20 @@ CREATE TABLE `course_material`
 
 
 ############################################################
+#                      Course Tutorial                     #
+############################################################
+DROP TABLE IF EXISTS `course_tutorial`;
+CREATE TABLE `course_tutorial`
+(
+    `course_id`  int           NOT NULL,
+    `url`        varchar(1023) NOT NULL,
+    `created_at` datetime      NOT NULL,
+    `updated_at` datetime      NOT NULL,
+    PRIMARY KEY (`course_id`)
+);
+
+
+############################################################
 #                        Problem                           #
 ############################################################
 DROP TABLE IF EXISTS `problem`;

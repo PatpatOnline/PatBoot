@@ -1,6 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -55,4 +57,24 @@ public interface CourseMapper {
 
     @Select("SELECT * FROM `course` ORDER BY `semester` DESC")
     List<Course> getAll();
+
+    @Select("""
+            SELECT `id`, `name`, `code`, `semester`, `active`, `url` AS `tutorial`
+            FROM `course` LEFT JOIN `course_tutorial` ON `course`.`id` = `course_tutorial`.`course_id`
+            WHERE `id` = #{id}
+            """)
+    CourseView findView(int id);
+
+    @Insert("""
+            INSERT INTO `course_tutorial` (`course_id`, `url`, `created_at`, `updated_at`)
+            VALUES (#{courseId}, #{url}, #{createdAt}, #{updatedAt})
+            ON DUPLICATE KEY UPDATE `url` = #{url}, `updated_at` = #{updatedAt}
+            """)
+    void updateTutorial(CourseTutorial tutorial);
+
+    @Delete("DELETE FROM `course_tutorial` WHERE `course_id` = #{courseId}")
+    int deleteTutorial(int courseId);
+
+    @Select("SELECT * FROM `course_tutorial` WHERE `course_id` = #{courseId}")
+    CourseTutorial findTutorial(int courseId);
 }

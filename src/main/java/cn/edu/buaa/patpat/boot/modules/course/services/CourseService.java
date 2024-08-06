@@ -1,16 +1,21 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CreateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.CourseMapper;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +55,8 @@ public class CourseService extends BaseService {
         return courseMapper.findAllActive(auth.getId());
     }
 
-    public Course findById(int id) {
-        return courseMapper.find(id);
+    public CourseView find(int id) {
+        return courseMapper.findView(id);
     }
 
     public Course tryGetCourse(AuthPayload auth, int courseId) {
@@ -59,5 +64,26 @@ public class CourseService extends BaseService {
             return courseMapper.find(courseId);
         }
         return courseMapper.findActive(courseId, auth.getId());
+    }
+
+    public CourseTutorial updateTutorial(int courseId, String url) {
+        CourseTutorial tutorial = new CourseTutorial(courseId, url);
+        courseMapper.updateTutorial(tutorial);
+        return findTutorial(courseId);
+    }
+
+    public void deleteTutorial(int courseId) {
+        int updated = courseMapper.deleteTutorial(courseId);
+        if (updated == 0) {
+            throw new NotFoundException(M("course.tutorial.exists.not"));
+        }
+    }
+
+    public CourseTutorial findTutorial(int courseId) {
+        var tutorial = courseMapper.findTutorial(courseId);
+        if (tutorial == null) {
+            throw new NotFoundException(M("course.tutorial.exists.not"));
+        }
+        return tutorial;
     }
 }

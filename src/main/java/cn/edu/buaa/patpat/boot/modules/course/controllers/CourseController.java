@@ -10,6 +10,8 @@ import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import cn.edu.buaa.patpat.boot.modules.course.services.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,11 +67,11 @@ public class CourseController extends BaseController {
     @GetMapping("")
     @Operation(summary = "Get the current course", description = "Get the current course")
     @ValidateCourse
-    public DataResponse<Course> current(
+    public DataResponse<CourseView> current(
             @CourseId Integer courseId,
             HttpServletResponse servletResponse
     ) {
-        Course course = courseService.findById(courseId);
+        CourseView course = courseService.find(courseId);
         if (course == null) {
             Cookie cookie = courseCookieSetter.clean();
             servletResponse.addCookie(cookie);
