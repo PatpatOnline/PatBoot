@@ -3,10 +3,12 @@ package cn.edu.buaa.patpat.boot.modules.course.services;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
+import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CreateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.CourseMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @Slf4j
 public class CourseService extends BaseService {
     private final CourseMapper courseMapper;
+    private final StudentService studentService;
 
     public Course create(CreateCourseRequest request) {
         Course course = mappers.map(request, Course.class);
@@ -85,5 +88,23 @@ public class CourseService extends BaseService {
             throw new NotFoundException(M("course.tutorial.exists.not"));
         }
         return tutorial;
+    }
+
+    public CoursePayload getCoursePayload(int courseId, AuthPayload auth) {
+        CoursePayload payload = new CoursePayload();
+
+        Course course = tryGetCourse(auth, courseId);
+        if (course == null) {
+            throw new NotFoundException(M("course.exists.not"));
+        }
+        payload.setCourseId(course.getId());
+
+        Student student = studentService.find(auth.getId(), course.getId());
+        if (student != null) {
+            payload.setStudentId(student.getId());
+            payload.setTeacherId(student.getTeacherId());
+        }
+
+        return payload;
     }
 }

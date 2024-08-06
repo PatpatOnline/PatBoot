@@ -9,9 +9,9 @@ import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.*;
-import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Score;
+import cn.edu.buaa.patpat.boot.modules.judge.models.entities.ProblemScore;
 import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
-import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.ScoreMapper;
+import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.ProblemScoreMapper;
 import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.SubmissionMapper;
 import cn.edu.buaa.patpat.boot.modules.stream.api.StreamApi;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Slf4j
-public abstract class SubmissionService extends BaseService {
+public abstract class JudgeService extends BaseService {
     @Autowired
     protected BucketApi bucketApi;
     @Autowired
@@ -36,7 +36,7 @@ public abstract class SubmissionService extends BaseService {
     @Autowired
     protected StreamApi streamApi;
     @Autowired
-    protected ScoreMapper scoreMapper;
+    protected ProblemScoreMapper problemScoreMapper;
     @Value("${judge.judge-root}")
     private String judgeRoot;
 
@@ -77,8 +77,8 @@ public abstract class SubmissionService extends BaseService {
 
         Medias.removeSilently(response.getPayload().getSandboxPath());
 
-        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
-        scoreMapper.saveOrUpdate(score);
+        ProblemScore score = new ProblemScore(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
+        problemScoreMapper.saveOrUpdate(score);
     }
 
     private Tuple<String, String> saveSubmissionInTemp(MultipartFile file) {
@@ -107,7 +107,7 @@ public abstract class SubmissionService extends BaseService {
             } else if (path.endsWith(".zip")) {
                 Zips.unzip(path, target);
             } else {
-                throw new BadRequestException(M("submission.file.invalid"));
+                throw new BadRequestException(M("judge.file.invalid"));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

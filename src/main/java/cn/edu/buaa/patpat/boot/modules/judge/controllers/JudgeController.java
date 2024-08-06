@@ -12,7 +12,7 @@ import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmissionDto;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmitRequest;
 import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
-import cn.edu.buaa.patpat.boot.modules.judge.services.SubmissionService;
+import cn.edu.buaa.patpat.boot.modules.judge.services.JudgeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Submission", description = "Submission API")
-public class SubmissionController extends BaseController {
-    private final SubmissionService submissionService;
+public class JudgeController extends BaseController {
+    private final JudgeService judgeService;
 
     @PostMapping("/submit/{problemId}")
     @Operation(summary = "Submit a solution to a problem", description = "Student submits a solution to a problem to invoke a judge")
@@ -45,13 +45,13 @@ public class SubmissionController extends BaseController {
         if (Strings.isNullOrEmpty(language)) {
             language = "17";
         } else if (language.length() > 3) {
-            throw new BadRequestException(M("submission.language.invalid"));
+            throw new BadRequestException(M("judge.language.invalid"));
         }
         var request = new SubmitRequest(auth.getId(), auth.getBuaaId(), problemId, courseId, language, file);
-        Submission submission = submissionService.submit(request);
+        Submission submission = judgeService.submit(request);
 
         return DataResponse.ok(
-                M("submission.submit.success"),
+                M("judge.submit.success"),
                 SubmissionDto.of(submission, mappers));
     }
 }

@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Score extends HasCreatedAndUpdated {
+public class ProblemScore extends HasCreatedAndUpdated {
     private int problemId;
     private int accountId;
     private int score;
-
 }

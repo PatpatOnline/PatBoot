@@ -92,7 +92,7 @@ public class AuthController extends BaseController {
 
         if (courses.size() == 1) {
             // If only one course available, set it as the active course.
-            servletResponse.addCookie(courseApi.setCourseCookie(courses.get(0).getId()));
+            servletResponse.addCookie(courseApi.setCourseCookie(courses.get(0).getId(), auth));
         } else {
             // If more than one course available, force user to select course.
             servletResponse.addCookie(courseApi.cleanCourseCookie());

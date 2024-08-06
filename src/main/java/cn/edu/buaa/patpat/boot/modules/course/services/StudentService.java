@@ -91,4 +91,8 @@ public class StudentService extends BaseService {
 
         return student;
     }
+
+    public Student find(int accountId, int courseId) {
+        return studentFilterMapper.findByAccountAndCourse(accountId, courseId);
+    }
 }
