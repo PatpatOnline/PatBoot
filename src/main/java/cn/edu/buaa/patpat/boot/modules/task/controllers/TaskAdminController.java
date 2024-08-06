@@ -48,13 +48,6 @@ public class TaskAdminController extends BaseController {
         return create(TaskTypes.fromString(type), courseId, request);
     }
 
-    private DataResponse<TaskDto> create(int type, int courseId, CreateTaskRequest request) {
-        Task task = taskService.create(type, courseId, request);
-        return DataResponse.ok(
-                M("task.create.success", TaskTypes.toString(type)),
-                mappers.map(task, TaskDto.class));
-    }
-
     @PutMapping("{type}/update/{id}")
     @Operation(summary = "Update Task", description = "Update an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
@@ -68,13 +61,6 @@ public class TaskAdminController extends BaseController {
         return update(id, courseId, TaskTypes.fromString(type), request);
     }
 
-    private DataResponse<TaskDto> update(int id, int courseId, int type, UpdateTaskRequest request) {
-        Task task = taskService.update(id, courseId, type, request);
-        return DataResponse.ok(
-                M("task.update.success", TaskTypes.toString(type)),
-                mappers.map(task, TaskDto.class));
-    }
-
     @DeleteMapping("{type}/delete/{id}")
     @Operation(summary = "Delete Task", description = "Delete an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
@@ -85,11 +71,6 @@ public class TaskAdminController extends BaseController {
             @CourseId Integer courseId
     ) {
         return delete(id, courseId, TaskTypes.fromString(type));
-    }
-
-    private MessageResponse delete(int id, int courseId, int type) {
-        taskService.delete(id, courseId, type);
-        return MessageResponse.ok(M("task.delete.success", TaskTypes.toString(type)));
     }
 
     @GetMapping("{type}/query")
@@ -115,5 +96,24 @@ public class TaskAdminController extends BaseController {
     ) {
         var task = taskService.query(id, courseId, TaskTypes.fromString(type), false);
         return DataResponse.ok(task);
+    }
+
+    private DataResponse<TaskDto> create(int type, int courseId, CreateTaskRequest request) {
+        Task task = taskService.create(type, courseId, request);
+        return DataResponse.ok(
+                M("task.create.success", TaskTypes.toString(type)),
+                mappers.map(task, TaskDto.class));
+    }
+
+    private DataResponse<TaskDto> update(int id, int courseId, int type, UpdateTaskRequest request) {
+        Task task = taskService.update(id, courseId, type, request);
+        return DataResponse.ok(
+                M("task.update.success", TaskTypes.toString(type)),
+                mappers.map(task, TaskDto.class));
+    }
+
+    private MessageResponse delete(int id, int courseId, int type) {
+        taskService.delete(id, courseId, type);
+        return MessageResponse.ok(M("task.delete.success", TaskTypes.toString(type)));
     }
 }

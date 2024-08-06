@@ -16,6 +16,9 @@ public interface DiscussionAccountMapper {
             """)
     DiscussionAccountView find(int id);
 
+    @SelectProvider(type = MapperProvider.class, method = "getBadgesByIds")
+    List<DiscussionAccountView> getAllImpl(Iterable<Integer> ids);
+
     default List<DiscussionAccountView> getAll(Iterable<Integer> ids) {
         if (ids.iterator().hasNext()) {
             return getAllImpl(ids);
@@ -23,7 +26,4 @@ public interface DiscussionAccountMapper {
             return List.of();
         }
     }
-
-    @SelectProvider(type = MapperProvider.class, method = "getBadgesByIds")
-    List<DiscussionAccountView> getAllImpl(Iterable<Integer> ids);
 }

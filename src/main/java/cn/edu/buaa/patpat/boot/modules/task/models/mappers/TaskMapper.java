@@ -49,14 +49,6 @@ public interface TaskMapper {
             """)
     int delete(int id, int courseId, int type);
 
-    default List<TaskListView> query(int courseId, int type, boolean visibleOnly) {
-        if (visibleOnly) {
-            return queryVisibleImpl(courseId, type);
-        } else {
-            return queryAllImpl(courseId, type);
-        }
-    }
-
     @Select("""
             SELECT `id`, `title`, `visible`, `start_time`, `deadline_time`, `end_time`
             FROM `task`
@@ -78,4 +70,12 @@ public interface TaskMapper {
             WHERE `id` = #{id} AND `course_id` = #{courseId} AND `type` = #{type}
             """)
     TaskView query(int id, int courseId, int type);
+
+    default List<TaskListView> query(int courseId, int type, boolean visibleOnly) {
+        if (visibleOnly) {
+            return queryVisibleImpl(courseId, type);
+        } else {
+            return queryAllImpl(courseId, type);
+        }
+    }
 }

@@ -40,6 +40,8 @@ public abstract class SubmissionService extends BaseService {
     @Value("${judge.judge-root}")
     private String judgeRoot;
 
+    protected abstract void sendImpl(JudgeRequestDto request);
+
     public Submission submit(SubmitRequest request) {
         var temp = saveSubmissionInTemp(request.getFile());
 
@@ -57,6 +59,26 @@ public abstract class SubmissionService extends BaseService {
         sendImpl(dto);
 
         return submission;
+    }
+
+    protected void receiveImpl(JudgeResponseDto response) {
+        log.info("Received judge response: {}", response.getId());
+
+        Submission submission = mappers.map(response, Submission.class);
+        submission.setData(mappers.toJson(response.getResult(), TestResult.DEFAULT));
+        if (submissionMapper.finalize(submission) == 0) {
+            log.error("Missing submission when finalizing: {}", response.getId());
+            return;
+        }
+        SubmitResponse dto = mappers.map(response, SubmitResponse.class);
+        dto.setCourseId(response.getPayload().getCourseId());
+        String buaaId = response.getPayload().getBuaaId();
+        streamApi.send(buaaId, dto.toWebSocketPayload());
+
+        Medias.removeSilently(response.getPayload().getSandboxPath());
+
+        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
+        scoreMapper.saveOrUpdate(score);
     }
 
     private Tuple<String, String> saveSubmissionInTemp(MultipartFile file) {
@@ -104,27 +126,5 @@ public abstract class SubmissionService extends BaseService {
             throw new InternalServerErrorException(M("system.error.io"));
         }
         return sandboxPath;
-    }
-
-    protected abstract void sendImpl(JudgeRequestDto request);
-
-    protected void receiveImpl(JudgeResponseDto response) {
-        log.info("Received judge response: {}", response.getId());
-
-        Submission submission = mappers.map(response, Submission.class);
-        submission.setData(mappers.toJson(response.getResult(), TestResult.DEFAULT));
-        if (submissionMapper.finalize(submission) == 0) {
-            log.error("Missing submission when finalizing: {}", response.getId());
-            return;
-        }
-        SubmitResponse dto = mappers.map(response, SubmitResponse.class);
-        dto.setCourseId(response.getPayload().getCourseId());
-        String buaaId = response.getPayload().getBuaaId();
-        streamApi.send(buaaId, dto.toWebSocketPayload());
-
-        Medias.removeSilently(response.getPayload().getSandboxPath());
-
-        Score score = new Score(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
-        scoreMapper.saveOrUpdate(score);
     }
 }

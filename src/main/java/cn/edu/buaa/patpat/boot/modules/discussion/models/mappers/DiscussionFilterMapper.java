@@ -27,10 +27,10 @@ public interface DiscussionFilterMapper {
     @SelectProvider(type = MapperProvider.class, method = "count")
     int count(int courseId, DiscussionFilter filter);
 
+    @SelectProvider(type = MapperProvider.class, method = "query")
+    List<DiscussionView> queryImpl(int courseId, int accountId, int pageSize, int offset, DiscussionFilter filter);
+
     default List<DiscussionView> query(int courseId, int accountId, int page, int pageSize, DiscussionFilter filter) {
         return queryImpl(courseId, accountId, pageSize, (page - 1) * pageSize, filter);
     }
-
-    @SelectProvider(type = MapperProvider.class, method = "query")
-    List<DiscussionView> queryImpl(int courseId, int accountId, int pageSize, int offset, DiscussionFilter filter);
 }

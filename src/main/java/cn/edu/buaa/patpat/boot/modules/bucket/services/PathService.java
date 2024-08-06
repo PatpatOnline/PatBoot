@@ -82,16 +82,6 @@ public class PathService {
         return toRecord(filename, true);
     }
 
-    private String randomizeFilename(String originalFilename) {
-        String ext = FilenameUtils.getExtension(originalFilename);
-        String filename = RandomStringUtils.randomAlphanumeric(16);
-        if ("".equals(ext)) {
-            return filename;
-        }
-        return filename + "." + ext;
-    }
-
-
     /**
      * Get the private path of the content.
      *
@@ -151,5 +141,14 @@ public class PathService {
             throw new MalformedPathException("Invalid URL: " + url);
         }
         return url.substring(httpUrl.length() + 1);
+    }
+
+    private String randomizeFilename(String originalFilename) {
+        String ext = FilenameUtils.getExtension(originalFilename);
+        String filename = RandomStringUtils.randomAlphanumeric(16);
+        if ("".equals(ext)) {
+            return filename;
+        }
+        return filename + "." + ext;
     }
 }

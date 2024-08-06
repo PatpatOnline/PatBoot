@@ -36,10 +36,10 @@ public interface AccountFilterMapper {
     @SelectProvider(type = MapperProvider.class, method = "count")
     int count(AccountFilter filter);
 
+    @SelectProvider(type = MapperProvider.class, method = "query")
+    List<AccountListView> queryImpl(int pageSize, int offset, AccountFilter filter);
+
     default List<AccountListView> query(int page, int pageSize, AccountFilter filter) {
         return queryImpl(pageSize, (page - 1) * pageSize, filter);
     }
-
-    @SelectProvider(type = MapperProvider.class, method = "query")
-    List<AccountListView> queryImpl(int pageSize, int offset, AccountFilter filter);
 }

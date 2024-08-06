@@ -93,10 +93,10 @@ public interface StudentFilterMapper {
             """)
     StudentListView queryById(int id);
 
+    @SelectProvider(type = MapperProvider.class, method = "query")
+    List<StudentListView> queryImpl(int courseId, int pageSize, int offset, StudentFilter filter);
+
     default List<StudentListView> query(int courseId, int page, int pageSize, StudentFilter filter) {
         return queryImpl(courseId, pageSize, (page - 1) * pageSize, filter);
     }
-
-    @SelectProvider(type = MapperProvider.class, method = "query")
-    List<StudentListView> queryImpl(int courseId, int pageSize, int offset, StudentFilter filter);
 }
