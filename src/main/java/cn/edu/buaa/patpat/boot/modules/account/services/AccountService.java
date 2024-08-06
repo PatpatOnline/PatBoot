@@ -15,6 +15,7 @@ import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMappe
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -135,5 +136,9 @@ public class AccountService extends BaseService {
                 ? List.of()
                 : accountFilterMapper.query(page, pageSize, filter);
         return PageListDto.of(accounts, count, page, pageSize);
+    }
+
+    public List<TeacherView> queryTeachers() {
+        return accountFilterMapper.queryTeachers();
     }
 }
