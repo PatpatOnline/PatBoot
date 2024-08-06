@@ -37,6 +37,8 @@ To run the project locally, you need to set up the following environment variabl
   - `submission/`: The submission root directory
     - `${submission-id}/`: The submission directory
       - `${buaa-id}/`: The user's submission directory
+  - `course/`: Root directory for course materials
+    - `${course-id}/`: The course directory
   - `temp/`: Temporary files
 - `/judge/`: The judge directory
   - `${random}/`: A copy of a submission for judging

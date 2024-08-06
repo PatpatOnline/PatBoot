@@ -4,6 +4,7 @@ public class Globals {
     public static final String TEMP_TAG = "temp";
     public static final String PROBLEM_TAG = "problem";
     public static final String SUBMISSION_TAG = "submission";
+    public static final String COURSE_TAG = "course";
 
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

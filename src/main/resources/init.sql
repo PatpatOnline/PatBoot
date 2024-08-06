@@ -111,6 +111,22 @@ CREATE TABLE task
 
 
 ############################################################
+#                      Course Material                     #
+############################################################
+DROP TABLE IF EXISTS `course_material`;
+CREATE TABLE `course_material`
+(
+    `id`         int          NOT NULL AUTO_INCREMENT,
+    `course_id`  int          NOT NULL,
+    `filename`   varchar(255) NOT NULL,
+    `comment`    varchar(255) NULL,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+
+############################################################
 #                        Problem                           #
 ############################################################
 DROP TABLE IF EXISTS `problem`;
