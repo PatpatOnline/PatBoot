@@ -5,6 +5,7 @@ import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.task.dto.CreateTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.UpdateTaskRequest;
+import cn.edu.buaa.patpat.boot.modules.task.models.entities.IHasTimeRange;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskMapper;
@@ -69,12 +70,12 @@ public class TaskService extends BaseService {
         return task;
     }
 
-    private void validateTime(int type, TaskView task) {
+    void validateTime(int type, IHasTimeRange range) {
         var now = LocalDateTime.now();
-        if (task.getStartTime().isAfter(now)) {
+        if (range.getStartTime().isAfter(now)) {
             throw new ForbiddenException(M("task.started.not", TaskTypes.toString(type)));
         }
-        if (now.isAfter(task.getEndTime())) {
+        if (now.isAfter(range.getEndTime())) {
             throw new ForbiddenException(M("task.ended", TaskTypes.toString(type)));
         }
     }

@@ -40,6 +40,14 @@ public class Medias {
         ensurePath(path);
     }
 
+    public static void ensureEmptyParentPath(String path) throws IOException {
+        ensureEmptyParentPath(Path.of(path));
+    }
+
+    public static void ensureEmptyParentPath(Path path) throws IOException {
+        ensureEmptyPath(path.getParent());
+    }
+
     public static void save(String path, InputStreamSource file) throws IOException {
         save(Path.of(path), file);
     }

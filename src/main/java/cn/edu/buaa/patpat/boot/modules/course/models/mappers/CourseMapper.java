@@ -68,7 +68,7 @@ public interface CourseMapper {
     @Insert("""
             INSERT INTO `course_tutorial` (`course_id`, `url`, `created_at`, `updated_at`)
             VALUES (#{courseId}, #{url}, #{createdAt}, #{updatedAt})
-            ON DUPLICATE KEY UPDATE `url` = #{url}, `updated_at` = #{updatedAt}
+            ON DUPLICATE KEY UPDATE `url` = VALUES(`url`), `updated_at` = VALUES(`updated_at`)
             """)
     void updateTutorial(CourseTutorial tutorial);
 

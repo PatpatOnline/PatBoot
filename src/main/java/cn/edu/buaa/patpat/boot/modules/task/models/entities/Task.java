@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Task extends HasCreatedAndUpdated {
+public class Task extends HasCreatedAndUpdated implements IHasTimeRange {
     private int id;
     private int courseId;
 

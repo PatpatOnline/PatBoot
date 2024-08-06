@@ -8,10 +8,10 @@ CREATE TABLE `account`
     `buaa_id`    varchar(10) NOT NULL UNIQUE,
     `name`       varchar(31) NOT NULL,
     `password`   varchar(31) NOT NULL,
-    `gender`     int         NOT NULL default 0,
+    `gender`     int         NOT NULL DEFAULT 0,
     `school`     varchar(63) NOT NULL,
-    `teacher`    bool        NOT NULL default false,
-    `ta`         bool        NOT NULL default false,
+    `teacher`    bool        NOT NULL DEFAULT false,
+    `ta`         bool        NOT NULL DEFAULT false,
     `avatar`     varchar(63) NOT NULL,
     `created_at` timestamp   NOT NULL,
     PRIMARY KEY (`id`)
@@ -43,7 +43,7 @@ CREATE TABLE `course`
 
 # Insert root course to ensure at least one course exists.
 INSERT INTO `course` (`name`, `code`, `semester`, `active`, `created_at`, `updated_at`)
-VALUES ('Root', 'root', '1952', false, NOW(), NOW());
+VALUES ('Root', 'root', '1952', FALSE, NOW(), NOW());
 
 
 ############################################################
@@ -58,7 +58,7 @@ CREATE TABLE `student`
     `teacher_id` int         NOT NULL,
     `major`      varchar(63) NOT NULL,
     `class_name` varchar(15) NOT NULL,
-    `repeat`     bool        NOT NULL DEFAULT false,
+    `repeat`     bool        NOT NULL DEFAULT FALSE,
     `created_at` timestamp   NOT NULL,
     PRIMARY KEY (`id`)
 );
@@ -80,7 +80,7 @@ CREATE TABLE `announcement`
     `account_id` int          NOT NULL,
     `title`      varchar(255) NOT NULL,
     `content`    text         NOT NULL,
-    `topped`     bool         NOT NULL DEFAULT false,
+    `topped`     bool         NOT NULL DEFAULT FALSE,
     `created_at` datetime     NOT NULL,
     `updated_at` datetime     NOT NULL,
     PRIMARY KEY (`id`)
@@ -100,7 +100,7 @@ CREATE TABLE task
     `type`          smallint     NOT NULL,
     `title`         varchar(255) NOT NULL,
     `content`       text         NOT NULL,
-    `visible`       bool         NOT NULL DEFAULT false,
+    `visible`       bool         NOT NULL DEFAULT FALSE,
     `start_time`    datetime     NOT NULL,
     `deadline_time` datetime     NOT NULL,
     `end_time`      datetime     NOT NULL,
@@ -188,10 +188,10 @@ CREATE INDEX `submission_problem_id_index` ON `submission` (`problem_id`);
 
 
 ############################################################
-#                         Score                            #
+#                    Problem Score                         #
 ############################################################
-DROP TABLE IF EXISTS `score`;
-CREATE TABLE `score`
+DROP TABLE IF EXISTS problem_score;
+CREATE TABLE problem_score
 (
     `problem_id` int      NOT NULL,
     `account_id` int      NOT NULL,
@@ -214,8 +214,8 @@ CREATE TABLE `discussion`
     `author_id`  int          NOT NULL,
     `title`      varchar(255) NOT NULL,
     `content`    text         NOT NULL,
-    `topped`     bool         NOT NULL DEFAULT false,
-    `starred`    bool         NOT NULL DEFAULT false,
+    `topped`     bool         NOT NULL DEFAULT FALSE,
+    `starred`    bool         NOT NULL DEFAULT FALSE,
     `created_at` datetime     NOT NULL,
     `updated_at` datetime     NOT NULL,
     PRIMARY KEY (`id`)
@@ -244,7 +244,7 @@ CREATE TABLE `reply`
     `to_id`         int      NOT NULL,
     `author_id`     int      NOT NULL,
     `content`       text     NOT NULL,
-    `verified`      bool     NOT NULL DEFAULT false,
+    `verified`      bool     NOT NULL DEFAULT FALSE,
     `created_at`    datetime NOT NULL,
     `updated_at`    datetime NOT NULL,
     PRIMARY KEY (`id`)
@@ -261,3 +261,28 @@ CREATE TABLE `like_reply`
     `reply_id`   int NOT NULL,
     PRIMARY KEY (`reply_id`, `account_id`)
 );
+
+
+############################################################
+#                     Task Score                           #
+############################################################
+# Actually a (`task_id`, `student_id`) can be the primary key.
+# But that case it won't be able to record T.A.'s score.
+# If `student_id` is 0, it means the score is for T.A.
+DROP TABLE IF EXISTS `task_score`;
+CREATE TABLE `task_score`
+(
+    `task_id`    int          NOT NULL,
+    `course_id`  int          NOT NULL,
+    `account_id` int          NOT NULL,
+    `student_id` int          NOT NULL,
+    `score`      int          NOT NULL,
+    `late`       bool         NOT NULL,
+    `record`     varchar(255) NULL,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+
+    PRIMARY KEY (`task_id`, `course_id`, `account_id`)
+);
+
+CREATE INDEX `task_score_student_id_index` ON `task_score` (`student_id`);

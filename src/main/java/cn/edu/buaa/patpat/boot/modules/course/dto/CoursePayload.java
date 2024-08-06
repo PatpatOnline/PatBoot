@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CoursePayload {
-    private Integer courseId;
-    private Integer studentId;
-    private Integer teacherId;
+    private int courseId;
+    private int studentId;
+    private int teacherId;
 }
