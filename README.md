@@ -42,4 +42,4 @@ To run the project locally, you need to set up the following environment variabl
   - `${random}/`: A copy of a submission for judging
 - `/wwwroot`: The public bucket for storing files
   - `${buaa-id}/`: Public files uploaded by the user, e.g. avatar
-  - `${files}`: Global public files~~~~
+  - `${files}`: Global public files

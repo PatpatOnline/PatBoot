@@ -35,6 +35,7 @@ public class ValidateCourseAspect {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         HttpServletRequest request = Requests.getCurrentRequest();
+        ValidateCourse annotation = method.getAnnotation(ValidateCourse.class);
 
         String cookies = courseCookieSetter.get(request);
         if (Strings.isNullOrBlank(cookies)) {
@@ -47,6 +48,10 @@ public class ValidateCourseAspect {
             payload = mappers.fromJson(cookies, CoursePayload.class);
         } catch (JsonProcessingException e) {
             throw new BadRequestException(M("course.cookies.invalid"));
+        }
+
+        if (!annotation.allowRoot() && payload.isRoot()) {
+            throw new ForbiddenException(M("validation.course.root.not"));
         }
 
         // Find CoursePayload or course id annotated with @CourseId.
