@@ -14,8 +14,8 @@ public class MapperProvider {
                         ) AS `as` ON `stu`.account_id = `as`.`id`
                         WHERE %s AND %s AND %s
                         """,
-                Strings.isNullOrEmpty(filter.getBuaaId()) ? "TRUE" : "`as`.`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
-                Strings.isNullOrEmpty(filter.getName()) ? "TRUE" : "`as`.`name` LIKE CONCAT('%', #{filter.name}, '%')",
+                Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`as`.`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`as`.`name` LIKE CONCAT('%', #{filter.name}, '%')",
                 filter.getTeacherId() == null ? "TRUE" : "`stu`.`teacher_id` = #{filter.teacherId}");
     }
 
@@ -42,8 +42,8 @@ public class MapperProvider {
                         ORDER BY `as`.`buaa_id` ASC
                         LIMIT #{pageSize} OFFSET #{offset}
                         """,
-                Strings.isNullOrEmpty(filter.getBuaaId()) ? "TRUE" : "`as`.`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
-                Strings.isNullOrEmpty(filter.getName()) ? "TRUE" : "`as`.`name` LIKE CONCAT('%', #{filter.name}, '%')",
+                Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`as`.`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`as`.`name` LIKE CONCAT('%', #{filter.name}, '%')",
                 filter.getTeacherId() == null ? "TRUE" : "`stu`.`teacher_id` = #{filter.teacherId}");
     }
 }

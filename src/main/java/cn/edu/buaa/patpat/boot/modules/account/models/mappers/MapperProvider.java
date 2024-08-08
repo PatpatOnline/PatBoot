@@ -12,8 +12,8 @@ public class MapperProvider {
                         FROM `account`
                         WHERE %s AND %s AND %s
                         """,
-                Strings.isNullOrEmpty(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{buaaId}, '%')",
-                Strings.isNullOrEmpty(filter.getName()) ? "TRUE" : "`name` LIKE CONCAT('%', #{name}, '%')",
+                Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{buaaId}, '%')",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`name` LIKE CONCAT('%', #{name}, '%')",
                 filter.getRole() == null ? "TRUE" : switch (filter.getRole()) {
                     case 0 -> "NOT `ta`";
                     case 1 -> "`ta` AND NOT `teacher`";
@@ -29,8 +29,8 @@ public class MapperProvider {
                         WHERE %s AND %s AND %s
                         LIMIT #{pageSize} OFFSET #{offset}
                         """,
-                Strings.isNullOrEmpty(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
-                Strings.isNullOrEmpty(filter.getName()) ? "TRUE" : "`name` LIKE CONCAT('%', #{filter.name}, '%')",
+                Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`name` LIKE CONCAT('%', #{filter.name}, '%')",
                 filter.getRole() == null ? "TRUE" : switch (filter.getRole()) {
                     case 0 -> "NOT `ta`";
                     case 1 -> "`ta` AND NOT `teacher`";

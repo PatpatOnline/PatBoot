@@ -57,7 +57,7 @@ public class PathService {
      * @return The record of the content.
      */
     public String toRecord(String tag, String filename, boolean randomName) {
-        if (Strings.isNullOrEmpty(tag)) {
+        if (Strings.isNullOrBlank(tag)) {
             return toRecord(filename, randomName);
         }
         return tag + "/" + toRecord(filename, randomName);

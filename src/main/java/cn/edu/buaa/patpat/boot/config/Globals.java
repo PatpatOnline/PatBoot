@@ -14,4 +14,6 @@ public class Globals {
 
     public static final String WS_IMPORT_STUDENT = "import-student";
     public static final String WS_SUBMIT = "submit";
+    public static final int NOT_SUBMITTED = -2;
+    public static final int NOT_GRADED = -1;
 }

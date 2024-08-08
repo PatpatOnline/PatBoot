@@ -42,7 +42,7 @@ public class JudgeController extends BaseController {
             @CourseId Integer courseId,
             AuthPayload auth
     ) {
-        if (Strings.isNullOrEmpty(language)) {
+        if (Strings.isNullOrBlank(language)) {
             language = "17";
         } else if (language.length() > 3) {
             throw new BadRequestException(M("judge.language.invalid"));

@@ -8,8 +8,12 @@ import java.util.Base64;
 public class Strings {
     private Strings() {}
 
-    public static boolean isNullOrEmpty(String str) {
+    public static boolean isNullOrBlank(String str) {
         return str == null || str.isBlank();
+    }
+
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 
     public static String escape(String str) {

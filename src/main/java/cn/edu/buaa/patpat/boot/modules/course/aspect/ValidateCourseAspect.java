@@ -37,7 +37,7 @@ public class ValidateCourseAspect {
         HttpServletRequest request = Requests.getCurrentRequest();
 
         String cookies = courseCookieSetter.get(request);
-        if (Strings.isNullOrEmpty(cookies)) {
+        if (Strings.isNullOrBlank(cookies)) {
             throw new ForbiddenException(M("validation.course.select.not"));
         }
         cookies = Strings.fromBase64(cookies);

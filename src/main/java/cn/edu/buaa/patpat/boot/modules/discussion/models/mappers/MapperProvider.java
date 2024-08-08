@@ -22,7 +22,7 @@ public class MapperProvider {
                         FROM `discussion`
                         WHERE `course_id` = #{courseId} AND %s AND %s
                         """,
-                Strings.isNullOrEmpty(filter.getQuery()) ? "TRUE" : "((`title` LIKE CONCAT('%', #{filter.query}, '%')) OR (`content` LIKE CONCAT('%', #{filter.query}, '%')))",
+                Strings.isNullOrBlank(filter.getQuery()) ? "TRUE" : "((`title` LIKE CONCAT('%', #{filter.query}, '%')) OR (`content` LIKE CONCAT('%', #{filter.query}, '%')))",
                 filter.getType() == null ? "TRUE" : "`type` = #{filter.type}"
         );
     }
@@ -45,7 +45,7 @@ public class MapperProvider {
                             SELECT `discussion_id`, COUNT(*) AS `reply_count`
                             FROM `reply` GROUP BY `discussion_id`) AS `c` ON `d`.`id` = `c`.`discussion_id`
                         """,
-                Strings.isNullOrEmpty(filter.getQuery()) ? "TRUE" : "((`title` LIKE CONCAT('%', #{filter.query}, '%')) OR (`content` LIKE CONCAT('%', #{filter.query}, '%')))",
+                Strings.isNullOrBlank(filter.getQuery()) ? "TRUE" : "((`title` LIKE CONCAT('%', #{filter.query}, '%')) OR (`content` LIKE CONCAT('%', #{filter.query}, '%')))",
                 filter.getType() == null ? "TRUE" : "`type` = #{filter.type}"
         );
     }
