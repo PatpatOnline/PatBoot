@@ -24,7 +24,7 @@ public class LabService extends TaskSubmissionService {
                 course.getCourseId(),
                 auth.getId(),
                 course.getStudentId(),
-                TaskScore.NOT_GRADED,
+                Globals.NOT_GRADED,
                 status == TaskStatus.OVERDUE,
                 record);
         taskScoreMapper.saveOrUpdate(score);

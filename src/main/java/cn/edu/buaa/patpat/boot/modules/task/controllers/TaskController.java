@@ -15,6 +15,7 @@ import cn.edu.buaa.patpat.boot.modules.task.dto.TaskScoreDto;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
 import cn.edu.buaa.patpat.boot.modules.task.services.LabService;
 import cn.edu.buaa.patpat.boot.modules.task.services.TaskService;
@@ -95,5 +96,24 @@ public class TaskController extends BaseController {
         Resource resource = labService.download(request);
 
         return ResourceResponse.ok(resource);
+    }
+
+    @GetMapping("{type}/problems/{id}")
+    @Operation(summary = "Get problems", description = "Get problems of a task with score")
+    @ValidatePermission
+    @ValidateCourse
+    public DataResponse<List<TaskProblemView>> getProblems(
+            @PathVariable String type,
+            @PathVariable int id,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        var problems = taskService.getProblems(
+                id,
+                courseId,
+                TaskTypes.fromString(type),
+                auth.getId(),
+                auth.isStudent());
+        return DataResponse.ok(problems);
     }
 }

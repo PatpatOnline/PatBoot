@@ -1,8 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.problem.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
+import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
@@ -11,6 +13,9 @@ import cn.edu.buaa.patpat.boot.modules.problem.dto.CreateProblemResponse;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemRequest;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemResponse;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
+import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemFilter;
+import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemListView;
+import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemSelectView;
 import cn.edu.buaa.patpat.boot.modules.problem.services.ProblemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -74,5 +81,28 @@ public class ProblemAdminController extends BaseController {
     ) {
         problemService.deleteProblem(id);
         return MessageResponse.ok(M("problem.delete.success"));
+    }
+
+    @GetMapping("select")
+    @Operation(summary = "Get all problems", description = "Get all problems for selection")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<List<ProblemSelectView>> getAll() {
+        List<ProblemSelectView> problems = problemService.getAll();
+        return DataResponse.ok(problems);
+    }
+
+    @GetMapping("query")
+    @Operation(summary = "Query problems", description = "Query problems")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidatePagination
+    public DataResponse<PageListDto<ProblemListView>> query(
+            @RequestParam(name = "p") int page,
+            @RequestParam(name = "ps") int pageSize,
+            @RequestParam @Nullable String title,
+            @RequestParam @Nullable Boolean hidden
+    ) {
+        var filter = new ProblemFilter(title, hidden);
+        var problems = problemService.query(page, pageSize, filter);
+        return DataResponse.ok(problems);
     }
 }

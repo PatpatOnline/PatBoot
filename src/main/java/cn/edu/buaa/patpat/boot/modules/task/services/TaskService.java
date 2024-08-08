@@ -9,7 +9,10 @@ import cn.edu.buaa.patpat.boot.modules.task.models.entities.IHasTimeRange;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskMapper;
+import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskProblemMapper;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemListView;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 public class TaskService extends BaseService {
     private final TaskMapper taskMapper;
+    private final TaskProblemMapper taskProblemMapper;
 
     public Task create(int type, int courseId, CreateTaskRequest request) {
         Task task = mappers.map(request, Task.class);
@@ -76,6 +80,49 @@ public class TaskService extends BaseService {
 
     public boolean exists(int id, int courseId, int type) {
         return taskMapper.existsByType(id, courseId, type);
+    }
+
+    public List<TaskProblemListView> updateProblems(int id, List<Integer> problemIds) {
+        taskProblemMapper.batchDelete(id);
+        if (problemIds.isEmpty()) {
+            return List.of();
+        }
+
+        if (problemIds.size() > 1) {
+            if (taskProblemMapper.count(problemIds) != problemIds.size()) {
+                throw new NotFoundException(M("problem.exists.not"));
+            }
+            taskProblemMapper.batchAdd(id, problemIds);
+        } else {
+            // For iteration task, only one problem is allowed, and
+            // 0 stands for no problem.
+            int problemId = problemIds.get(0);
+            if (problemId > 0) {
+                if (taskProblemMapper.count(List.of(problemId)) != 1) {
+                    throw new NotFoundException(M("problem.exists.not"));
+                }
+                taskProblemMapper.add(id, problemId);
+            } else {
+                return List.of();
+            }
+        }
+
+        return taskProblemMapper.findTaskProblemList(id);
+    }
+
+    public List<TaskProblemListView> getProblems(int id) {
+        return taskProblemMapper.findTaskProblemList(id);
+    }
+
+    public List<TaskProblemView> getProblems(int id, int courseId, int type, int accountId, boolean validateTime) {
+        TaskView task = taskMapper.query(id, courseId, type);
+        if (task == null) {
+            throw new NotFoundException(M("task.exists.not"));
+        }
+        if (validateTime) {
+            validateTime(type, task);
+        }
+        return taskProblemMapper.findTaskProblems(id, accountId);
     }
 
     private void validateTime(int type, IHasTimeRange range) {

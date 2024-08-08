@@ -160,6 +160,19 @@ CREATE INDEX `problem_title_index` ON `problem` (`title`);
 
 
 ############################################################
+#                    Task Problem                          #
+############################################################
+DROP TABLE IF EXISTS `task_problem`;
+CREATE TABLE `task_problem`
+(
+    `task_id`    int NOT NULL,
+    `problem_id` int NOT NULL,
+    `order`      int NOT NULL,
+    PRIMARY KEY (`task_id`, `problem_id`)
+);
+
+
+############################################################
 #                        Submission                        #
 ############################################################
 DROP TABLE IF EXISTS `submission`;

@@ -8,12 +8,11 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
-import cn.edu.buaa.patpat.boot.modules.task.dto.CreateTaskRequest;
-import cn.edu.buaa.patpat.boot.modules.task.dto.TaskDto;
-import cn.edu.buaa.patpat.boot.modules.task.dto.UpdateTaskRequest;
+import cn.edu.buaa.patpat.boot.modules.task.dto.*;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
 import cn.edu.buaa.patpat.boot.modules.task.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,6 +95,40 @@ public class TaskAdminController extends BaseController {
     ) {
         var task = taskService.query(id, courseId, TaskTypes.fromString(type), false);
         return DataResponse.ok(task);
+    }
+
+    @PostMapping("lab/problems/update/{id}")
+    @Operation(summary = "Update Lab problems", description = "Update problems of a lab task")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<List<TaskProblemListView>> updateProblems(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateLabProblemsRequest request
+    ) {
+        var problems = taskService.updateProblems(id, request.getProblemIds());
+        return DataResponse.ok(problems);
+    }
+
+    @PostMapping("iter/problems/update/{id}")
+    @Operation(summary = "Update Iteration problems", description = "Update problems of an iteration task")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<List<TaskProblemListView>> updateProblems(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateIterProblemsRequest request
+    ) {
+        var problems = taskService.updateProblems(id, List.of(request.getProblemId()));
+        return DataResponse.ok(problems);
+    }
+
+    @GetMapping("{type}/problems/{id}")
+    @Operation(summary = "Get Task problems", description = "Get problems of a task")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<List<TaskProblemListView>> getProblems(
+            @PathVariable String type,
+            @PathVariable int id
+    ) {
+        TaskTypes.fromString(type);
+        var problems = taskService.getProblems(id);
+        return DataResponse.ok(problems);
     }
 
     private DataResponse<TaskDto> create(int type, int courseId, CreateTaskRequest request) {

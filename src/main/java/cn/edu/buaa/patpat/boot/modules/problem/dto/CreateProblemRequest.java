@@ -15,10 +15,10 @@ public class CreateProblemRequest {
     private MultipartFile file;
 
     public void validate() {
-        if (Strings.isNullOrEmpty(title)) {
+        if (Strings.isNullOrBlank(title)) {
             throw new BadRequestException("Problem title cannot be empty");
         }
-        if (Strings.isNullOrEmpty(description)) {
+        if (Strings.isNullOrBlank(description)) {
             throw new BadRequestException("Problem description cannot be empty");
         }
         if (file == null || file.isEmpty()) {
