@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -97,6 +98,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleMissingPathVariableException(MissingPathVariableException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<MessageResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                MessageResponse.badRequest("Invalid parameter: " + e.getName())
         );
     }
 

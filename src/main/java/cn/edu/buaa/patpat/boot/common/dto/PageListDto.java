@@ -21,6 +21,10 @@ public class PageListDto<TData> {
         return new PageListDto<>(items, total, page, pageSize);
     }
 
+    public static <TData> PageListDto<TData> empty(int page, int pageSize) {
+        return new PageListDto<>(List.of(), 0, page, pageSize);
+    }
+
     public boolean isLast() {
         return page * pageSize >= total;
     }

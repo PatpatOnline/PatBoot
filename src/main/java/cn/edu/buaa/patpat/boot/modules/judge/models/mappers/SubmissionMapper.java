@@ -32,7 +32,7 @@ public interface SubmissionMapper {
             ORDER BY `id` DESC
             LIMIT 1
             """)
-    Submission findLast(int problemId, int accountId);
+    Submission findCheckLast(int problemId, int accountId);
 
     @Delete("DELETE FROM `submission` WHERE `id` = #{id}")
     void delete(int id);
