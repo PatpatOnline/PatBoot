@@ -12,4 +12,11 @@ public class TaskProblemView extends HasCreatedAndUpdated {
     private String title;
 
     private int score = Globals.NOT_SUBMITTED;
+
+    public void eraseTimestampIfNotSubmitted() {
+        if (score < 0) {
+            setCreatedAt(null);
+            setUpdatedAt(null);
+        }
+    }
 }

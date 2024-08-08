@@ -117,12 +117,14 @@ public class TaskService extends BaseService {
     public List<TaskProblemView> getProblems(int id, int courseId, int type, int accountId, boolean validateTime) {
         TaskView task = taskMapper.query(id, courseId, type);
         if (task == null) {
-            throw new NotFoundException(M("task.exists.not"));
+            throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
         }
         if (validateTime) {
             validateTime(type, task);
         }
-        return taskProblemMapper.findTaskProblems(id, accountId);
+        var problems = taskProblemMapper.findTaskProblems(id, accountId);
+        problems.forEach(TaskProblemView::eraseTimestampIfNotSubmitted);
+        return problems;
     }
 
     private void validateTime(int type, IHasTimeRange range) {
