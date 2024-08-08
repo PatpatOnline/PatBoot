@@ -14,6 +14,14 @@ import java.nio.file.Path;
 public class Medias {
     private Medias() {}
 
+    public static Path getParentPath(String path) {
+        return getParentPath(Path.of(path));
+    }
+
+    public static Path getParentPath(Path path) {
+        return path.getParent();
+    }
+
     public static void ensureParentPath(String path) throws IOException {
         ensureParentPath(Path.of(path));
     }

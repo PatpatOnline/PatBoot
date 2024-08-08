@@ -30,4 +30,8 @@ public interface ProblemMapper {
 
     @Insert("DELETE FROM `problem` WHERE `id` = #{id}")
     int delete(int id);
+
+
+    @Select("SELECT `id`, `hidden` FROM `problem` WHERE `id` = #{id}")
+    Problem findJudge(int id);
 }

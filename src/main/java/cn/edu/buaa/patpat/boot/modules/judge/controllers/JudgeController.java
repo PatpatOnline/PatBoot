@@ -47,8 +47,13 @@ public class JudgeController extends BaseController {
         } else if (language.length() > 3) {
             throw new BadRequestException(M("judge.language.invalid"));
         }
-        var request = new SubmitRequest(auth.getId(), auth.getBuaaId(), problemId, courseId, language, file);
-        Submission submission = judgeService.submit(request);
+
+        judgeService.checkProblem(problemId, false);
+        judgeService.checkLastSubmission(problemId, auth.getId());
+
+        String filePath = judgeService.saveSubmissionInTemp(file);
+        var request = new SubmitRequest(auth.getId(), auth.getBuaaId(), problemId, courseId, language, filePath);
+        Submission submission = judgeService.submit(request, true);
 
         return DataResponse.ok(
                 M("judge.submit.success"),

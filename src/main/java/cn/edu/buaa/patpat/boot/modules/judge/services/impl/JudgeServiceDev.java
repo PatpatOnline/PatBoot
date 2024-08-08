@@ -1,8 +1,9 @@
-package cn.edu.buaa.patpat.boot.modules.judge.services;
+package cn.edu.buaa.patpat.boot.modules.judge.services.impl;
 
 import cn.edu.buaa.patpat.boot.config.RabbitMqConfigDev;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.JudgeRequestDto;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.JudgeResponseDto;
+import cn.edu.buaa.patpat.boot.modules.judge.services.JudgeService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

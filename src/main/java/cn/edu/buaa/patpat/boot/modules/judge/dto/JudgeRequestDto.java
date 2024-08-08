@@ -12,5 +12,12 @@ public class JudgeRequestDto {
 
     private LocalDateTime submitTime;
 
+    /**
+     * The path to this submission.
+     * It is the bridge between PatBoot and PatJudge.
+     * This path will also be mapped to PatJudge to access the file.
+     */
+    private String record;
+
     private JudgePayload payload;
 }
