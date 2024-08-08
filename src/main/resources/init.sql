@@ -65,8 +65,8 @@ CREATE TABLE `student`
 
 CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
 CREATE INDEX `student_course_id_index` ON `student` (`course_id`);
-CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
 CREATE INDEX `student_teacher_id_index` ON `student` (`teacher_id`);
+CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
 
 
 ############################################################
@@ -193,6 +193,10 @@ CREATE TABLE `submission`
 );
 
 CREATE INDEX `submission_problem_id_account_id_index` ON `submission` (`problem_id`, `account_id`);
+CREATE INDEX `submission_course_id_index` ON `submission` (`course_id`);
+CREATE INDEX `submission_problem_id_index` ON `submission` (`problem_id`);
+CREATE INDEX `submission_account_id_index` ON `submission` (`account_id`);
+
 
 ############################################################
 #                    Problem Score                         #
@@ -229,7 +233,7 @@ CREATE TABLE `discussion`
 );
 
 CREATE INDEX `discussion_course_id_index` ON `discussion` (`course_id`);
-CREATE INDEX `discussion_id_course_id_index` ON `discussion` (`id`, `course_id`);
+CREATE INDEX `discussion_course_id_topped_index` ON `discussion` (`course_id`, `topped`);
 
 DROP TABLE IF EXISTS `like_discussion`;
 CREATE TABLE `like_discussion`
@@ -257,7 +261,6 @@ CREATE TABLE `reply`
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `reply_id_discussion_id_index` ON `reply` (`id`, `discussion_id`);
 CREATE INDEX `reply_discussion_id_index` ON `reply` (`discussion_id`);
 CREATE INDEX `reply_parent_id_index` ON `reply` (`parent_id`);
 

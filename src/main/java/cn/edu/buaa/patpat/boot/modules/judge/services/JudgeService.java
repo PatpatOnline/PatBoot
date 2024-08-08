@@ -93,7 +93,7 @@ public abstract class JudgeService extends BaseService {
      * Call this to prevent multiple ongoing submissions.
      */
     public void checkLastSubmission(int problemId, int accountId) {
-        Submission submission = submissionMapper.findLast(problemId, accountId);
+        Submission submission = submissionMapper.findCheckLast(problemId, accountId);
 
         // OK if no submission or submission has completed.
         if ((submission != null) && (submission.getEndTime() == null)) {

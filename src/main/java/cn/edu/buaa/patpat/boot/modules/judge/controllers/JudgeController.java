@@ -23,10 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @RestController
-@RequestMapping("api/submission")
+@RequestMapping("api/judge")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Submission", description = "Submission API")
+@Tag(name = "Judge", description = "Judge API")
 public class JudgeController extends BaseController {
     private final JudgeService judgeService;
 
