@@ -17,6 +17,7 @@ import cn.edu.buaa.patpat.boot.modules.judge.models.mappers.SubmissionMapper;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
 import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemMapper;
 import cn.edu.buaa.patpat.boot.modules.stream.api.StreamApi;
+import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskScoreMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -42,6 +42,8 @@ public abstract class JudgeService extends BaseService {
     private ProblemScoreMapper problemScoreMapper;
     @Autowired
     private ProblemMapper problemMapper;
+    @Autowired
+    private TaskScoreMapper taskScoreMapper;
 
     protected abstract void sendImpl(JudgeRequestDto request);
 
@@ -94,20 +96,9 @@ public abstract class JudgeService extends BaseService {
         Submission submission = submissionMapper.findLast(problemId, accountId);
 
         // OK if no submission or submission has completed.
-        if ((submission == null) || (submission.getEndTime() != null)) {
-            return;
-        }
-
-        // If elapsed time is less than 1 hour, reject submission.
-        var now = LocalDateTime.now();
-        if (submission.getStartTime().plusHours(1).isAfter(now)) {
+        if ((submission != null) && (submission.getEndTime() == null)) {
             throw new ForbiddenException(M("judge.submit.frequency"));
         }
-
-        // Judge timed out, delete this submission.
-        SubmissionLogDto dto = mappers.map(submission, SubmissionLogDto.class);
-        log.warn("Submission timed out: {}", dto.toString());
-        submissionMapper.delete(submission.getId());
     }
 
     public void checkProblem(int problemId, boolean allowHidden) {
@@ -122,6 +113,7 @@ public abstract class JudgeService extends BaseService {
 
     protected void receiveImpl(JudgeResponseDto response) {
         log.info("Received judge response: {}", response.getId());
+        JudgePayload payload = response.getPayload();
 
         Submission submission = mappers.map(response, Submission.class);
         submission.setData(mappers.toJson(response.getResult(), TestResult.DEFAULT));
@@ -130,12 +122,13 @@ public abstract class JudgeService extends BaseService {
             return;
         }
         SubmitResponse dto = mappers.map(response, SubmitResponse.class);
-        dto.setCourseId(response.getPayload().getCourseId());
-        String buaaId = response.getPayload().getBuaaId();
-        streamApi.send(buaaId, dto.toWebSocketPayload());
+        dto.setCourseId(payload.getCourseId());
+        streamApi.send(payload.getBuaaId(), dto.toWebSocketPayload());
 
-        ProblemScore score = new ProblemScore(submission.getProblemId(), submission.getAccountId(), response.getResult().getScore());
-        problemScoreMapper.saveOrUpdate(score);
+        updateProblemScore(submission.getProblemId(), payload.getAccountId(), response.getResult().getScore());
+        if (response.getPayload().getTaskId() != 0) {
+            updateTaskScore(payload.getTaskId(), payload.getAccountId(), response.getResult().getScore());
+        }
     }
 
     private String saveSubmission(String filePath, int problemId, String buaaId, boolean removeSource) {
@@ -160,5 +153,18 @@ public abstract class JudgeService extends BaseService {
         }
 
         return bucketApi.toRecord(String.valueOf(problemId), buaaId);
+    }
+
+    private void updateProblemScore(int problemId, int accountId, int score) {
+        ProblemScore problemScore = new ProblemScore(problemId, accountId, score);
+        problemScoreMapper.saveOrUpdate(problemScore);
+    }
+
+    private void updateTaskScore(int taskId, int accountId, int score) {
+        // This will overwrite the old score.
+        int updated = taskScoreMapper.updateScoreByAccount(taskId, accountId, score);
+        if (updated == 0) {
+            log.error("Task score not found: {} {}", taskId, accountId);
+        }
     }
 }

@@ -293,3 +293,4 @@ CREATE TABLE `task_score`
 );
 
 CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `student_id`);
+CREATE INDEX `task_score_task_id_account_id_index` ON `task_score` (`task_id`, `account_id`);

@@ -54,5 +54,12 @@ public interface TaskScoreMapper {
             WHERE `task_id` = #{taskId} AND `student_id` = #{studentId}
             """)
     int updateScore(int taskId, int score, int studentId);
+
+    @Update("""
+            UPDATE `task_score`
+            SET `score` = #{score}
+            WHERE `task_id` = #{taskId} AND `account_id` = #{accountId}
+            """)
+    int updateScoreByAccount(int taskId, int accountId, int score);
 }
 

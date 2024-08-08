@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.task.models.mappers;
 
+import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskProblem;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemView;
 import org.apache.ibatis.annotations.Delete;
@@ -52,7 +53,7 @@ public interface TaskProblemMapper {
     List<TaskProblemListView> findTaskProblemList(int taskId);
 
     @Select("""
-            SELECT t.`problem_id`, p.`title`, ps.`score`
+            SELECT t.`problem_id`, p.`title`, ps.`score`, `ps`.created_at, `ps`.updated_at
             FROM (
                 SELECT * FROM `task_problem`
                 WHERE `task_id` = #{taskId}
@@ -65,4 +66,7 @@ public interface TaskProblemMapper {
             ORDER BY `order`
             """)
     List<TaskProblemView> findTaskProblems(int taskId, int accountId);
+
+    @Select("SELECT * FROM `task_problem` WHERE `task_id` = #{taskId}")
+    List<TaskProblem> find(int taskId);
 }

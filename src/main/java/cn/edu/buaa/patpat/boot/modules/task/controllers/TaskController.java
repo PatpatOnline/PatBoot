@@ -4,11 +4,14 @@ import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
+import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
+import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmissionDto;
 import cn.edu.buaa.patpat.boot.modules.task.dto.DownloadTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.SubmitTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.TaskScoreDto;
@@ -17,8 +20,9 @@ import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
-import cn.edu.buaa.patpat.boot.modules.task.services.LabService;
 import cn.edu.buaa.patpat.boot.modules.task.services.TaskService;
+import cn.edu.buaa.patpat.boot.modules.task.services.impl.IterationService;
+import cn.edu.buaa.patpat.boot.modules.task.services.impl.LabService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @RestController
 @RequestMapping("api/task")
 @RequiredArgsConstructor
@@ -38,6 +44,7 @@ import java.util.List;
 public class TaskController extends BaseController {
     private final TaskService taskService;
     private final LabService labService;
+    private final IterationService iterationService;
 
     @GetMapping("{type}/query")
     @Operation(summary = "Get all visible tasks", description = "Get all visible tasks (lab or iter)")
@@ -62,23 +69,48 @@ public class TaskController extends BaseController {
         return DataResponse.ok(task);
     }
 
-    @PostMapping("lab/submit/{labId}")
+    @PostMapping("lab/submit/{id}")
     @Operation(summary = "Submit Lab report", description = "Student submit Lab report")
     @ValidateMultipartFile(extensions = { "zip", "pdf", "md", "doc", "docx", "txt" }, maxSize = 10)
     @ValidatePermission
     @ValidateCourse
     public DataResponse<TaskScoreDto> submit(
-            @PathVariable int labId,
+            @PathVariable int id,
             @RequestParam MultipartFile file,
             AuthPayload auth,
             CoursePayload course
     ) {
-        var request = new SubmitTaskRequest(labId, auth, course, file);
+        var request = new SubmitTaskRequest(id, auth, course, file);
         TaskScore score = labService.submit(request);
         TaskScoreDto dto = mappers.map(score, TaskScoreDto.class);
         dto.initFilename();
+        return DataResponse.ok(M("judge.submit.success"), dto);
+    }
+
+    @PostMapping("iter/submit/{id}")
+    @Operation(summary = "Submit Iteration code", description = "Student submit Iteration code")
+    @ValidateMultipartFile(extensions = { "zip", "java" }, maxSize = 1)
+    @ValidatePermission
+    @ValidateCourse
+    public DataResponse<SubmissionDto> submit(
+            @PathVariable int id,
+            @RequestParam String language,
+            @RequestParam MultipartFile file,
+            AuthPayload auth,
+            CoursePayload course
+    ) {
+        if (Strings.isNullOrBlank(language)) {
+            language = "17";
+        } else if (language.length() > 3) {
+            throw new BadRequestException(M("judge.language.invalid"));
+        }
+
+        var request = new SubmitTaskRequest(id, auth, course, file);
+        SubmissionDto dto = iterationService.submit(request, language);
+
         return DataResponse.ok(dto);
     }
+
 
     @GetMapping("{type}/download/{id}")
     @Operation(summary = "Download Lab report", description = "Student downloads their own Lab report")
