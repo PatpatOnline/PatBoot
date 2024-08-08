@@ -2,8 +2,6 @@ package cn.edu.buaa.patpat.boot.modules.judge.models.mappers;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 
-import java.util.List;
-
 public class MapperProvider {
     /**
      * If filter.id is not null, then it should be handled outside of this method.

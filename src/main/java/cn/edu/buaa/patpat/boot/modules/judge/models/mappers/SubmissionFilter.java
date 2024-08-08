@@ -2,8 +2,6 @@ package cn.edu.buaa.patpat.boot.modules.judge.models.mappers;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class SubmissionFilter {
     private Integer id;
