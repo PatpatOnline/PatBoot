@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<MessageResponse> handleNoResourceFound(NoResourceFoundException e) {
+    public ResponseEntity<MessageResponse> handleNoResourceFound() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).build();
     }
 

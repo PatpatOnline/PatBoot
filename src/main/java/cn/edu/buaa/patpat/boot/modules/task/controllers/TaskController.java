@@ -111,6 +111,28 @@ public class TaskController extends BaseController {
         return DataResponse.ok(dto);
     }
 
+    @GetMapping("{type}/score/{id}")
+    @Operation(summary = "Get task score", description = "Student get task score")
+    @ValidatePermission
+    @ValidateCourse
+    public DataResponse<TaskScoreDto> score(
+            @PathVariable String type,
+            @PathVariable int id,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        var score = taskService.getScore(
+                id,
+                courseId,
+                TaskTypes.fromString(type),
+                auth.getId(),
+                auth.isStudent()
+        );
+        var dto = mappers.map(score, TaskScoreDto.class);
+        dto.initFilename();
+
+        return DataResponse.ok(dto);
+    }
 
     @GetMapping("{type}/download/{id}")
     @Operation(summary = "Download Lab report", description = "Student downloads their own Lab report")

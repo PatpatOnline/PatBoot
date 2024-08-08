@@ -53,6 +53,8 @@ public class IterationService extends TaskSubmissionService {
         String filePath = bucketApi.recordToPrivatePath(record);
 
         var submitRequest = new SubmitRequest(auth.getId(), auth.getBuaaId(), course.getCourseId(), problemId, language, filePath);
+        // enable auto grading
+        submitRequest.setTaskId(request.getId());
 
         return judgeApi.submit(submitRequest);
     }

@@ -7,9 +7,11 @@ import cn.edu.buaa.patpat.boot.modules.task.dto.CreateTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.UpdateTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.IHasTimeRange;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
+import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskMapper;
 import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskProblemMapper;
+import cn.edu.buaa.patpat.boot.modules.task.models.mappers.TaskScoreMapper;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemView;
@@ -27,6 +29,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class TaskService extends BaseService {
     private final TaskMapper taskMapper;
     private final TaskProblemMapper taskProblemMapper;
+    private final TaskScoreMapper taskScoreMapper;
 
     public Task create(int type, int courseId, CreateTaskRequest request) {
         Task task = mappers.map(request, Task.class);
@@ -125,6 +128,23 @@ public class TaskService extends BaseService {
         var problems = taskProblemMapper.findTaskProblems(id, accountId);
         problems.forEach(TaskProblemView::eraseTimestampIfNotSubmitted);
         return problems;
+    }
+
+    public TaskScore getScore(int id, int courseId, int type, int accountId, boolean validateTime) {
+        TaskView task = taskMapper.query(id, courseId, type);
+        if (task == null) {
+            throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
+        }
+        if (validateTime) {
+            validateTime(type, task);
+        }
+
+        TaskScore score = taskScoreMapper.find(id, courseId, accountId);
+        if (score == null) {
+            throw new NotFoundException(M("task.score.exists.not"));
+        }
+
+        return score;
     }
 
     private void validateTime(int type, IHasTimeRange range) {
