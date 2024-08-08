@@ -9,6 +9,7 @@ import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
+import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
@@ -49,7 +50,7 @@ public class StudentAdminController extends BaseController {
     @Operation(summary = "Import students asynchronously", description = "T.A. imports students from an Excel file, results will be returned via WebSocket.")
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse
+    @ValidateCourse(allowRoot = false)
     public MessageResponse importStudentsAsync(
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
@@ -74,7 +75,7 @@ public class StudentAdminController extends BaseController {
     @Operation(summary = "Import students synchronously", description = "T.A. imports students from an Excel file results will be returned synchronously.")
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse
+    @ValidateCourse(allowRoot = false)
     public DataResponse<ImportStudentResponse> importStudents(
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,

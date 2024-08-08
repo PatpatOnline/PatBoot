@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.task.services;
 
+import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
@@ -59,6 +60,7 @@ public class TaskAdminService extends TaskSubmissionService {
                 String.format("%d-%d", taskId, teacherId)));
         String archiveName = getArchiveName(taskId, type, teacherId);
         try {
+            Medias.ensurePath(submissionPath);  // prevent empty zip error
             return downloadAgent.download(students, scores, submissionPath, archivePath, archiveName);
         } catch (IOException e) {
             log.error("Failed to download task submissions {}", e.getMessage());

@@ -52,7 +52,7 @@ public class JudgeController extends BaseController {
         judgeService.checkLastSubmission(problemId, auth.getId());
 
         String filePath = judgeService.saveSubmissionInTemp(file);
-        var request = new SubmitRequest(auth.getId(), auth.getBuaaId(), problemId, courseId, language, filePath);
+        var request = new SubmitRequest(auth.getId(), auth.getBuaaId(), courseId, problemId, language, filePath);
         Submission submission = judgeService.submit(request, true);
 
         return DataResponse.ok(
