@@ -4,5 +4,9 @@ spring:
 springdoc:
   swagger-ui:
     enabled: true
+cors:
+  allowed-origins:
+    - ${HTTP_URL}
+    - http://localhost:5173
 config:
   allow-register: true
