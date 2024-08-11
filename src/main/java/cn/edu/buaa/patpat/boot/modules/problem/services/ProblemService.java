@@ -9,6 +9,7 @@ import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.CreateProblemRequest;
+import cn.edu.buaa.patpat.boot.modules.problem.dto.ProblemDto;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemRequest;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
@@ -116,4 +117,16 @@ public class ProblemService extends BaseService {
                 : problemFilterMapper.query(page, pageSize, filter);
         return PageListDto.of(problems, count, page, pageSize);
     }
+
+    public ProblemDto query(int id, boolean allowHidden) {
+        Problem problem = problemMapper.find(id);
+        if (problem == null) {
+            throw new NotFoundException(M("problem.exists.not"));
+        }
+        if (!allowHidden && problem.isHidden()) {
+            throw new NotFoundException(M("problem.exists.not"));
+        }
+        return ProblemDto.of(problem, mappers);
+    }
 }
+

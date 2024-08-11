@@ -8,10 +8,7 @@ import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
-import cn.edu.buaa.patpat.boot.modules.problem.dto.CreateProblemRequest;
-import cn.edu.buaa.patpat.boot.modules.problem.dto.CreateProblemResponse;
-import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemRequest;
-import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemResponse;
+import cn.edu.buaa.patpat.boot.modules.problem.dto.*;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
 import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemFilter;
 import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemListView;
@@ -104,5 +101,15 @@ public class ProblemAdminController extends BaseController {
         var filter = new ProblemFilter(title, hidden);
         var problems = problemService.query(page, pageSize, filter);
         return DataResponse.ok(problems);
+    }
+
+    @GetMapping("query/{id}")
+    @Operation(summary = "Query a problem", description = "Query a problem by id")
+    @ValidatePermission(AuthLevel.TA)
+    public DataResponse<ProblemDto> queryById(
+            @PathVariable int id
+    ) {
+        var problem = problemService.query(id, true);
+        return DataResponse.ok(problem);
     }
 }
