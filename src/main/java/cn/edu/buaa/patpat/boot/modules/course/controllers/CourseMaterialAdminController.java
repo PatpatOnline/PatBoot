@@ -37,10 +37,10 @@ public class CourseMaterialAdminController extends BaseController {
     @PostMapping("upload")
     @Operation(summary = "Upload course material", description = "T.A. uploads a new course material")
     @ValidatePermission(AuthLevel.TA)
-    @ValidateMultipartFile(allowNull = true)
+    @ValidateMultipartFile
     @ValidateCourse
     public DataResponse<CourseMaterialDto> upload(
-            @RequestParam(required = false) MultipartFile file,
+            @RequestParam MultipartFile file,
             @RequestParam(required = false) String comment,
             @CourseId Integer courseId
     ) {
