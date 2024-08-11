@@ -32,7 +32,7 @@ public class AnnouncementAdminController extends BaseController {
 
     @PostMapping("create")
     @Operation(summary = "Create an announcement", description = "T.A. creates an announcement")
-    @ValidateCourse
+    @ValidateCourse(allowRoot = false)
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<AnnouncementView> create(
             @RequestBody @Valid CreateAnnouncementRequest request,
@@ -46,6 +46,7 @@ public class AnnouncementAdminController extends BaseController {
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update an announcement", description = "T.A. updates an announcement")
+    @ValidateCourse(allowRoot = false)
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<AnnouncementView> update(
             @PathVariable int id,
@@ -58,6 +59,7 @@ public class AnnouncementAdminController extends BaseController {
 
     @DeleteMapping("delete/{id}")
     @Operation(summary = "Delete an announcement", description = "T.A. deletes an announcement")
+    @ValidateCourse(allowRoot = false)
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse delete(@PathVariable int id) {
         announcementService.delete(id);

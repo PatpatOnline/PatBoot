@@ -7,6 +7,8 @@ import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.judge.api.JudgeApi;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmissionDto;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmitRequest;
+import cn.edu.buaa.patpat.boot.modules.problem.api.ProblemApi;
+import cn.edu.buaa.patpat.boot.modules.problem.dto.ProblemDto;
 import cn.edu.buaa.patpat.boot.modules.task.dto.SubmitTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskProblem;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
@@ -26,20 +28,20 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class IterationService extends TaskSubmissionService {
     private final TaskProblemMapper taskProblemMapper;
     private final JudgeApi judgeApi;
+    private final ProblemApi problemApi;
 
     public SubmissionDto submit(SubmitTaskRequest request, String language) {
+        AuthPayload auth = request.getAuth();
+        CoursePayload course = request.getCourse();
+
+        TaskStatus status = checkSubmissionStatus(request.getId(), course.getCourseId(), TaskTypes.ITERATION, auth);
         List<TaskProblem> problems = taskProblemMapper.find(request.getId());
         if (problems.isEmpty()) {
             throw new ForbiddenException(M("task.submit.forbidden", TaskTypes.toString(TaskTypes.ITERATION)));
         }
         int problemId = problems.get(0).getProblemId();
 
-        AuthPayload auth = request.getAuth();
-        CoursePayload course = request.getCourse();
-
-        TaskStatus status = checkSubmissionStatus(request.getId(), course.getCourseId(), TaskTypes.ITERATION, auth);
         String record = saveSubmission(request.getId(), auth, Globals.ITERATION_TAG, request.getFile());
-
         TaskScore score = new TaskScore(
                 request.getId(),
                 course.getCourseId(),
@@ -51,11 +53,22 @@ public class IterationService extends TaskSubmissionService {
         taskScoreMapper.saveOrUpdate(score);
 
         String filePath = bucketApi.recordToPrivatePath(record);
-
         var submitRequest = new SubmitRequest(auth.getId(), auth.getBuaaId(), course.getCourseId(), problemId, language, filePath);
         // enable auto grading
         submitRequest.setTaskId(request.getId());
 
         return judgeApi.submit(submitRequest);
+    }
+
+    public ProblemDto getProblem(int taskId, int courseId, AuthPayload auth) {
+        checkSubmissionStatus(taskId, courseId, TaskTypes.ITERATION, auth);
+
+        List<TaskProblem> problems = taskProblemMapper.find(taskId);
+        if (problems.isEmpty()) {
+            throw new ForbiddenException(M("task.submit.forbidden", TaskTypes.toString(TaskTypes.ITERATION)));
+        }
+        int problemId = problems.get(0).getProblemId();
+
+        return problemApi.query(problemId);
     }
 }

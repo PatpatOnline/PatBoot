@@ -12,6 +12,7 @@ import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.judge.dto.SubmissionDto;
+import cn.edu.buaa.patpat.boot.modules.problem.dto.ProblemDto;
 import cn.edu.buaa.patpat.boot.modules.task.dto.DownloadTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.SubmitTaskRequest;
 import cn.edu.buaa.patpat.boot.modules.task.dto.TaskScoreDto;
@@ -60,7 +61,7 @@ public class TaskController extends BaseController {
     @GetMapping("{type}/query/{id}")
     @Operation(summary = "Get task by id", description = "Get task by id, return forbidden if not started or ended")
     @ValidateCourse
-    public DataResponse<TaskView> queryById(
+    public DataResponse<TaskView> query(
             @PathVariable String type,
             @PathVariable Integer id,
             @CourseId Integer courseId
@@ -169,5 +170,18 @@ public class TaskController extends BaseController {
                 auth.getId(),
                 auth.isStudent());
         return DataResponse.ok(problems);
+    }
+
+    @GetMapping("iter/problem/{id}")
+    @Operation(summary = "Get Iteration problem", description = "Get Iteration problem content")
+    @ValidatePermission
+    @ValidateCourse
+    public DataResponse<ProblemDto> getIterProblem(
+            @PathVariable int id,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        var problem = iterationService.getProblem(id, courseId, auth);
+        return DataResponse.ok(problem);
     }
 }
