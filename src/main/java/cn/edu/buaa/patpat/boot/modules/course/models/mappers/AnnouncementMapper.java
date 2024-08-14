@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Announcement;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.AnnouncementBriefView;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.AnnouncementView;
 import org.apache.ibatis.annotations.*;
 
@@ -32,9 +33,9 @@ public interface AnnouncementMapper {
     @Select("""
             SELECT `id`, `title`, `content`, `topped`
             FROM `announcement`
-            WHERE `id` = #{id}
+            WHERE `id` = #{id} AND `course_id` = #{courseId}
             """)
-    Announcement findUpdate(int id);
+    Announcement findUpdate(int id, int courseId);
 
     @Update("""
             UPDATE `announcement`
@@ -53,12 +54,12 @@ public interface AnnouncementMapper {
             SELECT `ann`.`id`, `acc`.`name` AS `author`, `title`, `content`, `topped`, `created_at`, `updated_at`
             FROM (
                 SELECT * FROM `announcement`
-                WHERE `id` = #{id}
+                WHERE `id` = #{id} AND `course_id` = #{courseId}
             ) AS `ann` JOIN (
                 SELECT `id`, `name` FROM `account`
             ) AS `acc` ON `ann`.`account_id` = `acc`.`id`
             """)
-    AnnouncementView find(int id);
+    AnnouncementView find(int id, int courseId);
 
     @Select("""
             SELECT `ann`.`id`, `acc`.`name` AS `author`, `title`, `content`, `topped`, `created_at`, `updated_at`
@@ -71,4 +72,11 @@ public interface AnnouncementMapper {
             ORDER BY `topped` DESC, `created_at` DESC
             """)
     List<AnnouncementView> getAll(int courseId);
+
+    @Select("""
+            SELECT `id`, `title`, `content`
+            FROM `announcement`
+            WHERE `id` = #{id} AND `course_id` = #{courseId}
+            """)
+    AnnouncementBriefView findBrief(int id, int courseId);
 }
