@@ -6,6 +6,7 @@ import cn.edu.buaa.patpat.boot.modules.course.dto.CreateAnnouncementRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateAnnouncementRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Announcement;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.AnnouncementMapper;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.AnnouncementBriefView;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.AnnouncementView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ public class AnnouncementService extends BaseService {
         return announcement;
     }
 
-    public Announcement update(int id, UpdateAnnouncementRequest request) {
-        Announcement announcement = announcementMapper.findUpdate(id);
+    public Announcement update(int id, int courseId, UpdateAnnouncementRequest request) {
+        Announcement announcement = announcementMapper.findUpdate(id, courseId);
         if (announcement == null) {
             throw new NotFoundException(M("announcement.exists.not"));
         }
@@ -44,8 +45,16 @@ public class AnnouncementService extends BaseService {
         }
     }
 
-    public AnnouncementView find(int id) {
-        AnnouncementView announcement = announcementMapper.find(id);
+    public AnnouncementView find(int id, int courseId) {
+        AnnouncementView announcement = announcementMapper.find(id, courseId);
+        if (announcement == null) {
+            throw new NotFoundException(M("announcement.exists.not"));
+        }
+        return announcement;
+    }
+
+    public AnnouncementBriefView findBrief(int id, int courseId) {
+        AnnouncementBriefView announcement = announcementMapper.findBrief(id, courseId);
         if (announcement == null) {
             throw new NotFoundException(M("announcement.exists.not"));
         }
