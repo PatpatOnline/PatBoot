@@ -3,19 +3,18 @@ package cn.edu.buaa.patpat.boot.config;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -60,13 +59,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<MessageResponse> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError(e.getMessage())
-        );
-    }
-
     @ExceptionHandler(FileException.class)
     public ResponseEntity<MessageResponse> handleFileException(FileException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -86,55 +78,43 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(MessageResponse.badRequest(M("validation.params.error")));
     }
 
-    @ExceptionHandler(BadSqlGrammarException.class)
-    public ResponseEntity<MessageResponse> handleBadSqlGrammarException(BadSqlGrammarException e) {
-        log.error("Bad SQL grammar: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError("Bad SQL grammar")
-        );
-    }
-
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<MessageResponse> handleMissingPathVariableException(MissingPathVariableException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
         );
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<MessageResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Invalid parameter: " + e.getName())
-        );
-    }
-
-    @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<MessageResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                MessageResponse.badRequest("Missing request part: " + e.getRequestPartName())
-        );
-    }
-
-    @ExceptionHandler(MyBatisSystemException.class)
-    public ResponseEntity<MessageResponse> handleMyBatisSystemException(MyBatisSystemException e) {
-        log.error("MyBatis system error", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError("MyBatis system error")
         );
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<MessageResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing request parameter: " + e.getParameterName())
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<MessageResponse> handleHttpMessageNotReadableException() {
+        return ResponseEntity.badRequest().body(
+                MessageResponse.badRequest("Invalid request body")
+        );
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageResponse> handleException(Exception e) {
-        log.error("Internal server error", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError("Internal server error")
+    public ResponseEntity<MessageResponse> handleException(Exception e, WebRequest request) {
+        if (e.getMessage() == null) {
+            log.error("Unexpected exception", e);
+        } else {
+            log.error("Unexpected exception: {}", e.getMessage());
+        }
+        return ResponseEntity.badRequest().body(
+                MessageResponse.badRequest("How dare you!")
         );
     }
 }

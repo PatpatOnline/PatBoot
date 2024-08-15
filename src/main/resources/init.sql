@@ -63,10 +63,9 @@ CREATE TABLE `student`
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `student_account_id_index` ON `student` (`account_id`);
+CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
 CREATE INDEX `student_course_id_index` ON `student` (`course_id`);
 CREATE INDEX `student_teacher_id_index` ON `student` (`teacher_id`);
-CREATE INDEX `student_account_id_course_id_index` ON `student` (`account_id`, `course_id`);
 
 
 ############################################################
@@ -194,7 +193,6 @@ CREATE TABLE `submission`
 
 CREATE INDEX `submission_problem_id_account_id_index` ON `submission` (`problem_id`, `account_id`);
 CREATE INDEX `submission_course_id_index` ON `submission` (`course_id`);
-CREATE INDEX `submission_problem_id_index` ON `submission` (`problem_id`);
 CREATE INDEX `submission_account_id_index` ON `submission` (`account_id`);
 
 
@@ -232,7 +230,6 @@ CREATE TABLE `discussion`
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `discussion_course_id_index` ON `discussion` (`course_id`);
 CREATE INDEX `discussion_course_id_topped_index` ON `discussion` (`course_id`, `topped`);
 
 DROP TABLE IF EXISTS `like_discussion`;
@@ -296,4 +293,50 @@ CREATE TABLE `task_score`
 );
 
 CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `student_id`);
-CREATE INDEX `task_score_task_id_account_id_index` ON `task_score` (`task_id`, `account_id`);
+
+
+############################################################
+#                    Group Config                          #
+############################################################
+DROP TABLE IF EXISTS `group_config`;
+CREATE TABLE `group_config`
+(
+    `course_id` int  NOT NULL,
+    `max_size`  int  NOT NULL,
+    `enabled`   bool NOT NULL,
+    PRIMARY KEY (`course_id`)
+);
+
+
+############################################################
+#                        Group                             #
+############################################################
+DROP TABLE IF EXISTS `group`;
+CREATE TABLE `group`
+(
+    `id`          int          NOT NULL AUTO_INCREMENT,
+    `course_id`   int          NOT NULL,
+    `name`        varchar(63)  NOT NULL,
+    `description` varchar(255) NOT NULL,
+    `locked`      bool         NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `group_course_id_index` ON `group` (`course_id`);
+
+
+############################################################
+#                    Group Member                          #
+############################################################
+DROP TABLE IF EXISTS `group_member`;
+CREATE TABLE `group_member`
+(
+    `course_id`  int  NOT NULL,
+    `account_id` int  NOT NULL,
+    `group_id`   int  NOT NULL,
+    `owner`      bool NOT NULL,
+    `weight`     int  NOT NULL DEFAULT 100,
+    PRIMARY KEY (`course_id`, `account_id`)
+);
+
+CREATE INDEX `group_member_group_id_index` ON `group_member` (`group_id`);

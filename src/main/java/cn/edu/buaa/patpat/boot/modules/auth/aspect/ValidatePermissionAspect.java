@@ -12,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -26,6 +27,7 @@ public class ValidatePermissionAspect {
     private final AuthApi authApi;
 
     @Around("@annotation(cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission)")
+    @Order(200)
     public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
