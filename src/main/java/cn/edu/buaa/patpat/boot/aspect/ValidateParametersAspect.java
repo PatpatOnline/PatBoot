@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ValidateParametersAspect {
     @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidateParameters)")
+    @Order(100)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         for (Object arg : args) {
