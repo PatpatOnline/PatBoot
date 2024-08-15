@@ -8,6 +8,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,8 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 @Slf4j
 public class ValidateMultipartFileAspect {
-    @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidateParameters)")
+    @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile)")
+    @Order(102)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();

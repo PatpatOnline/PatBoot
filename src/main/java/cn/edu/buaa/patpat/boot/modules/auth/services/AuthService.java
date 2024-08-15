@@ -35,15 +35,6 @@ public class AuthService {
         return validateJwt(jwt);
     }
 
-    private AuthPayload validateJwt(String jwt) throws JwtVerifyException {
-        String subject = refreshIssuer.verify(jwt);
-        try {
-            return mappers.fromJson(subject, AuthPayload.class);
-        } catch (JsonProcessingException e) {
-            throw new JwtVerifyException("Failed to deserialize auth view", e);
-        }
-    }
-
     public String issueRefresh(AuthPayload auth) throws JwtIssueException {
         String subject;
         try {
@@ -72,5 +63,14 @@ public class AuthService {
 
     public Cookie cleanRefreshCookie() {
         return refreshCookieSetter.clean();
+    }
+
+    private AuthPayload validateJwt(String jwt) throws JwtVerifyException {
+        String subject = refreshIssuer.verify(jwt);
+        try {
+            return mappers.fromJson(subject, AuthPayload.class);
+        } catch (JsonProcessingException e) {
+            throw new JwtVerifyException("Failed to deserialize auth view", e);
+        }
     }
 }

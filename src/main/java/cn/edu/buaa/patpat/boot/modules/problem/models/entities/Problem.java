@@ -14,9 +14,9 @@ public class Problem extends HasCreatedAndUpdated {
 
     /**
      * Submission of hidden problems can only be invoked within.
-     * e.g. problem for iterative practice.
+     * e.g., problem for iterative practice.
      */
-    private Boolean hidden;
+    private boolean hidden;
 
     /**
      * JSON format of the problem descriptor.

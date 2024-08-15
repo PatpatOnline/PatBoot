@@ -10,10 +10,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SubmissionDto extends JudgeTimestamp {
     private int id;
-    private int accountId;
-    private String buaaId;
-    private int courseId;
-    private int problemId;
 
     private String language;
     private int score;

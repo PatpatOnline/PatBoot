@@ -6,10 +6,11 @@ import lombok.Data;
 public class AuthPayload {
     private int id;
     private String buaaId;
+    private String name;
     private boolean ta;
     private boolean teacher;
 
-    boolean isStudent() {
+    public boolean isStudent() {
         return !ta;
     }
 }

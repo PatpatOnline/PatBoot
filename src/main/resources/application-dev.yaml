@@ -6,17 +6,15 @@ springdoc:
     enabled: true
 cors:
   allowed-origins:
-    - http://localhost:8000
+    - http://localhost:8080
     - http://localhost:5173
 cookies:
-  domain: ${DOMAIN:localhost}
+  domain: none
 bucket:
   serve: true
-  public-root: ./volume/wwwroot/
-  private-root: ./volume/bucket/
+  public-root: ../volume/wwwroot/
+  private-root: ../volume/bucket/
 config:
   allow-register: true
   http: http://localhost:8080
   websocket: ws://localhost:8080
-judge:
-  judge-root: ./volume/judge/

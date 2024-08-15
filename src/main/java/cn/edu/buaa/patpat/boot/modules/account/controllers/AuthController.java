@@ -1,6 +1,5 @@
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -11,6 +10,7 @@ import cn.edu.buaa.patpat.boot.modules.account.dto.LoginRequest;
 import cn.edu.buaa.patpat.boot.modules.account.dto.LoginResponse;
 import cn.edu.buaa.patpat.boot.modules.account.dto.RegisterRequest;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
+import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.api.CourseApi;
@@ -19,13 +19,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +41,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class AuthController extends BaseController {
     private final AccountService accountService;
     private final CourseApi courseApi;
+    private final AuthApi authApi;
 
     @Value("${config.allow-register}")
     private boolean allowRegister;
@@ -53,10 +52,8 @@ public class AuthController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Register successfully"),
             @ApiResponse(responseCode = "400", description = "BUAA ID already exists")
     })
-    @ValidateParameters
     public MessageResponse register(
-            @RequestBody @Valid RegisterRequest request,
-            BindingResult bindingResult
+            @RequestBody @Valid RegisterRequest request
     ) {
         if (allowRegister) {
             accountService.register(request);
@@ -73,10 +70,8 @@ public class AuthController extends BaseController {
             @ApiResponse(responseCode = "400", description = "Account not found or password incorrect"),
             @ApiResponse(responseCode = "403", description = "You are not in any course")
     })
-    @ValidateParameters
     public DataResponse<LoginResponse> login(
             @RequestBody @Valid LoginRequest request,
-            BindingResult bindingResult,
             HttpServletResponse servletResponse
     ) {
         var account = accountService.login(request);
@@ -97,7 +92,7 @@ public class AuthController extends BaseController {
 
         if (courses.size() == 1) {
             // If only one course available, set it as the active course.
-            servletResponse.addCookie(courseApi.setCourseCookie(courses.get(0).getId()));
+            servletResponse.addCookie(courseApi.setCourseCookie(courses.get(0).getId(), auth));
         } else {
             // If more than one course available, force user to select course.
             servletResponse.addCookie(courseApi.cleanCourseCookie());
@@ -110,11 +105,8 @@ public class AuthController extends BaseController {
 
     @PostMapping("logout")
     @Operation(summary = "Logout", description = "Logout and clear the session")
-    @ValidateParameters
     @ValidatePermission
     public MessageResponse logout(
-            AuthPayload auth,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
         servletResponse.addCookie(authApi.cleanJwtCookie());

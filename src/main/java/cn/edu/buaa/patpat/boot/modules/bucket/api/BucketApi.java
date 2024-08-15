@@ -82,6 +82,10 @@ public class BucketApi {
         return pathService.toRecord(tag, filename, false);
     }
 
+    public String toRecord(String tag, String... args) {
+        return pathService.toRecord(tag, String.join("/", args), false);
+    }
+
     /**
      * @see PathService#toRecord(String)
      */

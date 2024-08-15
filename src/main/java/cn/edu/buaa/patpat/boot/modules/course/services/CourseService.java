@@ -1,22 +1,30 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
+import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CreateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateCourseRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseTutorial;
+import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.CourseMapper;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CourseService extends BaseService {
     private final CourseMapper courseMapper;
+    private final StudentService studentService;
 
     public Course create(CreateCourseRequest request) {
         Course course = mappers.map(request, Course.class);
@@ -26,15 +34,15 @@ public class CourseService extends BaseService {
     }
 
     public Course delete(int id) {
-        Course course = courseMapper.findById(id);
+        Course course = courseMapper.find(id);
         if (course != null) {
-            courseMapper.deleteById(course.getId());
+            courseMapper.delete(course.getId());
         }
         return course;
     }
 
     public Course update(int id, UpdateCourseRequest request) {
-        Course course = courseMapper.findById(id);
+        Course course = courseMapper.find(id);
         if (course == null) {
             return null;
         }
@@ -47,17 +55,56 @@ public class CourseService extends BaseService {
         if (auth.isTa()) {
             return courseMapper.getAll();
         }
-        return courseMapper.findAllActiveByAccount(auth.getId());
+        return courseMapper.findAllActive(auth.getId());
     }
 
-    public Course findById(int id) {
-        return courseMapper.findById(id);
+    public CourseView find(int id) {
+        return courseMapper.findView(id);
     }
 
     public Course tryGetCourse(AuthPayload auth, int courseId) {
         if (auth.isTa()) {
-            return courseMapper.findById(courseId);
+            return courseMapper.find(courseId);
         }
-        return courseMapper.findActiveByIdAndAccount(courseId, auth.getId());
+        return courseMapper.findActive(courseId, auth.getId());
+    }
+
+    public CourseTutorial updateTutorial(int courseId, String url) {
+        CourseTutorial tutorial = new CourseTutorial(courseId, url);
+        courseMapper.updateTutorial(tutorial);
+        return findTutorial(courseId);
+    }
+
+    public void deleteTutorial(int courseId) {
+        int updated = courseMapper.deleteTutorial(courseId);
+        if (updated == 0) {
+            throw new NotFoundException(M("course.tutorial.exists.not"));
+        }
+    }
+
+    public CourseTutorial findTutorial(int courseId) {
+        var tutorial = courseMapper.findTutorial(courseId);
+        if (tutorial == null) {
+            throw new NotFoundException(M("course.tutorial.exists.not"));
+        }
+        return tutorial;
+    }
+
+    public CoursePayload getCoursePayload(int courseId, AuthPayload auth) {
+        CoursePayload payload = new CoursePayload();
+
+        Course course = tryGetCourse(auth, courseId);
+        if (course == null) {
+            throw new NotFoundException(M("course.exists.not"));
+        }
+        payload.setCourseId(course.getId());
+
+        Student student = studentService.find(auth.getId(), course.getId());
+        if (student != null) {
+            payload.setStudentId(student.getId());
+            payload.setTeacherId(student.getTeacherId());
+        }
+
+        return payload;
     }
 }

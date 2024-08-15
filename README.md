@@ -32,13 +32,14 @@ To run the project locally, you need to set up the following environment variabl
 - `/log/`: The log directory
 - `/bucket/`: The private bucket for storing files
   - `${buaa-id}/`: Private files uploaded by the user
-  - `problem/`: The problem root directory
-    - `${problem-id}/`: The problem directory
-  - `submission/`: The submission root directory
-    - `${submission-id}/`: The submission directory
-      - `${buaa-id}/`: The user's submission directory
+  - `problem/${problem-id}/`: The problem directory
+  - `course/${course-id}/`: Course material directory
+  - `lab/${lab-id}/${buaa-id}-${name}`: Lab report directory
+  - `iter/${iter-id}/${buaa-id}-${name}`: Iteration submission directory
+  - `submission/${submission-id}/${buaa-id}`: Problem submission directory
   - `temp/`: Temporary files
-- `/judge/`: The judge directory
+- `/judge/`: The judge sandbox directory
   - `${random}/`: A copy of a submission for judging
 - `/wwwroot`: The public bucket for storing files
   - `${buaa-id}/`: Public files uploaded by the user, e.g. avatar
+  - `${files}`: Global public files

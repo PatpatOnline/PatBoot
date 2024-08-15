@@ -1,8 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.course.controllers;
 
-import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
+import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
@@ -10,12 +11,15 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
+import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.CourseView;
 import cn.edu.buaa.patpat.boot.modules.course.services.CourseService;
+import cn.edu.buaa.patpat.boot.modules.course.services.StudentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,50 +37,47 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class CourseController extends BaseController {
     private final CourseService courseService;
     private final ICookieSetter courseCookieSetter;
+    private final StudentService studentService;
 
     @GetMapping("all")
     @Operation(summary = "Get all courses", description = "T.A. gets all courses")
-    @ValidateParameters
     @ValidatePermission(AuthLevel.LOGIN)
     public DataResponse<List<Course>> getAll(
-            AuthPayload auth,
-            HttpServletRequest servletRequest
+            AuthPayload auth
     ) {
         return DataResponse.ok(courseService.getAll(auth));
     }
 
     @PostMapping("select/{id}")
     @Operation(summary = "Select a course", description = "User selects the current course")
-    @ValidateParameters
     @ValidatePermission
-    public DataResponse<Course> select(
+    public DataResponse<CoursePayload> select(
             @PathVariable int id,
             AuthPayload auth,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
-        Course course = courseService.tryGetCourse(auth, id);
-        if (course == null) {
-            throw new NotFoundException(M("course.exists.not"));
-        }
+        CoursePayload payload = courseService.getCoursePayload(id, auth);
 
-        Cookie cookie = courseCookieSetter.set(String.valueOf(course.getId()));
-        servletResponse.addCookie(cookie);
+        try {
+            Cookie cookie = courseCookieSetter.set(Strings.toBase64(mappers.toJson(payload)));
+            servletResponse.addCookie(cookie);
+        } catch (JsonProcessingException e) {
+            throw new InternalServerErrorException(M("course.cookies.error"));
+        }
 
         return DataResponse.ok(
                 M("course.select.success"),
-                course);
+                payload);
     }
 
-    @GetMapping("current")
+    @GetMapping("")
     @Operation(summary = "Get the current course", description = "Get the current course")
     @ValidateCourse
-    public DataResponse<Course> current(
+    public DataResponse<CourseView> current(
             @CourseId Integer courseId,
-            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse
     ) {
-        Course course = courseService.findById(courseId);
+        CourseView course = courseService.find(courseId);
         if (course == null) {
             Cookie cookie = courseCookieSetter.clean();
             servletResponse.addCookie(cookie);

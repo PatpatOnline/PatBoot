@@ -8,7 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
@@ -48,14 +50,14 @@ public class PathService {
     /**
      * Get the record of the content in the database.
      *
-     * @param tag        The tag of the content. If is null or empty, will
+     * @param tag        The tag of the content. If is null or empty, it will
      *                   be stored to the shared bucket.
      * @param filename   The filename of the content.
      * @param randomName Whether to generate a random name for the content.
      * @return The record of the content.
      */
     public String toRecord(String tag, String filename, boolean randomName) {
-        if (Strings.isNullOrEmpty(tag)) {
+        if (Strings.isNullOrBlank(tag)) {
             return toRecord(filename, randomName);
         }
         return tag + "/" + toRecord(filename, randomName);
@@ -82,16 +84,6 @@ public class PathService {
         return toRecord(filename, true);
     }
 
-    private String randomizeFilename(String originalFilename) {
-        String ext = FilenameUtils.getExtension(originalFilename);
-        String filename = RandomStringUtils.randomAlphanumeric(16);
-        if ("".equals(ext)) {
-            return filename;
-        }
-        return filename + "." + ext;
-    }
-
-
     /**
      * Get the private path of the content.
      *
@@ -109,7 +101,7 @@ public class PathService {
      * @return The URL of the content.
      */
     public String recordToUrl(String record) {
-        return httpUrl + "/public/" + record;
+        return UriUtils.encodePath(httpUrl + "/public/" + record, StandardCharsets.UTF_8);
     }
 
     /**
@@ -151,5 +143,14 @@ public class PathService {
             throw new MalformedPathException("Invalid URL: " + url);
         }
         return url.substring(httpUrl.length() + 1);
+    }
+
+    private String randomizeFilename(String originalFilename) {
+        String ext = FilenameUtils.getExtension(originalFilename);
+        String filename = RandomStringUtils.randomAlphanumeric(16);
+        if ("".equals(ext)) {
+            return filename;
+        }
+        return filename + "." + ext;
     }
 }

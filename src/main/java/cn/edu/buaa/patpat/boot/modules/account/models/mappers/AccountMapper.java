@@ -14,7 +14,8 @@ public interface AccountMapper {
                        `school`,
                        `ta`,
                        `teacher`,
-                       `avatar`)
+                       `avatar`,
+                       `created_at`)
             VALUES (
                 #{buaaId},
                 #{name},
@@ -23,22 +24,11 @@ public interface AccountMapper {
                 #{school},
                 #{ta},
                 #{teacher},
-                #{avatar})
+                #{avatar},
+                #{createdAt})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void save(Account account);
-
-    @Select("SELECT COUNT(*) FROM `account` WHERE `buaa_id` = #{buaaId}")
-    boolean existsByBuaaId(String buaaId);
-
-    @Select("SELECT * FROM `account` WHERE `id` = #{id} LIMIT 1")
-    Account findById(int id);
-
-    @Select("SELECT * FROM `account` WHERE `buaa_id` = #{buaaId} LIMIT 1")
-    Account findByBuaaId(String buaaId);
-
-    @Select("SELECT * FROM `account` WHERE `name` = #{name} LIMIT 1")
-    Account findByName(String name);
 
     @Update("""
             UPDATE `account`
@@ -48,8 +38,26 @@ public interface AccountMapper {
                 `school` = #{school}
             WHERE `id` = #{id}
             """)
-    int update(Account account);
+    void updateInfo(Account account);
+
+    @Update("""
+            UPDATE `account`
+            SET `buaa_id` = #{buaaId},
+                `name` = #{name},
+                `gender` = #{gender},
+                `school` = #{school},
+                `teacher` = #{teacher},
+                `ta` = #{ta}
+            WHERE `id` = #{id}
+            """)
+    void update(Account account);
+
+    @Select("SELECT `id`, `buaa_id`, `password` FROM `account` WHERE `id` = #{id} LIMIT 1")
+    Account findUpdatePassword(int id);
+
+    @Update("UPDATE `account` SET `password` = #{password} WHERE `id` = #{id}")
+    void updatePassword(Account account);
 
     @Delete("DELETE FROM `account` WHERE `id` = #{id}")
-    int deleteById(int id);
+    void delete(int id);
 }

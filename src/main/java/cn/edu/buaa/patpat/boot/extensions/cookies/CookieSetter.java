@@ -26,17 +26,17 @@ public class CookieSetter implements ICookieSetter {
     }
 
     public CookieSetter(String name, String domain, String path, int maxAge, boolean httpOnly, boolean secure) {
-        if (Strings.isNullOrEmpty(name)) {
+        if (Strings.isNullOrBlank(name)) {
             throw new IllegalArgumentException("Cookie name cannot be null or empty");
         }
         this.name = name;
 
-        if (Strings.isNullOrEmpty(domain) || "none".equals(domain)) {
+        if (Strings.isNullOrBlank(domain) || "none".equals(domain)) {
             domain = null;
         }
         this.domain = domain;
 
-        if (Strings.isNullOrEmpty(path)) {
+        if (Strings.isNullOrBlank(path)) {
             throw new IllegalArgumentException("Cookie path cannot be null or empty");
         }
         this.path = path;
@@ -51,7 +51,7 @@ public class CookieSetter implements ICookieSetter {
 
     @Override
     public Cookie set(String value) {
-        if (Strings.isNullOrEmpty(value)) {
+        if (Strings.isNullOrBlank(value)) {
             value = null;
         }
 

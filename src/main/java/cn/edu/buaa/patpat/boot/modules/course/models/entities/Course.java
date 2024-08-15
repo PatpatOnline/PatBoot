@@ -22,7 +22,7 @@ public class Course extends HasCreatedAndUpdated {
     private String code;
 
     /**
-     * The semester of the course. e.g. 2023 Autumn
+     * The semester of the course. e.g., 2023 Autumn
      */
     private String semester;
 

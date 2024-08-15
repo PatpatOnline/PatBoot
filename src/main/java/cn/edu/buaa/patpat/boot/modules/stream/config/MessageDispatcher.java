@@ -21,10 +21,6 @@ public class MessageDispatcher {
     private final Map<WebSocketSession, String> sessions = new ConcurrentHashMap<>();
     private final Mappers mappers;
 
-    void addSession(String tag, WebSocketSession session) {
-        sessions.put(session, tag);
-    }
-
     /**
      * Broadcast message to all connected sessions.
      *
@@ -41,10 +37,6 @@ public class MessageDispatcher {
             }
         }
         invalidSessions.forEach(this::removeSession);
-    }
-
-    String removeSession(WebSocketSession session) {
-        return sessions.remove(session);
     }
 
     /**
@@ -78,5 +70,13 @@ public class MessageDispatcher {
             }
         }
         invalidSessions.forEach(this::removeSession);
+    }
+
+    void addSession(String tag, WebSocketSession session) {
+        sessions.put(session, tag);
+    }
+
+    String removeSession(WebSocketSession session) {
+        return sessions.remove(session);
     }
 }

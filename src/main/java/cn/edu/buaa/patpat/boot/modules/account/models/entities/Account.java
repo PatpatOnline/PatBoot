@@ -1,13 +1,16 @@
 package cn.edu.buaa.patpat.boot.modules.account.models.entities;
 
 
+import cn.edu.buaa.patpat.boot.common.models.HasCreated;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Table: account
  */
 @Data
-public class Account {
+@EqualsAndHashCode(callSuper = true)
+public class Account extends HasCreated {
     private int id;
 
     /**
@@ -43,7 +46,7 @@ public class Account {
 
     /**
      * Whether the account is a teacher assistant.
-     * A teacher is also a teacher assistant.
+     * A teacher is also a teacher's assistant.
      */
     private boolean ta;
 

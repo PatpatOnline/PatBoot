@@ -52,10 +52,10 @@ public class ProblemDescriptor {
         if (!("basic".equalsIgnoreCase(mode) || "advanced".equalsIgnoreCase(mode))) {
             throw new ProblemInitializeException("Problem mode must be basic or advanced");
         }
-        if (Strings.isNullOrEmpty(name)) {
+        if (Strings.isNullOrBlank(name)) {
             throw new ProblemInitializeException("Problem name can not be empty");
         }
-        if (Strings.isNullOrEmpty(mainClass)) {
+        if (Strings.isNullOrBlank(mainClass)) {
             throw new ProblemInitializeException("Main class can not be empty");
         }
         if (cases == null || cases.isEmpty()) {
@@ -90,6 +90,5 @@ public class ProblemDescriptor {
         }
         return totalScore;
     }
-
 }
 

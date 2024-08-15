@@ -1,7 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface StudentMapper {
@@ -15,7 +18,7 @@ public interface StudentMapper {
     void save(Student student);
 
     @Delete("DELETE FROM `student` WHERE `id` = #{id}")
-    void deleteById(int id);
+    void delete(int id);
 
     @Update("""
             UPDATE `student`
@@ -28,12 +31,16 @@ public interface StudentMapper {
                 `repeat` = #{repeat}
             WHERE `id` = #{id}
             """)
-    void update(Student student);
+    void importUpdate(Student student);
 
-    @Select("""
-            SELECT * FROM `student`
-            WHERE `account_id` = #{accountId} AND `course_id` = #{courseId}
-            LIMIT 1
+    @Update("""
+            UPDATE `student`
+            SET
+                `teacher_id` = #{teacherId},
+                `major` = #{major},
+                `class_name` = #{className},
+                `repeat` = #{repeat}
+            WHERE `id` = #{id}
             """)
-    Student findByAccountAndCourse(int accountId, int courseId);
+    void update(Student student);
 }

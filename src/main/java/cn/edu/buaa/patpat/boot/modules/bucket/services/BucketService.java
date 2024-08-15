@@ -37,6 +37,28 @@ public class BucketService {
     }
 
     /**
+     * Save private shared content.
+     *
+     * @see BucketService#saveToPrivate(String, String, InputStreamSource)
+     */
+    public String saveToPrivate(String originalFilename, InputStreamSource source) throws IOException {
+        return saveToPrivate(null, originalFilename, source);
+    }
+
+    /**
+     * Save a file to the private path.
+     *
+     * @param tag              The tag of the content. If is null or empty, will
+     * @param originalFilename The original filename of the file.
+     * @param source           The source of the file.
+     * @return The record of the file to be saved in the database.
+     * @throws IOException If an I/O error occurs.
+     */
+    public String saveToPrivate(String tag, String originalFilename, InputStreamSource source) throws IOException {
+        return saveFile(tag, originalFilename, source, false);
+    }
+
+    /**
      * The implementation of saving a file to the path.
      *
      * @param tag              The tag of the content.
@@ -72,27 +94,5 @@ public class BucketService {
         String ext = FilenameUtils.getExtension(originalFilename);
         String filename = RandomStringUtils.randomAlphanumeric(16);
         return filename + "." + ext;
-    }
-
-    /**
-     * Save private shared content.
-     *
-     * @see BucketService#saveToPrivate(String, String, InputStreamSource)
-     */
-    public String saveToPrivate(String originalFilename, InputStreamSource source) throws IOException {
-        return saveToPrivate(null, originalFilename, source);
-    }
-
-    /**
-     * Save a file to the private path.
-     *
-     * @param tag              The tag of the content. If is null or empty, will
-     * @param originalFilename The original filename of the file.
-     * @param source           The source of the file.
-     * @return The record of the file to be saved in the database.
-     * @throws IOException If an I/O error occurs.
-     */
-    public String saveToPrivate(String tag, String originalFilename, InputStreamSource source) throws IOException {
-        return saveFile(tag, originalFilename, source, false);
     }
 }

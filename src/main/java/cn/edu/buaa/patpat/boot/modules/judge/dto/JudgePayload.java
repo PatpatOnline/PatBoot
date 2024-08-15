@@ -9,9 +9,8 @@ public class JudgePayload {
     private int courseId;
 
     /**
-     * Path of the sandbox directory under /judge/.
-     * Although we can simply calculate it again, this way
-     * we can get it easier after the submission is done.
+     * If taskId is not 0, then this submission is related to
+     * a task (Iteration) and should update the task's score also.
      */
-    private String sandboxPath;
+    private int taskId;
 }

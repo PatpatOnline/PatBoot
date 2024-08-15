@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.problem.services;
 
+import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.config.Globals;
@@ -8,16 +9,22 @@ import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.CreateProblemRequest;
+import cn.edu.buaa.patpat.boot.modules.problem.dto.ProblemDto;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.UpdateProblemRequest;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
+import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemFilter;
+import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.problem.models.mappers.ProblemMapper;
+import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemListView;
+import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemSelectView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -28,6 +35,7 @@ public class ProblemService extends BaseService {
     private final BucketApi bucketApi;
     private final ProblemInitializer problemInitializer;
     private final ProblemMapper problemMapper;
+    private final ProblemFilterMapper problemFilterMapper;
 
     public Problem createProblem(CreateProblemRequest request) {
         // validate problem configuration
@@ -59,7 +67,7 @@ public class ProblemService extends BaseService {
     }
 
     public Problem updateProblem(int id, UpdateProblemRequest request) {
-        Problem problem = problemMapper.findById(id);
+        Problem problem = problemMapper.find(id);
         if (problem == null) {
             throw new BadRequestException(M("problem.exists.not"));
         }
@@ -84,7 +92,7 @@ public class ProblemService extends BaseService {
     }
 
     public void deleteProblem(int id) {
-        if (problemMapper.deleteById(id) == 0) {
+        if (problemMapper.delete(id) == 0) {
             throw new NotFoundException(M("problem.exists.not"));
         }
 
@@ -97,4 +105,28 @@ public class ProblemService extends BaseService {
             log.error("Failed to purge problem files", e);
         }
     }
+
+    public List<ProblemSelectView> getAll() {
+        return problemFilterMapper.getAll();
+    }
+
+    public PageListDto<ProblemListView> query(int page, int pageSize, ProblemFilter filter) {
+        int count = problemFilterMapper.count(filter);
+        List<ProblemListView> problems = count == 0
+                ? List.of()
+                : problemFilterMapper.query(page, pageSize, filter);
+        return PageListDto.of(problems, count, page, pageSize);
+    }
+
+    public ProblemDto query(int id, boolean allowHidden) {
+        Problem problem = problemMapper.find(id);
+        if (problem == null) {
+            throw new NotFoundException(M("problem.exists.not"));
+        }
+        if (!allowHidden && problem.isHidden()) {
+            throw new NotFoundException(M("problem.exists.not"));
+        }
+        return ProblemDto.of(problem, mappers);
+    }
 }
+

@@ -4,9 +4,9 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class Zips {
     private Zips() {}
@@ -48,5 +48,26 @@ public class Zips {
 
     public static void zip(String sourceDir, String zipFilePath, boolean includeParent) throws IOException {
         zip(Path.of(sourceDir), Path.of(zipFilePath), includeParent);
+    }
+
+    /**
+     * Add files to an existing zip archive.
+     * Shouldn't pass directories to this method.
+     *
+     * @param zipFile The path to the zip archive.
+     * @param files   The paths to the files to add.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void update(Path zipFile, Path... files) throws IOException {
+        try (var archive = new ZipFile(zipFile.toFile())) {
+            archive.addFiles(Arrays.stream(files).map(Path::toFile).toList());
+        } catch (ZipException e) {
+            throw new IOException(e);
+        }
+
+    }
+
+    public static void update(String zipFile, String... files) throws IOException {
+        update(Path.of(zipFile), Arrays.stream(files).map(Path::of).toArray(Path[]::new));
     }
 }
