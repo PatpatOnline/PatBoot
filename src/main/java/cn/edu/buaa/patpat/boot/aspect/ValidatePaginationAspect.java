@@ -6,6 +6,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 public class ValidatePaginationAspect {
     @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidatePagination)")
+    @Order(101)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
