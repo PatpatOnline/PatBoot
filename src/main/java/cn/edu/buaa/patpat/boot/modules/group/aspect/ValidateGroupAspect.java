@@ -93,7 +93,7 @@ public class ValidateGroupAspect {
         for (int i = 0; i < method.getParameterCount(); i++) {
             if (args[i] instanceof Group) {
                 if (member != null) {
-                    args[i] = groupService.findGroup(member.getGroupId());
+                    args[i] = groupService.getGroup(member.getGroupId());
                 } else {
                     args[i] = null;
                 }

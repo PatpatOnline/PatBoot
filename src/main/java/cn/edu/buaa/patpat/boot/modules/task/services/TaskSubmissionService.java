@@ -40,7 +40,7 @@ public class TaskSubmissionService extends BaseService {
         return download(path);
     }
 
-    protected Task findTask(int taskId, int courseId, int type) {
+    protected Task get(int taskId, int courseId, int type) {
         Task task = taskMapper.findSubmit(taskId, courseId, type);
         if (task == null) {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
@@ -49,7 +49,7 @@ public class TaskSubmissionService extends BaseService {
     }
 
     protected TaskStatus checkSubmissionStatus(int taskId, int courseId, int type, AuthPayload auth) {
-        Task lab = findTask(taskId, courseId, type);
+        Task lab = get(taskId, courseId, type);
         TaskStatus status = validateStatus(lab);
         if (isEarlyOrLate(status, auth)) {
             throw new ForbiddenException(M("task.submit.forbidden", TaskTypes.toString(type)));

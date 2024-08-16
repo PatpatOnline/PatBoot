@@ -70,7 +70,7 @@ public class StudentAdminController extends BaseController {
         return MessageResponse.ok(M("student.import.progress"));
     }
 
-    @PostMapping("/import")
+    @PostMapping("import")
     @Operation(summary = "Import students synchronously", description = "T.A. imports students from an Excel file results will be returned synchronously.")
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)

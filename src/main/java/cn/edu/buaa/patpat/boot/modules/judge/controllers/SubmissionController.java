@@ -34,7 +34,7 @@ public class SubmissionController extends BaseController {
             @PathVariable int id,
             AuthPayload auth
     ) {
-        var dto = submissionService.findLastSubmission(id, auth.getId());
+        var dto = submissionService.getLastSubmission(id, auth.getId());
         return DataResponse.ok(dto);
     }
 }

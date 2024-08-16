@@ -53,7 +53,7 @@ public class DiscussionController extends BaseController {
         if (discussion == null) {
             throw new BadRequestException(M("discussion.create.error"));
         }
-        var view = discussionService.detail(courseId, discussion.getId(), auth.getId());
+        var view = discussionService.get(courseId, discussion.getId(), auth.getId());
 
         log.info("User {} created discussion {}: {}", auth.getBuaaId(), discussion.getId(), discussion.getTitle());
 
@@ -103,7 +103,7 @@ public class DiscussionController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
-        var discussion = discussionService.detail(courseId, id, auth.getId());
+        var discussion = discussionService.get(courseId, id, auth.getId());
         var replies = replyService.query(discussion.getId(), auth.getId());
 
         return DataResponse.ok(new DiscussionWithReplyView(discussion, replies));

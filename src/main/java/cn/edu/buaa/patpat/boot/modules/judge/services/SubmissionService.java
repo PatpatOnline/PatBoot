@@ -25,7 +25,7 @@ public class SubmissionService extends BaseService {
     private final SubmissionMapper submissionMapper;
     private final SubmissionFilterMapper submissionFilterMapper;
 
-    public SubmissionDto findLastSubmission(int problemId, int accountId) {
+    public SubmissionDto getLastSubmission(int problemId, int accountId) {
         Submission submission = submissionFilterMapper.findLast(problemId, accountId);
         if (submission == null) {
             throw new NotFoundException(M("submission.exists.not"));
@@ -35,7 +35,7 @@ public class SubmissionService extends BaseService {
         if (submission.isTimedOut()) {
             submissionMapper.delete(submission.getId());
             // calling self recursively to find at least one submission, or throw NotFoundException
-            return findLastSubmission(problemId, accountId);
+            return getLastSubmission(problemId, accountId);
         }
 
         return SubmissionDto.of(submission, mappers);

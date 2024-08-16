@@ -49,7 +49,7 @@ public class ReplyController extends BaseController {
         if (reply == null) {
             throw new NotFoundException(M("reply.create.error"));
         }
-        ReplyView view = replyService.detail(reply.getId(), auth.getId());
+        ReplyView view = replyService.get(reply.getId(), auth.getId());
 
         return DataResponse.ok(M("reply.create.success"), view);
     }

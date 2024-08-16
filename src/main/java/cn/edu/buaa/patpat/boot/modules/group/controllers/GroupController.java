@@ -98,7 +98,7 @@ public class GroupController extends BaseController {
             GroupConfig config,
             GroupMember member
     ) {
-        GroupView view = groupService.findGroup(member.getGroupId(), config);
+        GroupView view = groupService.getGroup(member.getGroupId(), config);
         return DataResponse.ok(view);
     }
 
@@ -115,7 +115,7 @@ public class GroupController extends BaseController {
             GroupConfig config
     ) {
         groupService.join(id, courseId, auth.getId(), config);
-        GroupView group = groupService.findGroup(id, config);
+        GroupView group = groupService.getGroup(id, config);
         return DataResponse.ok(M("group.join.success"), group);
     }
 

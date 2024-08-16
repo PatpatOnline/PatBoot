@@ -36,12 +36,22 @@ public class GroupService extends BaseService {
     private final BucketApi bucketApi;
     private final GroupFilterMapper groupFilterMapper;
 
-    public Group findGroup(int id) {
+    public Group getGroup(int id) {
         Group group = groupMapper.find(id);
         if (group == null) {
             throw new NotFoundException(M("group.exists.not"));
         }
         return group;
+    }
+
+    public GroupView getGroup(int id, GroupConfig config) {
+        GroupView view = groupFilterMapper.findGroup(id);
+        if (view == null) {
+            throw new NotFoundException(M("group.exists.not"));
+        }
+        view.setMembers(getMembersInGroup(id));
+        view.setMaxSize(config.getMaxSize());
+        return view;
     }
 
     public GroupMember findMember(int courseId, int accountId) {
@@ -66,13 +76,6 @@ public class GroupService extends BaseService {
         mappers.map(request, group);
         groupMapper.update(group);
         return group;
-    }
-
-    public GroupView findGroup(int id, GroupConfig config) {
-        GroupView view = groupFilterMapper.findGroup(id);
-        view.setMembers(findMembersInGroup(id));
-        view.setMaxSize(config.getMaxSize());
-        return view;
     }
 
     @Transactional
@@ -150,7 +153,7 @@ public class GroupService extends BaseService {
         return groupFilterMapper.queryRogueStudents(courseId);
     }
 
-    private List<GroupMemberView> findMembersInGroup(int groupId) {
+    private List<GroupMemberView> getMembersInGroup(int groupId) {
         var members = groupFilterMapper.findMembersInGroup(groupId);
         members.forEach(member -> member.setAvatar(
                 bucketApi.recordToUrl(member.getAvatar())));
