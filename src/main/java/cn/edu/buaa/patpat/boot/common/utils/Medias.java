@@ -7,9 +7,12 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class Medias {
     private Medias() {}
@@ -148,5 +151,22 @@ public class Medias {
         } catch (MalformedURLException e) {
             throw new IOException("Failed to load resource: " + path);
         }
+    }
+
+    public static InputStream getInputStream(String path) throws IOException {
+        return getInputStream(Path.of(path));
+    }
+
+    public static InputStream getInputStream(Path path) throws IOException {
+        return Files.newInputStream(path);
+    }
+
+    public static OutputStream getOutputStream(String path) throws IOException {
+        return getOutputStream(Path.of(path));
+    }
+
+    public static OutputStream getOutputStream(Path path) throws IOException {
+        ensureParentPath(path);
+        return Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }
