@@ -5,9 +5,6 @@ import lombok.Data;
 
 @Data
 public class UpdateIterProblemsRequest {
-    /**
-     * If list is empty, all problems will be removed.
-     */
     @NotNull
     private int problemId;
 }

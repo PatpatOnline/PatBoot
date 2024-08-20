@@ -13,6 +13,7 @@ import cn.edu.buaa.patpat.boot.modules.group.aspect.WithGroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.dto.CreateGroupRequest;
 import cn.edu.buaa.patpat.boot.modules.group.dto.GroupDto;
 import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateGroupRequest;
+import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateWeightRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
@@ -98,7 +99,7 @@ public class GroupController extends BaseController {
             GroupConfig config,
             GroupMember member
     ) {
-        GroupView view = groupService.findGroup(member.getGroupId(), config);
+        GroupView view = groupService.getGroup(member.getGroupId(), config);
         return DataResponse.ok(view);
     }
 
@@ -115,7 +116,7 @@ public class GroupController extends BaseController {
             GroupConfig config
     ) {
         groupService.join(id, courseId, auth.getId(), config);
-        GroupView group = groupService.findGroup(id, config);
+        GroupView group = groupService.getGroup(id, config);
         return DataResponse.ok(M("group.join.success"), group);
     }
 
@@ -137,7 +138,7 @@ public class GroupController extends BaseController {
         if (group.isLocked()) {
             throw new ForbiddenException(M("group.locked"));
         }
-        groupService.quit(member.getGroupId(), courseId, auth.getId());
+        groupService.quit(courseId, auth.getId());
         return MessageResponse.ok(M("group.quit.success"));
     }
 
@@ -151,8 +152,7 @@ public class GroupController extends BaseController {
             @PathVariable int accountId,
             @CourseId Integer courseId,
             AuthPayload auth,
-            Group group,
-            GroupMember member
+            Group group
     ) {
         if (accountId == auth.getId()) {
             throw new ForbiddenException(M("group.kick.self"));
@@ -160,7 +160,7 @@ public class GroupController extends BaseController {
         if (group.isLocked()) {
             throw new ForbiddenException(M("group.locked"));
         }
-        groupService.kick(member.getGroupId(), courseId, accountId);
+        groupService.kick(courseId, group.getId(), accountId);
         return MessageResponse.ok(M("group.kick.success"));
     }
 
@@ -174,5 +174,29 @@ public class GroupController extends BaseController {
     ) {
         List<GroupListView> groups = groupService.querySummarizedGroups(courseId, config);
         return DataResponse.ok(groups);
+    }
+
+    @PostMapping("weight/{id}")
+    @Operation(summary = "Group owner update member weight", description = "Group owner update member weight")
+    @ValidateCourse
+    @ValidatePermission
+    @WithGroupConfig
+    @ValidateGroup(requireInGroup = true, requireOwner = true)
+    public DataResponse<Integer> weight(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateWeightRequest request,
+            @CourseId Integer courseId,
+            AuthPayload auth,
+            GroupConfig config,
+            GroupMember member
+    ) {
+        var weight = request.getWeight();
+        if (weight < config.getMinWeight()) {
+            weight = config.getMinWeight();
+        } else if (weight > config.getMaxWeight()) {
+            weight = config.getMaxWeight();
+        }
+        groupService.updateWeight(courseId, member.getGroupId(), id, weight);
+        return DataResponse.ok(weight);
     }
 }

@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.group.controllers;
 
+import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
@@ -7,6 +8,7 @@ import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.group.aspect.WithGroupConfig;
+import cn.edu.buaa.patpat.boot.modules.group.dto.GroupAssignmentDto;
 import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateGroupConfigRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
@@ -28,7 +30,6 @@ import java.util.List;
 @Tag(name = "Group Admin", description = "Group Admin API")
 public class GroupAdminController extends BaseController {
     private final GroupConfigService groupConfigService;
-    private final RequestBodyService requestBodyBuilder;
     private final GroupService groupService;
 
     @GetMapping("config")
@@ -45,6 +46,7 @@ public class GroupAdminController extends BaseController {
 
     @PutMapping("config/update")
     @Operation(summary = "Update group configuration", description = "Update group configuration of the current course")
+    @ValidateParameters
     @ValidateCourse
     @ValidatePermission(AuthLevel.TA)
     @WithGroupConfig

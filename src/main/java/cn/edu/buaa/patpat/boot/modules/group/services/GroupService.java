@@ -36,12 +36,22 @@ public class GroupService extends BaseService {
     private final BucketApi bucketApi;
     private final GroupFilterMapper groupFilterMapper;
 
-    public Group findGroup(int id) {
+    public Group getGroup(int id) {
         Group group = groupMapper.find(id);
         if (group == null) {
             throw new NotFoundException(M("group.exists.not"));
         }
         return group;
+    }
+
+    public GroupView getGroup(int id, GroupConfig config) {
+        GroupView view = groupFilterMapper.findGroup(id);
+        if (view == null) {
+            throw new NotFoundException(M("group.exists.not"));
+        }
+        view.setMembers(getMembersInGroup(id));
+        view.setMaxSize(config.getMaxSize());
+        return view;
     }
 
     public GroupMember findMember(int courseId, int accountId) {
@@ -68,13 +78,6 @@ public class GroupService extends BaseService {
         return group;
     }
 
-    public GroupView findGroup(int id, GroupConfig config) {
-        GroupView view = groupFilterMapper.findGroup(id);
-        view.setMembers(findMembersInGroup(id));
-        view.setMaxSize(config.getMaxSize());
-        return view;
-    }
-
     @Transactional
     public void dismiss(int groupId, int courseId) {
         groupMapper.delete(groupId, courseId);
@@ -92,24 +95,28 @@ public class GroupService extends BaseService {
         addMember(courseId, groupId, accountId);
     }
 
-    public void quit(int groupId, int courseId, int accountId) {
-        if (isLocked(groupId)) {
-            throw new ForbiddenException(M("group.locked"));
+    /**
+     * Check if the group is locked outside.
+     */
+    public void quit(int courseId, int accountId) {
+        if (groupMemberMapper.delete(courseId, accountId) == 0) {
+            throw new NotFoundException(M("group.member.exists.not"));
         }
-        groupMemberMapper.delete(courseId, accountId);
     }
 
-    public void kick(int groupId, int courseId, int accountId) {
-        if (isLocked(groupId)) {
-            throw new ForbiddenException(M("group.locked"));
-        }
-        if (groupMemberMapper.find(courseId, accountId) == null) {
+    /**
+     * Check if the group is locked outside.
+     */
+    public void kick(int courseId, int groupId, int accountId) {
+        var member = getMember(courseId, groupId, accountId);
+        if (member.getGroupId() != groupId) {
             throw new NotFoundException(M("group.member.exists.not"));
         }
-        int updated = groupMemberMapper.delete(courseId, accountId);
-        if (updated == 0) {
-            throw new NotFoundException(M("group.member.exists.not"));
+        if (member.isOwner()) {
+            // Shouldn't reach here, since only the owner can kick members and cannot kick himself.
+            throw new ForbiddenException(M("group.kick.owner"));
         }
+        groupMemberMapper.delete(courseId, accountId);
     }
 
     public List<GroupListView> querySummarizedGroups(int courseId, GroupConfig config) {
@@ -150,7 +157,21 @@ public class GroupService extends BaseService {
         return groupFilterMapper.queryRogueStudents(courseId);
     }
 
-    private List<GroupMemberView> findMembersInGroup(int groupId) {
+    public void updateWeight(int courseId, int groupId, int accountId, int weight) {
+        var member = getMember(courseId, groupId, accountId);
+        member.setWeight(weight);
+        groupMemberMapper.update(member);
+    }
+
+    private GroupMember getMember(int courseId, int groupId, int accountId) {
+        var member = groupMemberMapper.find(courseId, accountId);
+        if (member == null || member.getGroupId() != groupId) {
+            throw new NotFoundException(M("group.member.exists.not"));
+        }
+        return member;
+    }
+
+    private List<GroupMemberView> getMembersInGroup(int groupId) {
         var members = groupFilterMapper.findMembersInGroup(groupId);
         members.forEach(member -> member.setAvatar(
                 bucketApi.recordToUrl(member.getAvatar())));

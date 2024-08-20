@@ -23,6 +23,14 @@ public class Gender {
         };
     }
 
+    public static String toString(int gender) {
+        return switch (gender) {
+            case BOY -> "男";
+            case GIRL -> "女";
+            default -> "保密";
+        };
+    }
+
     public static String toAvatar(int gender) {
         return switch (gender) {
             case BOY -> AccountConfig.BOY_AVATAR;

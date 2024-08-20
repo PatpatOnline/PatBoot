@@ -12,6 +12,16 @@ public class GroupConfig {
     private int maxSize;
 
     /**
+     * Minimum weight of the group members.
+     */
+    private int minWeight;
+
+    /**
+     * Maximum weight of the group members.
+     */
+    private int maxWeight;
+
+    /**
      * Whether enable group feature.
      */
     private boolean enabled;

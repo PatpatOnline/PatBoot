@@ -301,9 +301,11 @@ CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `
 DROP TABLE IF EXISTS `group_config`;
 CREATE TABLE `group_config`
 (
-    `course_id` int  NOT NULL,
-    `max_size`  int  NOT NULL,
-    `enabled`   bool NOT NULL,
+    `course_id`  int  NOT NULL,
+    `max_size`   int  NOT NULL,
+    `min_weight` int  NOT NULL,
+    `max_weight` int  NOT NULL,
+    `enabled`    bool NOT NULL,
     PRIMARY KEY (`course_id`)
 );
 
@@ -340,3 +342,34 @@ CREATE TABLE `group_member`
 );
 
 CREATE INDEX `group_member_group_id_index` ON `group_member` (`group_id`);
+
+
+############################################################\
+#                    Group Assignment                      #
+############################################################
+DROP TABLE IF EXISTS `group_assignment`;
+CREATE TABLE `group_assignment`
+(
+    `course_id`  int          NOT NULL,
+    `comment`    varchar(255) NOT NULL,
+    `visible`    bool         NOT NULL,
+    `start_time` datetime     NOT NULL,
+    `end_time`   datetime     NOT NULL,
+    PRIMARY KEY (`course_id`)
+);
+
+
+############################################################
+#                    Group Score                           #
+############################################################
+DROP TABLE IF EXISTS `group_score`;
+CREATE TABLE `group_score`
+(
+    `group_id`   int          NOT NULL,
+    `course_id`  int          NOT NULL,
+    `score`      int          NOT NULL,
+    `record`     varchar(255) NULL,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+    PRIMARY KEY (`group_id`)
+);

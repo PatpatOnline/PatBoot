@@ -1,8 +1,11 @@
 package cn.edu.buaa.patpat.boot.common.utils.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 public class Excels {
+    public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
     private Excels() {}
 
     /**

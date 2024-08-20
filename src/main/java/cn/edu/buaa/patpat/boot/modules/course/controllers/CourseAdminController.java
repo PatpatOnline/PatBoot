@@ -117,10 +117,10 @@ public class CourseAdminController extends BaseController {
     @Operation(summary = "Get course tutorial", description = "T.A. gets the current course tutorial")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
-    public DataResponse<CourseTutorialDto> findTutorial(
+    public DataResponse<CourseTutorialDto> getTutorial(
             @CourseId Integer courseId
     ) {
-        CourseTutorial tutorial = courseService.findTutorial(courseId);
+        CourseTutorial tutorial = courseService.getTutorial(courseId);
         return DataResponse.ok(mappers.map(tutorial, CourseTutorialDto.class));
     }
 }

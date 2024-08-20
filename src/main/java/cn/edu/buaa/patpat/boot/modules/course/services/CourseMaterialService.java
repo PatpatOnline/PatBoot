@@ -26,7 +26,6 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 @Slf4j
 public class CourseMaterialService extends BaseService {
-
     private final CourseMaterialMapper courseMaterialMapper;
     private final BucketApi bucketApi;
 
