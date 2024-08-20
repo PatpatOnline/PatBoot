@@ -95,24 +95,28 @@ public class GroupService extends BaseService {
         addMember(courseId, groupId, accountId);
     }
 
-    public void quit(int groupId, int courseId, int accountId) {
-        if (isLocked(groupId)) {
-            throw new ForbiddenException(M("group.locked"));
+    /**
+     * Check if the group is locked outside.
+     */
+    public void quit(int courseId, int accountId) {
+        if (groupMemberMapper.delete(courseId, accountId) == 0) {
+            throw new NotFoundException(M("group.member.exists.not"));
         }
-        groupMemberMapper.delete(courseId, accountId);
     }
 
-    public void kick(int groupId, int courseId, int accountId) {
-        if (isLocked(groupId)) {
-            throw new ForbiddenException(M("group.locked"));
-        }
-        if (groupMemberMapper.find(courseId, accountId) == null) {
+    /**
+     * Check if the group is locked outside.
+     */
+    public void kick(int courseId, int groupId, int accountId) {
+        var member = getMember(courseId, groupId, accountId);
+        if (member.getGroupId() != groupId) {
             throw new NotFoundException(M("group.member.exists.not"));
         }
-        int updated = groupMemberMapper.delete(courseId, accountId);
-        if (updated == 0) {
-            throw new NotFoundException(M("group.member.exists.not"));
+        if (member.isOwner()) {
+            // Shouldn't reach here, since only the owner can kick members and cannot kick himself.
+            throw new ForbiddenException(M("group.kick.owner"));
         }
+        groupMemberMapper.delete(courseId, accountId);
     }
 
     public List<GroupListView> querySummarizedGroups(int courseId, GroupConfig config) {
@@ -151,6 +155,20 @@ public class GroupService extends BaseService {
      */
     public List<RogueStudentView> queryRogueStudents(int courseId) {
         return groupFilterMapper.queryRogueStudents(courseId);
+    }
+
+    public void updateWeight(int courseId, int groupId, int accountId, int weight) {
+        var member = getMember(courseId, groupId, accountId);
+        member.setWeight(weight);
+        groupMemberMapper.update(member);
+    }
+
+    private GroupMember getMember(int courseId, int groupId, int accountId) {
+        var member = groupMemberMapper.find(courseId, accountId);
+        if (member == null || member.getGroupId() != groupId) {
+            throw new NotFoundException(M("group.member.exists.not"));
+        }
+        return member;
     }
 
     private List<GroupMemberView> getMembersInGroup(int groupId) {

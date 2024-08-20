@@ -15,7 +15,7 @@ public interface GroupMemberMapper {
     @Update("""
             UPDATE `group_member`
             SET `owner` = #{owner}, `weight` = #{weight}
-            WHERE `group_id` = #{groupId} AND `account_id` = #{accountId}
+            WHERE `course_id` = #{courseId} AND `account_id` = #{accountId}
             """)
     int update(GroupMember member);
 

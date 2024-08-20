@@ -301,9 +301,11 @@ CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `
 DROP TABLE IF EXISTS `group_config`;
 CREATE TABLE `group_config`
 (
-    `course_id` int  NOT NULL,
-    `max_size`  int  NOT NULL,
-    `enabled`   bool NOT NULL,
+    `course_id`  int  NOT NULL,
+    `max_size`   int  NOT NULL,
+    `min_weight` int  NOT NULL,
+    `max_weight` int  NOT NULL,
+    `enabled`    bool NOT NULL,
     PRIMARY KEY (`course_id`)
 );
 
