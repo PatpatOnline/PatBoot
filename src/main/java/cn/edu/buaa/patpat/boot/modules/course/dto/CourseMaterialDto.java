@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.course.dto;
 
-import cn.edu.buaa.patpat.boot.common.dto.HasTimestamp;
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
+import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CourseMaterialDto extends HasTimestamp {
+public class CourseMaterialDto extends HasCreatedAndUpdated {
     private int id;
     @JsonIgnore
     private int courseId;

@@ -58,6 +58,10 @@ public class Mappers {
         }
     }
 
+    public Object fromJson(String json) throws JsonProcessingException {
+        return jsonMapper.readValue(json, Object.class);
+    }
+
     public <T> T fromJson(String json, Class<T> clazz) throws JsonProcessingException {
         return jsonMapper.readValue(json, clazz);
     }

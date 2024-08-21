@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.judge.models;
 
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 

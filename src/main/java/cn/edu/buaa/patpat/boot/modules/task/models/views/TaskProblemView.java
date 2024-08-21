@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.task.models.views;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.group.dto;
 
-import cn.edu.buaa.patpat.boot.common.dto.HasTimestamp;
+import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GroupScoreStudentDto extends HasTimestamp {
+public class GroupScoreStudentDto extends HasCreatedAndUpdated {
 }

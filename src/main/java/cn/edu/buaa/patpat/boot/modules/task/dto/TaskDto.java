@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.task.dto;
 
-import cn.edu.buaa.patpat.boot.common.dto.HasTimestamp;
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
+import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TaskDto extends HasTimestamp {
+public class TaskDto extends HasCreatedAndUpdated {
     private int id;
 
     private String title;
