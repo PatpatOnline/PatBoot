@@ -53,15 +53,14 @@ public class MessageController extends BaseController {
         return DataResponse.ok(read
                 ? M("message.read.success")
                 : M("message.unread.success"), read);
-
     }
 
     @PutMapping("update/{id}")
     @Operation(summary = "Update message", description = "Update the argument of a message")
     @ValidatePermission
     public DataResponse<Object> update(
+            @RequestBody Object argument,
             @PathVariable int id,
-            @RequestParam Object argument,
             AuthPayload auth
     ) {
         messageService.updateMessage(id, auth.getId(), argument);

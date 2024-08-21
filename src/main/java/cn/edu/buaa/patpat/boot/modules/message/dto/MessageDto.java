@@ -33,8 +33,12 @@ public class MessageDto extends HasCreated {
     public static MessageDto of(Message message, Mappers mappers) {
         MessageDto dto = mappers.map(message, MessageDto.class);
         try {
-            dto.setContentObj(mappers.fromJson(message.getContent()));
-            dto.setArgumentObj(mappers.fromJson(message.getArgument()));
+            if (message.getContent() != null) {
+                dto.setContentObj(mappers.fromJson(message.getContent()));
+            }
+            if (message.getArgument() != null) {
+                dto.setArgumentObj(mappers.fromJson(message.getArgument()));
+            }
         } catch (JsonProcessingException e) {
             // ignore
         }

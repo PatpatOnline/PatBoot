@@ -271,6 +271,19 @@ CREATE TABLE `like_reply`
 
 
 ############################################################
+#                      Subscription                        #
+############################################################
+DROP TABLE IF EXISTS `subscription`;
+CREATE TABLE `subscription`
+(
+    `account_id`    int         NOT NULL,
+    `discussion_id` int         NOT NULL,
+    `buaa_id`       varchar(10) NOT NULL,
+    PRIMARY KEY (`account_id`, `discussion_id`)
+);
+
+
+############################################################
 #                     Task Score                           #
 ############################################################
 # Actually a (`task_id`, `student_id`) can be the primary key.

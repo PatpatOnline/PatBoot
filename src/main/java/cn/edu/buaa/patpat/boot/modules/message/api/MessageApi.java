@@ -20,12 +20,7 @@ public class MessageApi {
     }
 
     @Async
-    public void send(int courseId, int accountId, String buaaId, MessagePayload<?> payload) {
-        send(MessageWrapper.of(courseId, accountId, buaaId, payload));
-    }
-
-    @Async
-    public void send(List<MessageWrapper> wrappers) {
+    public void broadcast(List<MessageWrapper> wrappers) {
         messageService.sendMessages(wrappers);
     }
 

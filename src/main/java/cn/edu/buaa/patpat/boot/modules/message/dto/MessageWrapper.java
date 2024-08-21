@@ -12,15 +12,10 @@ import lombok.Data;
 public class MessageWrapper {
     private int courseId;
     private int accountId;
-    private String buaaId;
     private MessagePayload<?> payload;
 
-    public static MessageWrapper of(int courseId, int accountId, String buaaId, MessagePayload<?> payload) {
-        return new MessageWrapper(courseId, accountId, buaaId, payload);
-    }
-
     public static MessageWrapper of(int courseId, int accountId, MessagePayload<?> payload) {
-        return new MessageWrapper(courseId, accountId, null, payload);
+        return new MessageWrapper(courseId, accountId, payload);
     }
 
     public Message toMessage(Mappers mappers) throws JsonProcessingException {

@@ -12,7 +12,7 @@ public class WebSocketPayload<TData> {
     private TData data;
 
     public static WebSocketPayload<String> message(String message) {
-        return of("message", message);
+        return of("ws", message);
     }
 
     public static <TData> WebSocketPayload<TData> of(String type, TData data) {
