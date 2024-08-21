@@ -19,7 +19,7 @@ import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
-import cn.edu.buaa.patpat.boot.modules.group.services.GroupService;
+import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

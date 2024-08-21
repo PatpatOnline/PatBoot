@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.group.models.entities;
 
 import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
+import cn.edu.buaa.patpat.boot.config.Globals;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,7 +10,7 @@ import lombok.EqualsAndHashCode;
 public class GroupScore extends HasCreatedAndUpdated {
     private int groupId;
     private int courseId;
-    private int score;
+    private int score = Globals.NOT_SUBMITTED;
 
     private String record;
 }

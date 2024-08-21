@@ -36,6 +36,7 @@ To run the project locally, you need to set up the following environment variabl
   - `course/${course-id}/`: Course material directory
   - `lab/${lab-id}/${buaa-id}-${name}`: Lab report directory
   - `iter/${iter-id}/${buaa-id}-${name}`: Iteration submission directory
+  - `proj/${course-id}/${group-id}`: Group project directory~~~~
   - `submission/${submission-id}/${buaa-id}`: Problem submission directory
   - `temp/`: Temporary files
 - `/judge/`: The judge sandbox directory

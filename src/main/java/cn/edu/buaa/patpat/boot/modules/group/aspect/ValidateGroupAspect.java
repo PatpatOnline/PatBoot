@@ -8,7 +8,7 @@ import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
 import cn.edu.buaa.patpat.boot.modules.group.services.GroupConfigService;
-import cn.edu.buaa.patpat.boot.modules.group.services.GroupService;
+import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -26,6 +26,10 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
  * <ul>
  * <li>{@link cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourseAspect}
  * <li>{@link cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermissionAspect}
+ * <p>
+ * It injects {@link Group} and {@link GroupMember} objects into the method arguments.
+ * If only group id is wanted, then it is better to inject {@link GroupMember} to
+ * avoid an extra database query for group.
  */
 @Component
 @Aspect

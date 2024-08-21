@@ -1,63 +1,26 @@
-package cn.edu.buaa.patpat.boot.modules.group.services;
+package cn.edu.buaa.patpat.boot.modules.group.services.impl;
 
-import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
-import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.group.dto.CreateGroupRequest;
 import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateGroupRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
-import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupFilterMapper;
-import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupMapper;
-import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupMemberMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.RogueStudentView;
+import cn.edu.buaa.patpat.boot.modules.group.services.GroupBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Service
 @RequiredArgsConstructor
-public class GroupService extends BaseService {
-    private final GroupMapper groupMapper;
-    private final GroupMemberMapper groupMemberMapper;
-    private final BucketApi bucketApi;
-    private final GroupFilterMapper groupFilterMapper;
-
-    public Group getGroup(int id) {
-        Group group = groupMapper.find(id);
-        if (group == null) {
-            throw new NotFoundException(M("group.exists.not"));
-        }
-        return group;
-    }
-
-    public GroupView getGroup(int id, GroupConfig config) {
-        GroupView view = groupFilterMapper.findGroup(id);
-        if (view == null) {
-            throw new NotFoundException(M("group.exists.not"));
-        }
-        view.setMembers(getMembersInGroup(id));
-        view.setMaxSize(config.getMaxSize());
-        return view;
-    }
-
-    public GroupMember findMember(int courseId, int accountId) {
-        return groupMemberMapper.find(courseId, accountId);
-    }
-
+public class GroupService extends GroupBaseService {
     @Transactional
     public Group create(int courseId, int accountId, CreateGroupRequest request) {
         if (groupMapper.existsByNameAndCourseId(request.getName(), courseId)) {
@@ -125,38 +88,6 @@ public class GroupService extends BaseService {
         return groups;
     }
 
-    public List<GroupView> queryGroups(int courseId, GroupConfig config) {
-        List<GroupView> groups = groupFilterMapper.queryGroups(courseId);
-        List<GroupMemberView> members = groupFilterMapper.findMembersInCourse(courseId);
-        Map<Integer, GroupView> groupMap = groups.stream()
-                .collect(Collectors.toMap(GroupView::getId, group -> group));
-
-        groups.forEach(group -> {
-            group.setMaxSize(config.getMaxSize());
-            group.setMembers(new ArrayList<>());
-        });
-        members.forEach(member -> {
-            member.setAvatar(bucketApi.recordToUrl(member.getAvatar()));
-            GroupView group = groupMap.get(member.getGroupId());
-            if (group != null) {
-                if (member.isOwner()) {
-                    group.getMembers().add(0, member);
-                } else {
-                    group.getMembers().add(member);
-                }
-            }
-        });
-
-        return groups;
-    }
-
-    /**
-     * Get all students who are not in any group.
-     */
-    public List<RogueStudentView> queryRogueStudents(int courseId) {
-        return groupFilterMapper.queryRogueStudents(courseId);
-    }
-
     public void updateWeight(int courseId, int groupId, int accountId, int weight) {
         var member = getMember(courseId, groupId, accountId);
         member.setWeight(weight);
@@ -169,13 +100,6 @@ public class GroupService extends BaseService {
             throw new NotFoundException(M("group.member.exists.not"));
         }
         return member;
-    }
-
-    private List<GroupMemberView> getMembersInGroup(int groupId) {
-        var members = groupFilterMapper.findMembersInGroup(groupId);
-        members.forEach(member -> member.setAvatar(
-                bucketApi.recordToUrl(member.getAvatar())));
-        return members;
     }
 
     private void addOwner(int courseId, int groupId, int accountId) {

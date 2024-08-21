@@ -10,17 +10,17 @@ public interface GroupMapper {
             VALUES (#{courseId}, #{name}, #{description}, #{locked})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int save(Group group);
+    void save(Group group);
 
     @Update("""
             UPDATE `group`
             SET `name` = #{name}, `description` = #{description}, `locked` = #{locked}
             WHERE `id` = #{id}
             """)
-    int update(Group group);
+    void update(Group group);
 
     @Delete("DELETE FROM `group` WHERE `id` = #{id} AND `course_id` = #{courseId}")
-    int delete(int id, int courseId);
+    void delete(int id, int courseId);
 
     @Select("SELECT * FROM `group` WHERE `id` = #{id}")
     Group find(int id);

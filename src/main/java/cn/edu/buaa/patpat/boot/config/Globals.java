@@ -4,6 +4,7 @@ public class Globals {
     public static final String TEMP_TAG = "temp";
     public static final String PROBLEM_TAG = "problem";
     public static final String COURSE_TAG = "course";
+    public static final String PROJECT_TAG = "proj";
 
     public static final String LAB_TAG = "lab";
     public static final String ITERATION_TAG = "iter";
