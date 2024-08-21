@@ -12,7 +12,7 @@ public interface GroupConfigMapper {
             INSERT INTO `group_config` (`course_id`, `max_size`, `min_weight`, `max_weight`, `enabled`)
             VALUES (#{courseId}, #{maxSize}, #{minWeight}, #{maxWeight}, #{enabled})
             """)
-    int save(GroupConfig config);
+    void save(GroupConfig config);
 
     @Insert("""
             UPDATE `group_config`
@@ -22,7 +22,7 @@ public interface GroupConfigMapper {
                 `enabled` = #{enabled}
             WHERE `course_id` = #{courseId}
             """)
-    int update(GroupConfig config);
+    void update(GroupConfig config);
 
     @Select("SELECT * FROM `group_config` WHERE `course_id` = #{courseId}")
     @Options(useCache = true)

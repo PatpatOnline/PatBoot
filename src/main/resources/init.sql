@@ -271,6 +271,19 @@ CREATE TABLE `like_reply`
 
 
 ############################################################
+#                      Subscription                        #
+############################################################
+DROP TABLE IF EXISTS `subscription`;
+CREATE TABLE `subscription`
+(
+    `account_id`    int         NOT NULL,
+    `discussion_id` int         NOT NULL,
+    `buaa_id`       varchar(10) NOT NULL,
+    PRIMARY KEY (`account_id`, `discussion_id`)
+);
+
+
+############################################################
 #                     Task Score                           #
 ############################################################
 # Actually a (`task_id`, `student_id`) can be the primary key.
@@ -373,3 +386,23 @@ CREATE TABLE `group_score`
     `updated_at` datetime     NOT NULL,
     PRIMARY KEY (`group_id`)
 );
+
+
+############################################################
+#                        Message                           #
+############################################################
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message`
+(
+    `id`         int      NOT NULL AUTO_INCREMENT,
+    `type`       int      NOT NULL,
+    `course_id`  int      NOT NULL,
+    `account_id` int      NOT NULL,
+    `content`    json     NOT NULL,
+    `argument`   json     NULL     DEFAULT NULL,
+    `read`       bool     NOT NULL DEFAULT FALSE,
+    `created_at` datetime NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `message_course_id_account_id_index` ON `message` (`course_id`, `account_id`);

@@ -13,8 +13,9 @@ public interface DiscussionFilterMapper {
             SELECT `id`, `type`, `author_id`, `course_id`, `title`, `content`,
                     `topped`, `starred`, `created_at`, `updated_at`,
                     (SELECT COUNT(*) FROM `like_discussion` WHERE `discussion_id` = #{discussionId}) AS `like_count`,
-                    (SELECT EXISTS(SELECT 1 FROM `like_discussion` WHERE `account_id` = #{accountId} AND `discussion_id` = #{discussionId})) AS `liked`,
-                    (SELECT COUNT(*) FROM `reply` WHERE `discussion_id` = #{discussionId}) AS `reply_count`
+                    EXISTS(SELECT 1 FROM `like_discussion` WHERE `account_id` = #{accountId} AND `discussion_id` = #{discussionId}) AS `liked`,
+                    (SELECT COUNT(*) FROM `reply` WHERE `discussion_id` = #{discussionId}) AS `reply_count`,
+                    EXISTS(SELECT 1 FROM `subscription` WHERE `account_id` = #{accountId} AND `discussion_id` = #{discussionId}) AS `subscribed`
             FROM `discussion`
             WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
             """)

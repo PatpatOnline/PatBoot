@@ -1,8 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;

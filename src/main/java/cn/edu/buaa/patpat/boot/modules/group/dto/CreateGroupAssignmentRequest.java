@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.group.dto;
 
 import cn.edu.buaa.patpat.boot.aspect.IRequireValidation;
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;

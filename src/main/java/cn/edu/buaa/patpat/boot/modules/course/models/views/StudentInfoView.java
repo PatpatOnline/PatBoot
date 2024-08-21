@@ -1,9 +1,9 @@
-package cn.edu.buaa.patpat.boot.modules.task.models.views;
+package cn.edu.buaa.patpat.boot.modules.course.models.views;
 
 import lombok.Data;
 
 @Data
-public class TaskStudentView {
+public class StudentInfoView {
     private int studentId;
     private int accountId;
     private String buaaId;

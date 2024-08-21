@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.task.dto;
 
-import cn.edu.buaa.patpat.boot.common.dto.HasTimestamp;
+import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +8,7 @@ import org.apache.commons.io.FilenameUtils;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TaskScoreDto extends HasTimestamp {
+public class TaskScoreDto extends HasCreatedAndUpdated {
     private int score;
     private boolean late;
 

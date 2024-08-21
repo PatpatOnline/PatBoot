@@ -7,6 +7,7 @@ import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.task.dto.*;
@@ -143,8 +144,10 @@ public class TaskAdminController extends BaseController {
     public ResponseEntity<Resource> download(
             @PathVariable String type,
             @PathVariable int id,
-            @PathVariable int studentId
+            @PathVariable int studentId,
+            AuthPayload auth
     ) {
+        log.warn("{} initiates download of student {} in task {}", auth.getName(), studentId, id);
         TaskTypes.fromString(type);
         Resource resource = taskAdminService.download(id, studentId);
         return ResourceResponse.ok(resource);
@@ -158,8 +161,14 @@ public class TaskAdminController extends BaseController {
             @PathVariable String type,
             @PathVariable int id,
             @RequestParam int teacherId,
-            @CourseId Integer courseId
+            @CourseId Integer courseId,
+            AuthPayload auth
     ) {
+        log.warn("Teacher {} initiates download of all task submissions in task {} of teacher {}",
+                auth.getName(),
+                id,
+                teacherId);
+
         Resource resource = taskAdminService.downloadAll(
                 id,
                 TaskTypes.fromString(type),

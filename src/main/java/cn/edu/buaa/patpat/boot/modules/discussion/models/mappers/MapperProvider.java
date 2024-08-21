@@ -31,7 +31,8 @@ public class MapperProvider {
         return String.format("""
                         SELECT `id`, `type`, `author_id`, `course_id`, `title`, SUBSTRING(`content`, 1, 50) AS `content`,
                                `topped`, `starred`, `created_at`, `updated_at`, `l`.`like_count`, `c`.`reply_count`,
-                               EXISTS(SELECT 1 FROM `like_discussion` WHERE `account_id` = #{accountId} AND `discussion_id` = `d`.`id`) AS `liked`
+                               EXISTS(SELECT 1 FROM `like_discussion` WHERE `account_id` = #{accountId} AND `discussion_id` = `d`.`id`) AS `liked`,
+                               EXISTS(SELECT 1 FROM `subscription` WHERE `account_id` = #{accountId} AND `discussion_id` = `d`.`id`) AS `subscribed`
                         FROM (
                             SELECT `id`, `type`, `author_id`, `course_id`, `title`, `topped`, `starred`,
                                 `created_at`, `updated_at`, `content`

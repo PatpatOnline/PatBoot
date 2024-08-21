@@ -1,10 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.course.services.impl;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.common.utils.excel.ExcelException;
 import cn.edu.buaa.patpat.boot.common.utils.excel.Excels;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;

@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.task.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskScore;
+import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskScoreView;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -61,5 +62,12 @@ public interface TaskScoreMapper {
             WHERE `task_id` = #{taskId} AND `account_id` = #{accountId}
             """)
     int updateScoreByAccount(int taskId, int accountId, int score);
+
+    @Select("""
+            SELECT `task_id`, `student_id`, `score`, `late`
+            FROM `task_score`
+            WHERE `task_id` = #{taskId}
+            """)
+    List<TaskScoreView> getScores(int taskId);
 }
 

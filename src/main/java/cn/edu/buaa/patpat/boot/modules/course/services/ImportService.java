@@ -1,8 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;

@@ -13,7 +13,7 @@ public interface GroupAssignmentMapper {
             VALUES (#{courseId}, #{comment}, #{visible}, #{startTime}, #{endTime})
             ON DUPLICATE KEY UPDATE `comment` = #{comment}, `visible` = #{visible}, `start_time` = #{startTime}, `end_time` = #{endTime}
             """)
-    int saveOrUpdate(GroupAssignment assignment);
+    void saveOrUpdate(GroupAssignment assignment);
 
     @Delete("DELETE FROM `group_assignment` WHERE `course_id` = #{courseId}")
     int delete(int courseId);

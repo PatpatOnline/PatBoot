@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.task.services.impl;
 
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;

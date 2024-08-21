@@ -18,6 +18,11 @@ spring:
     basename: i18n/messages
     encoding: UTF-8
     use-code-as-default-message: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 256MB
+      max-request-size: 4096MB
 server:
   port: 8080
 mybatis:

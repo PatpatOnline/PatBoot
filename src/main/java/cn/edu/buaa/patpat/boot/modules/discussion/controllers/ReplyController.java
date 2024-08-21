@@ -15,6 +15,7 @@ import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.ReplyView;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.DiscussionService;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.ReplyService;
+import cn.edu.buaa.patpat.boot.modules.discussion.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class ReplyController extends BaseController {
     private final ReplyService replyService;
     private final DiscussionService discussionService;
+    private final SubscriptionService subscriptionService;
 
     @PostMapping("create")
     @Operation(summary = "Create a new reply", description = "Create a new reply in a discussion")
@@ -45,11 +47,14 @@ public class ReplyController extends BaseController {
         if (!discussionService.exists(courseId, request.getDiscussionId())) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
+
         Reply reply = replyService.create(request, auth.getId());
         if (reply == null) {
             throw new NotFoundException(M("reply.create.error"));
         }
         ReplyView view = replyService.get(reply.getId(), auth.getId());
+
+        subscriptionService.notifySubscribers(courseId, request.getDiscussionId(), reply.getId(), auth);
 
         return DataResponse.ok(M("reply.create.success"), view);
     }
