@@ -31,7 +31,7 @@ public class DownloadAgent {
         String reportPath = generateReport(groups, scores, archivePath);
         Zips.update(zipFile, reportPath);
 
-        return Medias.loadAsResource(zipFile);
+        return Medias.loadAsResource(zipFile, path -> Medias.removeSilently(Medias.getParentPath(path)));
     }
 
     private String generateReport(List<GroupInfoView> groups, List<GroupScoreInfoView> scores, String tempPath) throws IOException {

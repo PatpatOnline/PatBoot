@@ -100,7 +100,7 @@ public class StudentImporter {
                 throw new BadRequestException(M("student.export.empty"));
             }
             workbook.write(out);
-            return Medias.loadAsResource(path);
+            return Medias.loadAsResource(path, true);
         } catch (Exception e) {
             log.error("Failed to export students: {}", e.getMessage());
             throw new InternalServerErrorException(M("student.export.error"));
