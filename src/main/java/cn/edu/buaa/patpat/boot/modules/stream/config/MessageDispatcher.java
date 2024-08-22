@@ -8,10 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -19,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MessageDispatcher {
     private final Map<WebSocketSession, String> sessions = new ConcurrentHashMap<>();
+    private final Map<String, Set<WebSocketSession>> tags = new ConcurrentHashMap<>();
     private final Mappers mappers;
 
     /**
@@ -59,14 +57,12 @@ public class MessageDispatcher {
     @Async
     public void send(String tag, WebSocketPayload<?> payload) {
         List<WebSocketSession> invalidSessions = new ArrayList<>();
-        for (Map.Entry<WebSocketSession, String> entry : sessions.entrySet()) {
-            if (entry.getValue().equals(tag)) {
-                try {
-                    entry.getKey().sendMessage(payload.toTextMessage(mappers));
-                } catch (Exception e) {
-                    log.error("Failed to send message to tag: {}", tag);
-                    invalidSessions.add(entry.getKey());
-                }
+        for (var sessions : tags.getOrDefault(tag, Collections.emptySet())) {
+            try {
+                sessions.sendMessage(payload.toTextMessage(mappers));
+            } catch (Exception e) {
+                log.error("Failed to send message to tag: {}", tag);
+                invalidSessions.add(sessions);
             }
         }
         invalidSessions.forEach(this::removeSession);
@@ -74,9 +70,17 @@ public class MessageDispatcher {
 
     void addSession(String tag, WebSocketSession session) {
         sessions.put(session, tag);
+        tags.computeIfAbsent(tag, k -> new HashSet<>()).add(session);
     }
 
     String removeSession(WebSocketSession session) {
-        return sessions.remove(session);
+        String tag = sessions.remove(session);
+        if (tag != null) {
+            tags.computeIfPresent(tag, (k, set) -> {
+                set.remove(session);
+                return set.isEmpty() ? null : set;
+            });
+        }
+        return tag;
     }
 }
