@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.common.utils.excel.ExcelException;
+import cn.edu.buaa.patpat.boot.common.utils.excel.ExcelHelper;
 import cn.edu.buaa.patpat.boot.common.utils.excel.Excels;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
@@ -22,17 +23,13 @@ import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentExportView;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentImportView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -59,7 +56,7 @@ public class StudentImporter {
         int deleted = 0;
         int created = 0;
         int updated = 0;
-        try (Workbook workbook = getWorkbook(FilenameUtils.getExtension(excelPath), excelPath)) {
+        try (Workbook workbook = Excels.getWorkbook(excelPath)) {
             Sheet sheet = workbook.getSheetAt(0);
             Account teacher = extractTeacherFromSheet(sheet);
             if (clean) {
@@ -80,15 +77,20 @@ public class StudentImporter {
         }
     }
 
-    public Resource exportStudents(int courseId, String courseName, int teacherId, LocalDateTime timestamp) {
+    public Resource exportStudents(int courseId, String courseName, int teacherId) {
         List<Tuple<Integer, String>> teachers = getTeachers(teacherId);
         List<Tuple<String, List<StudentExportView>>> students = getStudentsToExport(courseId, teachers);
 
-        String record = bucketApi.toRandomRecord(Globals.TEMP_TAG, "placeholder.xlsx");
+        LocalDateTime timestamp = LocalDateTime.now();
+        String filename = String.format("%s-学生名单-%s.xlsx",
+                courseName,
+                timestamp.format(DateTimeFormatter.ofPattern(Globals.FILE_DATE_FORMAT)));
+
+        String record = bucketApi.toRecord(Globals.TEMP_TAG, filename);
         String path = bucketApi.recordToPrivatePath(record);
 
         boolean hasStudent = false;
-        try (Workbook workbook = getWorkbook("xlsx"); OutputStream out = Medias.getOutputStream(path)) {
+        try (Workbook workbook = Excels.getWorkbook(); OutputStream out = Medias.getOutputStream(path)) {
             for (var student : students) {
                 if (student.second.isEmpty()) {
                     continue;
@@ -104,26 +106,6 @@ public class StudentImporter {
         } catch (Exception e) {
             log.error("Failed to export students: {}", e.getMessage());
             throw new InternalServerErrorException(M("student.export.error"));
-        }
-    }
-
-    private Workbook getWorkbook(String extension) {
-        if ("xls".equalsIgnoreCase(extension)) {
-            return new HSSFWorkbook();
-        } else if ("xlsx".equalsIgnoreCase(extension)) {
-            return new XSSFWorkbook();
-        } else {
-            throw new BadRequestException(M("validation.file.type"));
-        }
-    }
-
-    private Workbook getWorkbook(String extension, String path) throws IOException {
-        if ("xls".equalsIgnoreCase(extension)) {
-            return new HSSFWorkbook(Medias.getInputStream(path));
-        } else if ("xlsx".equalsIgnoreCase(extension)) {
-            return new XSSFWorkbook(Medias.getInputStream(path));
-        } else {
-            throw new BadRequestException(M("validation.file.type"));
         }
     }
 
@@ -147,38 +129,46 @@ public class StudentImporter {
         String teacher = data.first;
         List<StudentExportView> students = data.second;
         Sheet sheet = workbook.createSheet(teacher);
-
-        Row title = sheet.createRow(0);
-        title.createCell(0).setCellValue("课程");
-        title.createCell(1).setCellValue(course);
-        title.createCell(2).setCellValue("任课教师");
-        title.createCell(3).setCellValue(teacher);
-        title.createCell(6).setCellValue("导出时间");
-        title.createCell(7).setCellValue(timestamp.format(DateTimeFormatter.ofPattern(Excels.DATE_TIME_FORMAT)));
-
-        Row header = sheet.createRow(2);
-        header.createCell(0).setCellValue("序号");
-        header.createCell(1).setCellValue("学号");
-        header.createCell(2).setCellValue("姓名");
-        header.createCell(3).setCellValue("性别");
-        header.createCell(4).setCellValue("学院");
-        header.createCell(5).setCellValue("专业");
-        header.createCell(6).setCellValue("班级");
-        header.createCell(7).setCellValue("备注");
+        var helper = ExcelHelper.open(sheet).createRow(0, row -> row
+                        .createCenteredCell(0, "课程")
+                        .createCenteredCell(1, course)
+                        .createCenteredCell(6, "任课教师")
+                        .createCenteredCell(7, teacher))
+                .createRow(1, row -> row
+                        .createCenteredCell(0, "导出时间")
+                        .createCenteredCell(1, timestamp.format(DateTimeFormatter.ofPattern(Excels.DATE_TIME_FORMAT))))
+                .createRow(2, row -> row
+                        .createCenteredCell(0, "序号")
+                        .createCenteredCell(1, "学号")
+                        .createCenteredCell(2, "姓名")
+                        .createCenteredCell(3, "性别")
+                        .createCenteredCell(4, "学院")
+                        .createCenteredCell(5, "专业")
+                        .createCenteredCell(6, "班级")
+                        .createCenteredCell(7, "备注"));
 
         int i = 0;
         for (var student : students) {
-            Row row = sheet.createRow(i + 3);
-            row.createCell(0).setCellValue(i + 1);
-            row.createCell(1).setCellValue(student.getBuaaId());
-            row.createCell(2).setCellValue(student.getName());
-            row.createCell(3).setCellValue(Gender.toString(student.getGender()));
-            row.createCell(4).setCellValue(student.getSchool());
-            row.createCell(5).setCellValue(student.getMajor());
-            row.createCell(6).setCellValue(student.getClassName());
-            row.createCell(7).setCellValue(student.isRepeat() ? "重修" : "");
-            i++;
+            final int index = ++i;
+            helper.createRow(i + 2, row -> row
+                    .createCell(0, String.valueOf(index))
+                    .createCenteredCell(1, student.getBuaaId())
+                    .createCenteredCell(2, student.getName())
+                    .createCenteredCell(3, Gender.toString(student.getGender()))
+                    .createCenteredCell(4, student.getSchool())
+                    .createCenteredCell(5, student.getMajor())
+                    .createCenteredCell(6, student.getClassName())
+                    .createCenteredCell(7, student.isRepeat() ? "重修" : ""));
         }
+
+        helper.setColumnWidth(0, 10)
+                .setColumnsWidth(1, 2, 14)
+                .setColumnWidth(3, 8)
+                .setColumnsWidth(4, 5, 12)
+                .setColumnWidth(6, 10)
+                .setColumnWidth(7, 14)
+                .mergeAndCenter(0, 1, 3)
+                .mergeAndCenter(1, 1, 3);
     }
 
     private Account extractTeacherFromSheet(Sheet sheet) throws ImportException {

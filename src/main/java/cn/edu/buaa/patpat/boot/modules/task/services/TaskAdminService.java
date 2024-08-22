@@ -54,7 +54,7 @@ public class TaskAdminService extends TaskSubmissionService {
         List<StudentInfoView> students = studentMapper.getStudentsByTeacher(courseId, teacherId);
         List<TaskScoreView> scores = taskScoreMapper.getScores(taskId);
         String submissionPath = getSubmissionRootPath(taskId, TaskTypes.toTag(type));
-        String archivePath = bucketApi.recordToPrivatePath(bucketApi.toRandomRecord(Globals.TEMP_TAG, ""));
+        String archivePath = bucketApi.getRandomTempPath();
         String archiveName = getArchiveName(taskId, type, teacherId);
         try {
             Medias.ensurePath(submissionPath);  // prevent empty zip error

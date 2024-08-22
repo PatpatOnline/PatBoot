@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.group.services.impl;
 
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
+import cn.edu.buaa.patpat.boot.modules.course.api.CourseApi;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupScore;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupScoreMapper;
@@ -10,6 +11,7 @@ import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.RogueStudentView;
 import cn.edu.buaa.patpat.boot.modules.group.services.GroupBaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,7 +25,12 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 public class GroupAdminService extends GroupBaseService {
     private final GroupScoreMapper groupScoreMapper;
+    private final CourseApi courseApi;
+    private final GroupExporter groupExporter;
 
+    /**
+     * This method ensures that the group leader is always the first member in the group.
+     */
     public List<GroupView> queryGroups(int courseId, GroupConfig config) {
         List<GroupView> groups = groupFilterMapper.queryGroups(courseId);
         List<GroupMemberView> members = groupFilterMapper.findMemberViewsInCourse(courseId);
@@ -73,5 +80,17 @@ public class GroupAdminService extends GroupBaseService {
      */
     public List<GroupScoreListView> queryScores(int courseId) {
         return groupScoreMapper.findInCourse(courseId);
+    }
+
+    public Resource exportGroups(int courseId, GroupConfig config) {
+        String courseName = courseApi.getCourseName(courseId);
+        List<GroupView> groups = queryGroups(courseId, config);
+        List<RogueStudentView> rogueStudents = queryRogueStudents(courseId);
+
+        return groupExporter.exportGroups(
+                courseName,
+                groups,
+                rogueStudents,
+                config);
     }
 }

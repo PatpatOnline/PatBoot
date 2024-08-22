@@ -79,9 +79,7 @@ public class ProblemInitializer {
             throw new ProblemInitializeException(M("system.error.io"));
         }
 
-        // This will generate a random directory name.
-        record = bucketApi.toRandomRecord(Globals.TEMP_TAG, "");
-        String path = bucketApi.recordToPrivatePath(record);
+        String path = bucketApi.getRandomTempPath();
         try {
             Zips.unzip(zipPath, path);
         } catch (IOException e) {

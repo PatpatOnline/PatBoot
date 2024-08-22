@@ -69,6 +69,14 @@ public class CourseService extends BaseService {
         return courseMapper.findActive(courseId, auth.getId());
     }
 
+    public String getName(int courseId) {
+        Course course = courseMapper.find(courseId);
+        if (course == null) {
+            throw new NotFoundException(M("course.exists.not"));
+        }
+        return course.getName();
+    }
+
     public CourseTutorial updateTutorial(int courseId, String url) {
         CourseTutorial tutorial = new CourseTutorial(courseId, url);
         courseMapper.updateTutorial(tutorial);

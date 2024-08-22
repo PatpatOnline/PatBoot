@@ -38,4 +38,8 @@ public class CourseApi {
     public Cookie cleanCourseCookie() {
         return courseCookieSetter.clean();
     }
+
+    public String getCourseName(int courseId) {
+        return courseService.getName(courseId);
+    }
 }

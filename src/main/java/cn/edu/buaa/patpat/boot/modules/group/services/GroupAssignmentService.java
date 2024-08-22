@@ -123,7 +123,7 @@ public class GroupAssignmentService extends BaseService {
         List<GroupInfoView> groups = groupStatisticsMapper.getGroups(courseId);
         List<GroupScoreInfoView> scores = groupStatisticsMapper.getGroupScores(courseId);
         String submissionPath = getGroupProjectSubmissionPath(courseId);
-        String archivePath = bucketApi.recordToPrivatePath(bucketApi.toRandomRecord(Globals.TEMP_TAG, ""));
+        String archivePath = bucketApi.getRandomTempPath();
         String archiveName = getArchiveName();
         try {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
@@ -147,7 +147,7 @@ public class GroupAssignmentService extends BaseService {
     private Resource downloadAdmin(int courseId, int groupId) {
         String path = Medias.getParentPath(getSubmitFileRecord(courseId, groupId).second).toString();
         try {
-            String zipFilePath = bucketApi.recordToPrivatePath(bucketApi.toRandomRecord(Globals.TEMP_TAG, "")) + ".zip";
+            String zipFilePath = bucketApi.getRandomTempFile("zip");
             Zips.zip(path, zipFilePath, false);
             return Medias.loadAsResource(zipFilePath, true);
         } catch (IOException e) {
