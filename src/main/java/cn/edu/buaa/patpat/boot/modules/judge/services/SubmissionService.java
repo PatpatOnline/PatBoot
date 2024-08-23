@@ -25,10 +25,13 @@ public class SubmissionService extends BaseService {
     private final SubmissionMapper submissionMapper;
     private final SubmissionFilterMapper submissionFilterMapper;
 
+    /**
+     * If no submission is found, return null.
+     */
     public SubmissionDto getLastSubmission(int problemId, int accountId) {
         Submission submission = submissionFilterMapper.findLast(problemId, accountId);
         if (submission == null) {
-            throw new NotFoundException(M("submission.exists.not"));
+            return null;
         }
 
         // check if submission is timed out
