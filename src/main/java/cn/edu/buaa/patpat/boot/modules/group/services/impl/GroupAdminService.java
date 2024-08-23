@@ -56,6 +56,17 @@ public class GroupAdminService extends GroupBaseService {
         return groups;
     }
 
+
+    /**
+     * This overload will use a pseudo {@link GroupConfig} with default values,
+     * which is suitable for internal use to export groups.
+     * In this case, {@link GroupView#getMaxSize()} will be invalid.
+     */
+    public List<GroupView> queryGroups(int courseId) {
+        return queryGroups(courseId, new GroupConfig());
+    }
+
+
     /**
      * Get all students who are not in any group.
      */
