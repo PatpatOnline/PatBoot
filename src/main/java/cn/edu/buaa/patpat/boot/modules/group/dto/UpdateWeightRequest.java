@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 public class UpdateWeightRequest {
+    @NotNull
     @Min(0)
     @Max(200)
-    @NotNull
     private int weight;
 }

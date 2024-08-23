@@ -106,22 +106,26 @@ public class TaskAdminController extends BaseController {
     @PostMapping("lab/problems/update/{id}")
     @Operation(summary = "Update Lab problems", description = "Update problems of a lab task")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
     public DataResponse<List<TaskProblemListView>> updateProblems(
             @PathVariable int id,
-            @RequestBody @Valid UpdateLabProblemsRequest request
+            @RequestBody @Valid UpdateLabProblemsRequest request,
+            @CourseId Integer courseId
     ) {
-        var problems = taskService.updateProblems(id, request.getProblemIds());
+        var problems = taskService.updateProblems(id, courseId, TaskTypes.LAB, request.getProblemIds());
         return DataResponse.ok(problems);
     }
 
     @PostMapping("iter/problems/update/{id}")
     @Operation(summary = "Update Iteration problems", description = "Update problems of an iteration task")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
     public DataResponse<List<TaskProblemListView>> updateProblems(
             @PathVariable int id,
-            @RequestBody @Valid UpdateIterProblemsRequest request
+            @RequestBody @Valid UpdateIterProblemsRequest request,
+            @CourseId Integer courseId
     ) {
-        var problems = taskService.updateProblems(id, List.of(request.getProblemId()));
+        var problems = taskService.updateProblems(id, courseId, TaskTypes.ITERATION, List.of(request.getProblemId()));
         return DataResponse.ok(problems);
     }
 

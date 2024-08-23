@@ -1,12 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
-import cn.edu.buaa.patpat.boot.common.Globals;
-import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
-import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
+import cn.edu.buaa.patpat.boot.modules.course.api.CourseApi;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
-import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
-import cn.edu.buaa.patpat.boot.modules.course.models.mappers.CourseMapper;
 import cn.edu.buaa.patpat.boot.modules.course.services.impl.StudentImporter;
 import cn.edu.buaa.patpat.boot.modules.stream.api.StreamApi;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +20,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class ImportService {
     private final StudentImporter studentImporter;
     private final StreamApi streamApi;
-    private final CourseMapper courseMapper;
+    private final CourseApi courseApi;
 
     @Async
     public void importStudentsAsync(String buaaId, int courseId, String excelPath, boolean clean) {
@@ -51,17 +44,8 @@ public class ImportService {
         return response;
     }
 
-    public Tuple<Resource, String> exportStudents(int courseId, int teacherId) {
-        Course course = courseMapper.findName(courseId);
-        if (course == null) {
-            throw new NotFoundException(M("course.not.found"));
-        }
-        LocalDateTime timestamp = LocalDateTime.now();
-        Resource resource = studentImporter.exportStudents(courseId, course.getName(), teacherId, timestamp);
-        String filename = String.format("%s-学生名单-%s.xlsx",
-                course.getName(),
-                timestamp.format(DateTimeFormatter.ofPattern(Globals.FILE_DATE_FORMAT)));
-
-        return Tuple.of(resource, filename);
+    public Resource exportStudents(int courseId, int teacherId) {
+        String courseName = courseApi.getCourseName(courseId);
+        return studentImporter.exportStudents(courseId, courseName, teacherId);
     }
 }

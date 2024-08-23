@@ -1,5 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.bucket.api;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.modules.bucket.exceptions.MalformedPathException;
 import cn.edu.buaa.patpat.boot.modules.bucket.services.PathService;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,35 @@ public class BucketApi {
     public String recordToUrl(String record) {
         return pathService.recordToUrl(record);
     }
+
+    /**
+     * Get a random directory under temp directory.
+     */
+    public String getRandomTempPath() {
+        return recordToPrivatePath(toRandomRecord(Globals.TEMP_TAG, ""));
+    }
+
+    /**
+     * Get a temp directory with the given filename under temp directory.
+     */
+    public String getTempPath(String filename) {
+        return recordToPrivatePath(toRecord(Globals.TEMP_TAG, filename));
+    }
+
+    /**
+     * Get a random temp file with the given extension.
+     */
+    public String getRandomTempFile(String extension) {
+        return getRandomTempPath() + "." + extension;
+    }
+
+    /**
+     * Get a temp file with the given filename.
+     */
+    public String getTempFile(String filename) {
+        return recordToPrivatePath(toRecord(Globals.TEMP_TAG, filename));
+    }
+
 
     /**
      * @see PathService#toRecord(String, String)

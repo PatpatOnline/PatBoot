@@ -3,6 +3,7 @@ package cn.edu.buaa.patpat.boot.modules.task.services;
 import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentMapper;
@@ -48,15 +49,12 @@ public class TaskAdminService extends TaskSubmissionService {
 
     /**
      * Download all tasks submissions of a teacher in a task.
-     * WARNING: This method has potential synchronization issues.
      */
-    public synchronized Resource downloadAll(int taskId, int type, int courseId, int teacherId) {
+    public Resource downloadAll(int taskId, int type, int courseId, int teacherId) {
         List<StudentInfoView> students = studentMapper.getStudentsByTeacher(courseId, teacherId);
         List<TaskScoreView> scores = taskScoreMapper.getScores(taskId);
         String submissionPath = getSubmissionRootPath(taskId, TaskTypes.toTag(type));
-        String archivePath = bucketApi.recordToPrivatePath(bucketApi.toRecord(
-                Globals.TEMP_TAG,
-                "task-download"));
+        String archivePath = bucketApi.getRandomTempPath();
         String archiveName = getArchiveName(taskId, type, teacherId);
         try {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
@@ -69,6 +67,9 @@ public class TaskAdminService extends TaskSubmissionService {
 
     private String getArchiveName(int taskId, int type, int teacherId) {
         Task task = taskMapper.findTitle(taskId);
+        if (task == null) {
+            throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
+        }
         String index = task.getTitle().replaceAll("[^0-9]", "").strip();
 
         TeacherView teacher = accountFilterMapper.queryTeacher(teacherId);

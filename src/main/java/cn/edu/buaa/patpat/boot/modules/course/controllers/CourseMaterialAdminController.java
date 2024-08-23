@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.extensions.validation.Validator;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
@@ -45,9 +46,12 @@ public class CourseMaterialAdminController extends BaseController {
             @CourseId Integer courseId
     ) {
         var request = new CreateCourseMaterialRequest(courseId, file.getOriginalFilename(), comment);
+        Validator.validate(request);
+
         CourseMaterial material = courseMaterialService.upload(request, file);
         CourseMaterialDto dto = mappers.map(material, CourseMaterialDto.class);
         dto.initUrl(bucketApi);
+
         return DataResponse.ok(M("course.material.create.success"), dto);
     }
 

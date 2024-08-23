@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Data
 public class CreateAnnouncementRequest {
-    @Size(min = 1, max = 255)
     @NotNull
+    @Size(min = 1, max = 255)
     private String title;
 
-    @Size(min = 1, max = 65535)
     @NotNull
+    @Size(min = 1, max = 65535)
     private String content;
 
     private Boolean topped;

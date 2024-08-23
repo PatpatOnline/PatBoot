@@ -4,7 +4,6 @@ import cn.edu.buaa.patpat.boot.aspect.Page;
 import cn.edu.buaa.patpat.boot.aspect.PageSize;
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
-import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
@@ -107,8 +106,8 @@ public class StudentAdminController extends BaseController {
             @CourseId Integer courseId,
             @RequestParam(required = false, defaultValue = "0") Integer teacherId
     ) {
-        Tuple<Resource, String> resource = importService.exportStudents(courseId, teacherId);
-        return ResourceResponse.ok(resource.first, resource.second);
+        Resource resource = importService.exportStudents(courseId, teacherId);
+        return ResourceResponse.ok(resource);
     }
 
     @GetMapping("{id}")

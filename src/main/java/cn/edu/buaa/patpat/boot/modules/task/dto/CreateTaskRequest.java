@@ -23,7 +23,7 @@ public class CreateTaskRequest implements IRequireValidation {
     private String content;
 
     @NotNull
-    private boolean visible;
+    private Boolean visible;
 
     @NotNull
     @JsonFormat(pattern = Globals.DATE_FORMAT)

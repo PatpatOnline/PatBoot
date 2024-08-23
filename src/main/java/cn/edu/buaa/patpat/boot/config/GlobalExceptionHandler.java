@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -74,8 +75,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException() {
-        return ResponseEntity.badRequest().body(MessageResponse.badRequest(M("validation.params.error")));
+    public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        var error = e.getBindingResult().getFieldError();
+        if (error == null) {
+            return ResponseEntity.badRequest().body(MessageResponse.badRequest(M("validation.params.error")));
+        }
+        return ResponseEntity.badRequest().body(
+                MessageResponse.badRequest(M("validation.params.error",
+                        error.getField(), error.getDefaultMessage())));
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
@@ -96,6 +103,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing request parameter: " + e.getParameterName())
+        );
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<MessageResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+        return ResponseEntity.badRequest().body(
+                MessageResponse.badRequest("Missing request part: " + e.getRequestPartName())
         );
     }
 

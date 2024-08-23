@@ -117,15 +117,13 @@ public class GroupAssignmentService extends BaseService {
         return String.format("artifact-%d.zip", groupId);
     }
 
-    public synchronized Resource downloadAll(int courseId) {
+    public Resource downloadAll(int courseId) {
         get(courseId);  // ensure the assignment exists
 
         List<GroupInfoView> groups = groupStatisticsMapper.getGroups(courseId);
         List<GroupScoreInfoView> scores = groupStatisticsMapper.getGroupScores(courseId);
         String submissionPath = getGroupProjectSubmissionPath(courseId);
-        String archivePath = bucketApi.recordToPrivatePath(bucketApi.toRecord(
-                Globals.TEMP_TAG,
-                "proj-download"));
+        String archivePath = bucketApi.getRandomTempPath();
         String archiveName = getArchiveName();
         try {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
@@ -149,9 +147,9 @@ public class GroupAssignmentService extends BaseService {
     private Resource downloadAdmin(int courseId, int groupId) {
         String path = Medias.getParentPath(getSubmitFileRecord(courseId, groupId).second).toString();
         try {
-            String zipFilePath = bucketApi.recordToPrivatePath(bucketApi.toRandomRecord(Globals.TEMP_TAG, "")) + ".zip";
+            String zipFilePath = bucketApi.getRandomTempFile("zip");
             Zips.zip(path, zipFilePath, false);
-            return Medias.loadAsResource(zipFilePath);
+            return Medias.loadAsResource(zipFilePath, true);
         } catch (IOException e) {
             throw new NotFoundException(M("group.assignment.download.error"));
         }

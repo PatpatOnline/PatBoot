@@ -2,6 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.group.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateParameters;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
+import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
@@ -21,6 +22,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -104,5 +107,18 @@ public class GroupAdminController extends BaseController {
     ) {
         List<GroupScoreListView> scores = groupAdminService.queryScores(courseId);
         return DataResponse.ok(scores);
+    }
+
+    @GetMapping("export")
+    @Operation(summary = "Export groups", description = "Export all groups of the current course")
+    @ValidateCourse
+    @ValidatePermission(AuthLevel.TA)
+    @WithGroupConfig
+    public ResponseEntity<Resource> export(
+            @CourseId Integer courseId,
+            GroupConfig config
+    ) {
+        Resource resource = groupAdminService.exportGroups(courseId, config);
+        return ResourceResponse.ok(resource);
     }
 }

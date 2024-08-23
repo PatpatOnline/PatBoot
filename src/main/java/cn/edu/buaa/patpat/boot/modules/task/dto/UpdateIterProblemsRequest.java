@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class UpdateIterProblemsRequest {
     @NotNull
-    private int problemId;
+    private Integer problemId;
 }

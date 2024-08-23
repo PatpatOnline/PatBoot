@@ -1,18 +1,17 @@
 package cn.edu.buaa.patpat.boot.common.utils;
 
+import jakarta.annotation.Nonnull;
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.function.Consumer;
 
 public class Medias {
     private Medias() {}
@@ -137,19 +136,39 @@ public class Medias {
     }
 
     public static Resource loadAsResource(String path) throws IOException {
-        return loadAsResource(Path.of(path));
+        return loadAsResource(path, false);
+    }
+
+    public static Resource loadAsResource(String path, boolean autoDelete) throws IOException {
+        return loadAsResource(Path.of(path), autoDelete);
     }
 
     public static Resource loadAsResource(Path path) throws IOException {
-        try {
-            Resource resource = new UrlResource(path.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new IOException("Resource not found: " + path);
-            }
-        } catch (MalformedURLException e) {
-            throw new IOException("Failed to load resource: " + path);
+        return loadAsResource(path, false);
+    }
+
+    public static Resource loadAsResource(Path path, boolean autoDelete) throws IOException {
+        Resource resource = autoDelete ? new AutoDeleteFileSystemResource(path) : new FileSystemResource(path);
+        if (resource.exists() || resource.isReadable()) {
+            return resource;
+        } else {
+            throw new IOException("Resource not found: " + path);
+        }
+
+    }
+
+    public static Resource loadAsResource(String path, Consumer<Path> deleteAction) throws IOException {
+        return loadAsResource(Path.of(path), deleteAction);
+    }
+
+    public static Resource loadAsResource(Path path, Consumer<Path> deleteAction) throws IOException {
+        Resource resource = deleteAction == null
+                ? new FileSystemResource(path)
+                : new AutoDeleteFileSystemResource(path, deleteAction);
+        if (resource.exists() && resource.isReadable()) {
+            return resource;
+        } else {
+            throw new IOException("Resource not found: " + path);
         }
     }
 
@@ -168,5 +187,39 @@ public class Medias {
     public static OutputStream getOutputStream(Path path) throws IOException {
         ensureParentPath(path);
         return Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    private static class AutoDeleteFileSystemResource extends FileSystemResource {
+        private final Consumer<Path> deleteAction;
+
+        public AutoDeleteFileSystemResource(Path path, @Nonnull Consumer<Path> deleteAction) {
+            super(path);
+            this.deleteAction = deleteAction;
+        }
+
+        public AutoDeleteFileSystemResource(Path path) {
+            this(path, Medias::removeSilently);
+        }
+
+        @Override
+        @Nonnull
+        public InputStream getInputStream() throws IOException {
+            return new DeleteOnCloseFileInputStream(getFile());
+        }
+
+        private final class DeleteOnCloseFileInputStream extends FileInputStream {
+            private final File file;
+
+            DeleteOnCloseFileInputStream(File file) throws FileNotFoundException {
+                super(file);
+                this.file = file;
+            }
+
+            @Override
+            public void close() throws IOException {
+                super.close();
+                deleteAction.accept(file.toPath());
+            }
+        }
     }
 }
