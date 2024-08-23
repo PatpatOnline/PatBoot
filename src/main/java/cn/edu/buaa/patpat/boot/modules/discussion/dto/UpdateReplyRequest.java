@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class UpdateReplyRequest {
-    @Size(min = 1, max = 65535)
     @NotNull
+    @Size(min = 1, max = 65535)
     private String content;
 }

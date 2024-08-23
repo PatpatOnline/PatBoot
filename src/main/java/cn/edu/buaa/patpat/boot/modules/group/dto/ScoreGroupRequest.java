@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 public class ScoreGroupRequest {
+    @NotNull
     @Min(0)
     @Max(100)
-    @NotNull
     private int score;
 }

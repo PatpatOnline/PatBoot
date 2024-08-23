@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class CreateReplyRequest {
+    @NotNull
     @Min(1)
     private int discussionId;
 
@@ -14,8 +15,9 @@ public class CreateReplyRequest {
      * 0 for root reply, the id of the reply to which this reply is replying to.
      * (So many replies in one sentence, I know.)
      */
+    @NotNull
     @Min(0)
-    private int toId;
+    private Integer toId;
 
     @Size(min = 1, max = 65535)
     @NotNull

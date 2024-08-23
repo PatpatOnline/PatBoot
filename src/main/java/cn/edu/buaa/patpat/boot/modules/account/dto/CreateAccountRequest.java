@@ -19,14 +19,18 @@ public class CreateAccountRequest {
     @Size(min = 1, max = 31)
     private String name;
 
+    @NotNull
     @Min(0)
     @Max(2)
-    private int gender;
+    private Integer gender;
 
     @NotNull
     @Size(min = 1, max = 31)
     private String school;
 
-    private boolean teacher;
-    private boolean ta;
+    @NotNull
+    private Boolean teacher;
+
+    @NotNull
+    private Boolean ta;
 }

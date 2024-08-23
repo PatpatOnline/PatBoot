@@ -85,7 +85,11 @@ public class TaskService extends BaseService {
         return taskMapper.existsByType(id, courseId, type);
     }
 
-    public List<TaskProblemListView> updateProblems(int id, List<Integer> problemIds) {
+    public List<TaskProblemListView> updateProblems(int id, int courseId, int type, List<Integer> problemIds) {
+        if (!exists(id, courseId)) {
+            throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
+        }
+
         taskProblemMapper.batchDelete(id);
         if (problemIds.isEmpty()) {
             return List.of();
