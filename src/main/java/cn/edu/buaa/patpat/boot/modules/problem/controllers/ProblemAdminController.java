@@ -80,6 +80,16 @@ public class ProblemAdminController extends BaseController {
         return MessageResponse.ok(M("problem.delete.success"));
     }
 
+    @GetMapping("download/{id}")
+    @Operation(summary = "Download a problem configuration", description = "Download a problem configuration")
+    @ValidatePermission(AuthLevel.TA)
+    public ResponseEntity<Resource> download(
+            @PathVariable int id
+    ) {
+        Resource resource = problemService.download(id);
+        return ResourceResponse.ok(resource, String.format("problem-%d.zip", id));
+    }
+
     @GetMapping("select")
     @Operation(summary = "Get all problems", description = "Get all problems for selection")
     @ValidatePermission(AuthLevel.TA)

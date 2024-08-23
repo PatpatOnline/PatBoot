@@ -4,11 +4,14 @@ import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.common.utils.Zips;
+import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
+import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.ProblemDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,13 +56,11 @@ public class ProblemInitializer {
      * @throws ProblemInitializeException If an error occurs.
      */
     public void finalize(InitializeResult result, int problemId) throws ProblemInitializeException {
-        String record = bucketApi.toRecord(Globals.PROBLEM_TAG, String.valueOf(problemId));
-        String path = bucketApi.recordToPrivatePath(record);
-
+        String path = getProblemPath(problemId);
         try {
-            Medias.remove(path);
             if (problemId > 0) {
                 Medias.ensureParentPath(path);
+                Medias.remove(path);
                 Files.move(Path.of(result.problemPath), Path.of(path), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
@@ -67,6 +68,25 @@ public class ProblemInitializer {
         } finally {
             Medias.removeSilently(result.archivePath);
         }
+    }
+
+    public Resource download(int problemId) {
+        String path = getProblemPath(problemId);
+        if (!Medias.exists(Path.of(path))) {
+            throw new NotFoundException(M("problem.exists.not"));
+        }
+        String zipFile = bucketApi.getRandomTempFile("zip");
+        try {
+            Zips.zip(path, zipFile, false);
+            return Medias.loadAsResource(zipFile, true);
+        } catch (IOException e) {
+            throw new InternalServerErrorException(M("problem.download.error"));
+        }
+    }
+
+    private String getProblemPath(int problemId) {
+        String record = bucketApi.toRecord(Globals.PROBLEM_TAG, String.valueOf(problemId));
+        return bucketApi.recordToPrivatePath(record);
     }
 
     private String extractZipFile(MultipartFile file) throws ProblemInitializeException {
