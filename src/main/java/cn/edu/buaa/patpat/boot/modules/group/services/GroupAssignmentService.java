@@ -74,6 +74,10 @@ public class GroupAssignmentService extends BaseService {
         }
     }
 
+    public GroupAssignment find(int courseId) {
+        return groupAssignmentMapper.find(courseId);
+    }
+
     public GroupAssignment get(int courseId) {
         GroupAssignment assignment = groupAssignmentMapper.find(courseId);
         if (assignment == null) {

@@ -108,6 +108,8 @@ CREATE TABLE task
     PRIMARY KEY (`id`)
 );
 
+CREATE INDEX `task_course_id_index` ON `task` (`course_id`);
+
 
 ############################################################
 #                      Course Material                     #
