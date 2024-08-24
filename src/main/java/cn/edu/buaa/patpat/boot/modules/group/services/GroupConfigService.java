@@ -33,7 +33,7 @@ public class GroupConfigService extends BaseService {
         if (config == null) {
             config = mappers.map(DEFAULT_CONFIG, GroupConfig.class);
             config.setCourseId(courseId);
-            groupConfigMapper.save(config);
+            groupConfigMapper.saveOrUpdate(config);
         }
         return config;
     }
@@ -43,7 +43,7 @@ public class GroupConfigService extends BaseService {
         if (config.getMinWeight() > config.getMaxWeight()) {
             throw new BadRequestException(M("group.weight.invalid"));
         }
-        groupConfigMapper.update(config);
+        groupConfigMapper.saveOrUpdate(config);
         return config;
     }
 }

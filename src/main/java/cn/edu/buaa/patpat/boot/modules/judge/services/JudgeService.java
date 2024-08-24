@@ -83,7 +83,7 @@ public abstract class JudgeService extends BaseService {
         try {
             Medias.save(path, file);
         } catch (IOException e) {
-            log.error("Failed to save submission file: {}", e.getMessage());
+            log.error("Failed to save submission file", e);
             throw new InternalServerErrorException(M("system.error.io"));
         }
         return path.toString();

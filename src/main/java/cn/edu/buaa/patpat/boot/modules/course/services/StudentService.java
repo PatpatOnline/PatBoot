@@ -4,8 +4,8 @@ import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
+import cn.edu.buaa.patpat.boot.modules.account.api.AccountApi;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
-import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.dto.UpdateStudentRequest;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
@@ -29,7 +29,7 @@ public class StudentService extends BaseService {
     private final StudentFilterMapper studentFilterMapper;
     private final BucketApi bucketApi;
     private final StudentMapper studentMapper;
-    private final AccountFilterMapper accountFilterMapper;
+    private final AccountApi accountApi;
 
     /**
      * Student calls this API to get their own details.
@@ -81,7 +81,7 @@ public class StudentService extends BaseService {
             if (request.getTeacherId() == 1) {
                 throw new BadRequestException(M("student.teacher.not"));
             }
-            Account role = accountFilterMapper.findRole(request.getTeacherId());
+            Account role = accountApi.findRole(request.getTeacherId());
             if (!role.isTeacher()) {
                 throw new BadRequestException(M("student.teacher.not"));
             }

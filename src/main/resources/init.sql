@@ -408,3 +408,17 @@ CREATE TABLE `message`
 );
 
 CREATE INDEX `message_course_id_account_id_index` ON `message` (`course_id`, `account_id`);
+
+
+############################################################
+#                       Score Config                       #
+############################################################
+DROP TABLE IF EXISTS `score_config`;
+CREATE TABLE `score_config`
+(
+    `course_id`  int NOT NULL,
+    `lab_score`  int NOT NULL,
+    `iter_score` int NOT NULL,
+    `proj_score` int NOT NULL,
+    PRIMARY KEY (`course_id`)
+);
