@@ -49,6 +49,15 @@ public class ExcelHelper {
         return this;
     }
 
+    public ExcelHelper getRow(int row, Consumer<RowHelper> consumer) {
+        Row r = sheet.getRow(row);
+        if (r == null) {
+            r = sheet.createRow(row);
+        }
+        consumer.accept(new RowHelper(r));
+        return this;
+    }
+
     public static class RowHelper {
         private final Row row;
         private CellStyle centerStyle;
@@ -58,15 +67,23 @@ public class ExcelHelper {
             this.row = row;
         }
 
+        public RowHelper createCell(int column, int value) {
+            return createCell(column, String.valueOf(value));
+        }
+
         public RowHelper createCell(int column, String value) {
             return createCell(column, value, false);
+        }
+
+        public RowHelper createCenteredCell(int column, int value) {
+            return createCenteredCell(column, String.valueOf(value));
         }
 
         public RowHelper createCenteredCell(int column, String value) {
             return createCell(column, value, true);
         }
 
-        public RowHelper createCell(int column, String value, boolean center) {
+        private RowHelper createCell(int column, String value, boolean center) {
             Cell cell = row.createCell(column);
             cell.setCellValue(value);
             if (center) {
@@ -74,13 +91,6 @@ public class ExcelHelper {
             } else {
                 cell.setCellStyle(getRightStyle());
             }
-            return this;
-        }
-
-        public RowHelper createCell(int column, String value, Consumer<CellHelper> consumer) {
-            Cell cell = row.createCell(column);
-            cell.setCellValue(value);
-            consumer.accept(new CellHelper(cell));
             return this;
         }
 

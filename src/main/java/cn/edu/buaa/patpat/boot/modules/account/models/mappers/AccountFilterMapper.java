@@ -3,7 +3,7 @@ package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
-import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -41,10 +41,10 @@ public interface AccountFilterMapper {
     List<AccountListView> queryImpl(int pageSize, int offset, AccountFilter filter);
 
     @Select("SELECT `id`, `name` FROM `account` WHERE `teacher` = 1 AND `id` != 1")
-    List<TeacherView> queryTeachers();
+    List<TeacherIndexView> queryTeachers();
 
     @Select("SELECT `id`, `name` FROM `account` WHERE `teacher` = 1 AND `id` = #{id}")
-    TeacherView queryTeacher(int id);
+    TeacherIndexView queryTeacher(int id);
 
     default List<AccountListView> query(int page, int pageSize, AccountFilter filter) {
         return queryImpl(pageSize, (page - 1) * pageSize, filter);

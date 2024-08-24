@@ -1,25 +1,28 @@
 package cn.edu.buaa.patpat.boot.modules.statistics.controllers;
 
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
+import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
-import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourseAspect;
+import cn.edu.buaa.patpat.boot.modules.statistics.dto.ScoreConfigDto;
+import cn.edu.buaa.patpat.boot.modules.statistics.dto.UpdateScoreConfigRequest;
 import cn.edu.buaa.patpat.boot.modules.statistics.models.views.GroupScoreIndexView;
 import cn.edu.buaa.patpat.boot.modules.statistics.models.views.StudentIndexView;
 import cn.edu.buaa.patpat.boot.modules.statistics.models.views.TaskIndexView;
 import cn.edu.buaa.patpat.boot.modules.statistics.models.views.TaskScoreIndexView;
+import cn.edu.buaa.patpat.boot.modules.statistics.services.ScoreConfigService;
 import cn.edu.buaa.patpat.boot.modules.statistics.services.StatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,8 +32,31 @@ import java.util.List;
 @Slf4j
 @Tag(name = "Statistics Admin", description = "Statistics Admin API for score")
 public class StatisticsAdminController extends BaseController {
-    private final ValidateCourseAspect validateCourseAspect;
     private final StatisticsService statisticsService;
+    private final ScoreConfigService scoreConfigService;
+
+    @GetMapping("config")
+    @Operation(summary = "Get score config", description = "Get score config of course")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public DataResponse<ScoreConfigDto> getScoreConfig(
+            @CourseId Integer courseId
+    ) {
+        var config = scoreConfigService.get(courseId);
+        return DataResponse.ok(mappers.map(config, ScoreConfigDto.class));
+    }
+
+    @PutMapping("config/update")
+    @Operation(summary = "Update score config", description = "Update score config of course")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public DataResponse<ScoreConfigDto> updateScoreConfig(
+            @CourseId Integer courseId,
+            @RequestBody @Valid UpdateScoreConfigRequest request
+    ) {
+        var config = scoreConfigService.update(courseId, request);
+        return DataResponse.ok(mappers.map(config, ScoreConfigDto.class));
+    }
 
     @GetMapping("students")
     @Operation(summary = "Get all students", description = "Get all students in course to show statistics")
@@ -78,5 +104,16 @@ public class StatisticsAdminController extends BaseController {
     ) {
         var groupScores = statisticsService.queryGroupScores(courseId);
         return DataResponse.ok(groupScores);
+    }
+
+    @GetMapping("export")
+    @Operation(summary = "Export statistics", description = "Export score statistics of course")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
+    public ResponseEntity<Resource> export(
+            @CourseId Integer courseId
+    ) {
+        Resource resource = statisticsService.export(courseId);
+        return ResourceResponse.ok(resource);
     }
 }

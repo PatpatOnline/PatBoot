@@ -133,7 +133,7 @@ public class GroupAssignmentService extends BaseService {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
             return downloadAgent.download(groups, scores, submissionPath, archivePath, archiveName);
         } catch (IOException e) {
-            log.error("Failed to download group projects {}", e.getMessage());
+            log.error("Failed to download group projects", e);
             throw new InternalServerErrorException(M("system.error.io"));
         }
     }

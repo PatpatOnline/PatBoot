@@ -8,11 +8,11 @@ import cn.edu.buaa.patpat.boot.common.utils.excel.ExcelHelper;
 import cn.edu.buaa.patpat.boot.common.utils.excel.Excels;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
+import cn.edu.buaa.patpat.boot.modules.account.api.AccountApi;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
-import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
-import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.course.dto.ImportStudentResponse;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
@@ -47,9 +47,9 @@ public class StudentImporter {
     private final AccountMapper accountMapper;
     private final StudentMapper studentMapper;
     private final StudentImportMapper studentImportMapper;
-    private final AccountFilterMapper accountFilterMapper;
     private final StudentFilterMapper studentFilterMapper;
     private final BucketApi bucketApi;
+    private final AccountApi accountApi;
 
     @Transactional
     public ImportStudentResponse importStudents(int courseId, String excelPath, boolean clean) {
@@ -72,7 +72,7 @@ public class StudentImporter {
             }
             return ImportStudentResponse.of(created, updated, deleted);
         } catch (Exception e) {
-            log.error("Failed to import students: {}", e.getMessage());
+            log.error("Failed to import students", e);
             return ImportStudentResponse.of(MessageFormat.format(M("student.import.error"), e.getMessage()));
         }
     }
@@ -85,9 +85,7 @@ public class StudentImporter {
         String filename = String.format("%s-学生名单-%s.xlsx",
                 courseName,
                 timestamp.format(DateTimeFormatter.ofPattern(Globals.FILE_DATE_FORMAT)));
-
-        String record = bucketApi.toRecord(Globals.TEMP_TAG, filename);
-        String path = bucketApi.recordToPrivatePath(record);
+        String path = bucketApi.getTempFile(filename);
 
         boolean hasStudent = false;
         try (Workbook workbook = Excels.getWorkbook(); OutputStream out = Medias.getOutputStream(path)) {
@@ -104,13 +102,13 @@ public class StudentImporter {
             workbook.write(out);
             return Medias.loadAsResource(path, true);
         } catch (Exception e) {
-            log.error("Failed to export students: {}", e.getMessage());
+            log.error("Failed to export students", e);
             throw new InternalServerErrorException(M("student.export.error"));
         }
     }
 
     private List<Tuple<Integer, String>> getTeachers(int teacherId) {
-        List<TeacherView> teachers = accountFilterMapper.queryTeachers();
+        List<TeacherIndexView> teachers = accountApi.queryTeachers();
         if (teacherId == 0) {
             return teachers.stream().map(t -> new Tuple<>(t.getId(), t.getName())).toList();
         } else {
@@ -151,7 +149,7 @@ public class StudentImporter {
         for (var student : students) {
             final int index = ++i;
             helper.createRow(i + 2, row -> row
-                    .createCell(0, String.valueOf(index))
+                    .createCell(0, index)
                     .createCenteredCell(1, student.getBuaaId())
                     .createCenteredCell(2, student.getName())
                     .createCenteredCell(3, Gender.toString(student.getGender()))
@@ -175,7 +173,7 @@ public class StudentImporter {
         try {
             String value = Excels.getNonEmptyCellValue(sheet.getRow(2).getCell(4));
             String name = value.substring(value.lastIndexOf("：") + 1);
-            Account account = accountFilterMapper.findByName(name);
+            Account account = accountApi.findByName(name);
             if (account == null) {
                 throw new ImportException(MessageFormat.format(M("student.import.error.teacher"), name));
             }
@@ -250,7 +248,7 @@ public class StudentImporter {
 
     private Account createOrUpdateAccount(Row row) throws ImportException {
         String buaaId = row.getCell(1).toString();
-        Account account = accountFilterMapper.findByBuaaId(buaaId);
+        Account account = accountApi.findByBuaaId(buaaId);
         boolean create = account == null;
         if (create) {
             account = new Account();

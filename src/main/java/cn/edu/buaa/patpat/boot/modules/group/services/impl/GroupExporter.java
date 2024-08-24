@@ -51,7 +51,7 @@ public class GroupExporter {
             workbook.write(out);
             return Medias.loadAsResource(path, true);
         } catch (Exception e) {
-            log.error("Failed to export groups: {}", e.getMessage());
+            log.error("Failed to export groups", e);
             throw new InternalServerErrorException(M("group.export.error"));
         }
     }
@@ -95,7 +95,7 @@ public class GroupExporter {
             final int index = i + 1;
             helper.createRow(rowCursor++, row -> {
                 int colCursor = 0;
-                row.createCell(colCursor++, String.valueOf(index));
+                row.createCell(colCursor++, index);
                 row.createCenteredCell(colCursor++, group.getName());
                 row.createCenteredCell(colCursor++, group.getDescription());
                 for (var member : group.getMembers()) {
@@ -120,7 +120,7 @@ public class GroupExporter {
         for (RogueStudentView student : rogueStudents) {
             final int index = colCursor;
             helper.createRow(colCursor++, row -> row
-                    .createCell(0, String.valueOf(index))
+                    .createCell(0, index)
                     .createCenteredCell(1, student.getBuaaId())
                     .createCenteredCell(2, student.getName()));
         }

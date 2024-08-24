@@ -11,18 +11,13 @@ public interface GroupConfigMapper {
     @Insert("""
             INSERT INTO `group_config` (`course_id`, `max_size`, `min_weight`, `max_weight`, `enabled`)
             VALUES (#{courseId}, #{maxSize}, #{minWeight}, #{maxWeight}, #{enabled})
-            """)
-    void save(GroupConfig config);
-
-    @Insert("""
-            UPDATE `group_config`
-            SET `max_size` = #{maxSize},
+            ON DUPLICATE KEY UPDATE
+                `max_size` = #{maxSize},
                 `min_weight` = #{minWeight},
                 `max_weight` = #{maxWeight},
                 `enabled` = #{enabled}
-            WHERE `course_id` = #{courseId}
             """)
-    void update(GroupConfig config);
+    void saveOrUpdate(GroupConfig config);
 
     @Select("SELECT * FROM `group_config` WHERE `course_id` = #{courseId}")
     @Options(useCache = true)

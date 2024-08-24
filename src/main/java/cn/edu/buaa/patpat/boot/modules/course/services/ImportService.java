@@ -37,7 +37,7 @@ public class ImportService {
         try {
             Medias.remove(excelPath);
         } catch (IOException e) {
-            log.error("IO exception when importing students: {}", e.getMessage());
+            log.error("IO exception when importing students", e);
         }
 
         log.info("Importing students for course {} at {} finished", courseId, timestamp);

@@ -91,7 +91,7 @@ public class CourseMaterialService extends BaseService {
         try {
             Medias.save(path, file);
         } catch (IOException e) {
-            log.error("Failed to save course material: {}", path);
+            log.error("Failed to save course material", e);
             throw new InternalServerErrorException(M("course.material.save.error"));
         }
     }

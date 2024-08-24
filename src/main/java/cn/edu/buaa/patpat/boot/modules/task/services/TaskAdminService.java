@@ -4,8 +4,8 @@ import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
-import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
-import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
+import cn.edu.buaa.patpat.boot.modules.account.api.AccountApi;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
 import cn.edu.buaa.patpat.boot.modules.course.models.mappers.StudentMapper;
 import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentInfoView;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
@@ -30,9 +30,9 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @Slf4j
 public class TaskAdminService extends TaskSubmissionService {
     private final TaskScoreMapper taskScoreMapper;
-    private final AccountFilterMapper accountFilterMapper;
     private final StudentMapper studentMapper;
     private final DownloadAgent downloadAgent = new DownloadAgent();
+    private final AccountApi accountApi;
 
     public int batchGrade(int taskId, int score, List<Integer> studentIds) {
         if (studentIds.isEmpty()) {
@@ -60,7 +60,7 @@ public class TaskAdminService extends TaskSubmissionService {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
             return downloadAgent.download(students, scores, submissionPath, archivePath, archiveName);
         } catch (IOException e) {
-            log.error("Failed to download task submissions {}", e.getMessage());
+            log.error("Failed to download task submissions", e);
             throw new InternalServerErrorException(M("system.error.io"));
         }
     }
@@ -72,7 +72,7 @@ public class TaskAdminService extends TaskSubmissionService {
         }
         String index = task.getTitle().replaceAll("[^0-9]", "").strip();
 
-        TeacherView teacher = accountFilterMapper.queryTeacher(teacherId);
+        TeacherIndexView teacher = accountApi.queryTeacher(teacherId);
         String name = teacher == null ? "Unknown" : teacher.getName();
 
         String date = DateTimeFormatter.ofPattern(Globals.FILE_DATE_FORMAT).format(LocalDateTime.now());
