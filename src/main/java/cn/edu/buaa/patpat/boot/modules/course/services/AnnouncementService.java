@@ -45,7 +45,7 @@ public class AnnouncementService extends BaseService {
         }
     }
 
-    public AnnouncementView find(int id, int courseId) {
+    public AnnouncementView get(int id, int courseId) {
         AnnouncementView announcement = announcementMapper.find(id, courseId);
         if (announcement == null) {
             throw new NotFoundException(M("announcement.exists.not"));
@@ -53,7 +53,7 @@ public class AnnouncementService extends BaseService {
         return announcement;
     }
 
-    public AnnouncementBriefView findBrief(int id, int courseId) {
+    public AnnouncementBriefView getBrief(int id, int courseId) {
         AnnouncementBriefView announcement = announcementMapper.findBrief(id, courseId);
         if (announcement == null) {
             throw new NotFoundException(M("announcement.exists.not"));

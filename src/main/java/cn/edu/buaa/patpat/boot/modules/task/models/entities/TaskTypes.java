@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.task.models.entities;
 
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;

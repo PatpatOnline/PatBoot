@@ -5,7 +5,9 @@ import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
+import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.extensions.validation.Validator;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.problem.dto.*;
@@ -19,6 +21,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,9 +49,9 @@ public class ProblemAdminController extends BaseController {
             @RequestParam MultipartFile file
     ) {
         var request = new CreateProblemRequest(title, description, hidden, file);
-        request.validate();
+        Validator.validate(request);
 
-        Problem problem = problemService.createProblem(request);
+        Problem problem = problemService.create(request);
         var response = CreateProblemResponse.of(problem, mappers);
 
         return DataResponse.ok(M("problem.create.success"), response);
@@ -65,7 +69,7 @@ public class ProblemAdminController extends BaseController {
             @RequestParam @Nullable MultipartFile file
     ) {
         var request = new UpdateProblemRequest(title, description, hidden, file);
-        Problem problem = problemService.updateProblem(id, request);
+        Problem problem = problemService.update(id, request);
         var response = UpdateProblemResponse.of(problem, mappers);
         return DataResponse.ok(M("problem.update.success"), response);
     }
@@ -76,8 +80,18 @@ public class ProblemAdminController extends BaseController {
     public MessageResponse delete(
             @PathVariable int id
     ) {
-        problemService.deleteProblem(id);
+        problemService.delete(id);
         return MessageResponse.ok(M("problem.delete.success"));
+    }
+
+    @GetMapping("download/{id}")
+    @Operation(summary = "Download a problem configuration", description = "Download a problem configuration")
+    @ValidatePermission(AuthLevel.TA)
+    public ResponseEntity<Resource> download(
+            @PathVariable int id
+    ) {
+        Resource resource = problemService.download(id);
+        return ResourceResponse.ok(resource, String.format("problem-%d.zip", id));
     }
 
     @GetMapping("select")

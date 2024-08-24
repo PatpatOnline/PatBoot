@@ -113,7 +113,7 @@ public class ReplyService extends BaseService {
         replyMapper.deleteById(id);
     }
 
-    public ReplyView detail(int replyId, int accountId) {
+    public ReplyView get(int replyId, int accountId) {
         var reply = replyFilterMapper.find(replyId, accountId);
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));

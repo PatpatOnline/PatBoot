@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.course.dto;
 
-import cn.edu.buaa.patpat.boot.config.Globals;
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

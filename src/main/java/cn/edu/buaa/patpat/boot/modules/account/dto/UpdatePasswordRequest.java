@@ -7,13 +7,13 @@ import lombok.Data;
 
 @Data
 public class UpdatePasswordRequest {
-    @Size(min = 1, max = 31)
     @NotNull
+    @Size(min = 1, max = 31)
     @JsonProperty("old")
     private String oldPassword;
 
-    @Size(min = 6, max = 31)
     @NotNull
+    @Size(min = 6, max = 31)
     @JsonProperty("new")
     private String newPassword;
 }

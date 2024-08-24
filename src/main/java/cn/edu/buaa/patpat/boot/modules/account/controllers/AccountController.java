@@ -5,7 +5,7 @@ import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.account.dto.UpdatePasswordRequest;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
-import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherView;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -49,7 +49,7 @@ public class AccountController extends BaseController {
 
     @GetMapping("teachers")
     @Operation(summary = "Query teachers", description = "Get all teachers")
-    public DataResponse<List<TeacherView>> queryTeachers() {
+    public DataResponse<List<TeacherIndexView>> queryTeachers() {
         return DataResponse.ok(accountService.queryTeachers());
     }
 }

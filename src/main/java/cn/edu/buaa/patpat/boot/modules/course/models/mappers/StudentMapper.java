@@ -1,10 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Student;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
+import cn.edu.buaa.patpat.boot.modules.course.models.views.StudentInfoView;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface StudentMapper {
@@ -43,4 +43,15 @@ public interface StudentMapper {
             WHERE `id` = #{id}
             """)
     void update(Student student);
+
+    @Select("""
+            SELECT `stu`.`id` AS `studentId`, `acc`.`id` AS `accountId`, `acc`.`buaa_id`, `acc`.`name`
+            FROM (
+                SELECT `id`, `account_id` FROM `student`
+                WHERE `course_id` = #{courseId} AND `teacher_id` = #{teacherId}
+            ) AS `stu` JOIN (
+                SELECT `id`, `buaa_id`, `name` FROM `account`
+            ) AS `acc` ON `stu`.`account_id` = `acc`.`id`
+            """)
+    List<StudentInfoView> getStudentsByTeacher(int courseId, int teacherId);
 }

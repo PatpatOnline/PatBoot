@@ -1,9 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.problem.services;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -21,6 +21,7 @@ import cn.edu.buaa.patpat.boot.modules.problem.models.views.ProblemSelectView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ProblemService extends BaseService {
     private final ProblemMapper problemMapper;
     private final ProblemFilterMapper problemFilterMapper;
 
-    public Problem createProblem(CreateProblemRequest request) {
+    public Problem create(CreateProblemRequest request) {
         // validate problem configuration
         ProblemInitializer.InitializeResult result;
         try {
@@ -66,7 +67,7 @@ public class ProblemService extends BaseService {
         return problem;
     }
 
-    public Problem updateProblem(int id, UpdateProblemRequest request) {
+    public Problem update(int id, UpdateProblemRequest request) {
         Problem problem = problemMapper.find(id);
         if (problem == null) {
             throw new BadRequestException(M("problem.exists.not"));
@@ -91,7 +92,11 @@ public class ProblemService extends BaseService {
         return problem;
     }
 
-    public void deleteProblem(int id) {
+    public Resource download(int id) {
+        return problemInitializer.download(id);
+    }
+
+    public void delete(int id) {
         if (problemMapper.delete(id) == 0) {
             throw new NotFoundException(M("problem.exists.not"));
         }

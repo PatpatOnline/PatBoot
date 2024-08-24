@@ -77,4 +77,7 @@ public interface CourseMapper {
 
     @Select("SELECT * FROM `course_tutorial` WHERE `course_id` = #{courseId}")
     CourseTutorial findTutorial(int courseId);
+
+    @Select("SELECT `id`, `name` FROM `course` WHERE `id` = #{id}")
+    Course findName(int id);
 }

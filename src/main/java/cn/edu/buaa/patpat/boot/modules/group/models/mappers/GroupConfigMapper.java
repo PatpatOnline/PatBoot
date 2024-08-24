@@ -9,17 +9,15 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface GroupConfigMapper {
     @Insert("""
-            INSERT INTO `group_config` (`course_id`, `max_size`, `enabled`)
-            VALUES (#{courseId}, #{maxSize}, #{enabled})
+            INSERT INTO `group_config` (`course_id`, `max_size`, `min_weight`, `max_weight`, `enabled`)
+            VALUES (#{courseId}, #{maxSize}, #{minWeight}, #{maxWeight}, #{enabled})
+            ON DUPLICATE KEY UPDATE
+                `max_size` = #{maxSize},
+                `min_weight` = #{minWeight},
+                `max_weight` = #{maxWeight},
+                `enabled` = #{enabled}
             """)
-    int save(GroupConfig config);
-
-    @Insert("""
-            UPDATE `group_config`
-            SET `max_size` = #{maxSize}, `enabled` = #{enabled}
-            WHERE `course_id` = #{courseId}
-            """)
-    int update(GroupConfig config);
+    void saveOrUpdate(GroupConfig config);
 
     @Select("SELECT * FROM `group_config` WHERE `course_id` = #{courseId}")
     @Options(useCache = true)

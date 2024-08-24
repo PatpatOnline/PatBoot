@@ -41,7 +41,7 @@ public class AnnouncementAdminController extends BaseController {
             @CourseId Integer courseId
     ) {
         Announcement announcement = announcementService.create(courseId, auth.getId(), request);
-        AnnouncementView view = announcementService.find(announcement.getId(), courseId);
+        AnnouncementView view = announcementService.get(announcement.getId(), courseId);
         return DataResponse.ok(M("announcement.create.success"), view);
     }
 
@@ -55,7 +55,7 @@ public class AnnouncementAdminController extends BaseController {
             @CourseId Integer courseId
     ) {
         Announcement announcement = announcementService.update(id, courseId, request);
-        AnnouncementView view = announcementService.find(announcement.getId(), courseId);
+        AnnouncementView view = announcementService.get(announcement.getId(), courseId);
         return DataResponse.ok(M("announcement.update.success"), view);
     }
 
@@ -75,8 +75,7 @@ public class AnnouncementAdminController extends BaseController {
             @PathVariable int id,
             @CourseId Integer courseId
     ) {
-        AnnouncementView announcement = announcementService.find(id, courseId);
-        AnnouncementBriefView view = mappers.map(announcement, AnnouncementBriefView.class);
-        return DataResponse.ok(view);
+        AnnouncementBriefView announcement = announcementService.getBrief(id, courseId);
+        return DataResponse.ok(announcement);
     }
 }

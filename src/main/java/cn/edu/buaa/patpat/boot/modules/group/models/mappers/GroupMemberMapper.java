@@ -10,14 +10,14 @@ public interface GroupMemberMapper {
             VALUES (#{groupId}, #{courseId}, #{accountId}, #{owner}, #{weight})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int save(GroupMember member);
+    void save(GroupMember member);
 
     @Update("""
             UPDATE `group_member`
             SET `owner` = #{owner}, `weight` = #{weight}
-            WHERE `group_id` = #{groupId} AND `account_id` = #{accountId}
+            WHERE `course_id` = #{courseId} AND `account_id` = #{accountId}
             """)
-    int update(GroupMember member);
+    void update(GroupMember member);
 
     @Delete("DELETE FROM `group_member` WHERE `course_id` = #{courseId} AND `account_id` = #{accountId}")
     int delete(int courseId, int accountId);

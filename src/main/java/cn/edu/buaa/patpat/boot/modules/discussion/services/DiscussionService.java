@@ -56,7 +56,7 @@ public class DiscussionService extends BaseService {
         return discussion;
     }
 
-    public DiscussionView detail(int courseId, int discussionId, int accountId) {
+    public DiscussionView get(int courseId, int discussionId, int accountId) {
         var discussion = discussionFilterMapper.find(courseId, discussionId, accountId);
         if (discussion == null) {
             throw new NotFoundException(M("discussion.exists.not"));

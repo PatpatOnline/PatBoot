@@ -1,8 +1,8 @@
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
-import cn.edu.buaa.patpat.boot.config.Globals;
 import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -26,7 +26,6 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @RequiredArgsConstructor
 @Slf4j
 public class CourseMaterialService extends BaseService {
-
     private final CourseMaterialMapper courseMaterialMapper;
     private final BucketApi bucketApi;
 
@@ -92,7 +91,7 @@ public class CourseMaterialService extends BaseService {
         try {
             Medias.save(path, file);
         } catch (IOException e) {
-            log.error("Failed to save course material: {}", path);
+            log.error("Failed to save course material", e);
             throw new InternalServerErrorException(M("course.material.save.error"));
         }
     }

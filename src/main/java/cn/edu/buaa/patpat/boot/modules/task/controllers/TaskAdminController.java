@@ -7,6 +7,7 @@ import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
+import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse;
 import cn.edu.buaa.patpat.boot.modules.task.dto.*;
@@ -105,22 +106,26 @@ public class TaskAdminController extends BaseController {
     @PostMapping("lab/problems/update/{id}")
     @Operation(summary = "Update Lab problems", description = "Update problems of a lab task")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
     public DataResponse<List<TaskProblemListView>> updateProblems(
             @PathVariable int id,
-            @RequestBody @Valid UpdateLabProblemsRequest request
+            @RequestBody @Valid UpdateLabProblemsRequest request,
+            @CourseId Integer courseId
     ) {
-        var problems = taskService.updateProblems(id, request.getProblemIds());
+        var problems = taskService.updateProblems(id, courseId, TaskTypes.LAB, request.getProblemIds());
         return DataResponse.ok(problems);
     }
 
     @PostMapping("iter/problems/update/{id}")
     @Operation(summary = "Update Iteration problems", description = "Update problems of an iteration task")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse
     public DataResponse<List<TaskProblemListView>> updateProblems(
             @PathVariable int id,
-            @RequestBody @Valid UpdateIterProblemsRequest request
+            @RequestBody @Valid UpdateIterProblemsRequest request,
+            @CourseId Integer courseId
     ) {
-        var problems = taskService.updateProblems(id, List.of(request.getProblemId()));
+        var problems = taskService.updateProblems(id, courseId, TaskTypes.ITERATION, List.of(request.getProblemId()));
         return DataResponse.ok(problems);
     }
 
@@ -143,8 +148,10 @@ public class TaskAdminController extends BaseController {
     public ResponseEntity<Resource> download(
             @PathVariable String type,
             @PathVariable int id,
-            @PathVariable int studentId
+            @PathVariable int studentId,
+            AuthPayload auth
     ) {
+        log.warn("{} initiates download of student {} in task {}", auth.getName(), studentId, id);
         TaskTypes.fromString(type);
         Resource resource = taskAdminService.download(id, studentId);
         return ResourceResponse.ok(resource);
@@ -158,8 +165,14 @@ public class TaskAdminController extends BaseController {
             @PathVariable String type,
             @PathVariable int id,
             @RequestParam int teacherId,
-            @CourseId Integer courseId
+            @CourseId Integer courseId,
+            AuthPayload auth
     ) {
+        log.warn("Teacher {} initiates download of all task submissions in task {} of teacher {}",
+                auth.getName(),
+                id,
+                teacherId);
+
         Resource resource = taskAdminService.downloadAll(
                 id,
                 TaskTypes.fromString(type),

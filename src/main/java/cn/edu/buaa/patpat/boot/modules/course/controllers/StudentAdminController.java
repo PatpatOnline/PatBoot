@@ -7,6 +7,7 @@ import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
+import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
@@ -28,6 +29,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,7 +73,7 @@ public class StudentAdminController extends BaseController {
         return MessageResponse.ok(M("student.import.progress"));
     }
 
-    @PostMapping("/import")
+    @PostMapping("import")
     @Operation(summary = "Import students synchronously", description = "T.A. imports students from an Excel file results will be returned synchronously.")
     @ValidateMultipartFile(maxSize = 4, extensions = { "xlsx", "xls" })
     @ValidatePermission(AuthLevel.TA)
@@ -78,8 +81,7 @@ public class StudentAdminController extends BaseController {
     public DataResponse<ImportStudentResponse> importStudents(
             @RequestParam("file") MultipartFile file,
             @RequestParam boolean clean,
-            @CourseId Integer courseId,
-            AuthPayload auth
+            @CourseId Integer courseId
     ) {
         String record = bucketApi.toRandomRecord(file.getOriginalFilename());
         String path = bucketApi.recordToPrivatePath(record);
@@ -95,9 +97,23 @@ public class StudentAdminController extends BaseController {
         return DataResponse.ok(response);
     }
 
+
+    @GetMapping("export")
+    @Operation(summary = "Export students", description = "Export students of a teacher (optional) to an Excel file")
+    @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse(allowRoot = false)
+    public ResponseEntity<Resource> exportStudents(
+            @CourseId Integer courseId,
+            @RequestParam(required = false, defaultValue = "0") Integer teacherId
+    ) {
+        Resource resource = importService.exportStudents(courseId, teacherId);
+        return ResourceResponse.ok(resource);
+    }
+
     @GetMapping("{id}")
     @Operation(summary = "Get student detail", description = "Get student detail by student ID")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse(allowRoot = false)
     public DataResponse<StudentDetailView> detail(
             @PathVariable int id
     ) {
@@ -108,6 +124,7 @@ public class StudentAdminController extends BaseController {
     @PutMapping("update/{id}")
     @Operation(summary = "Update student", description = "Update student information by student ID")
     @ValidatePermission(AuthLevel.TA)
+    @ValidateCourse(allowRoot = false)
     public DataResponse<StudentListView> update(
             @PathVariable int id,
             @RequestBody @Valid UpdateStudentRequest request
@@ -120,7 +137,7 @@ public class StudentAdminController extends BaseController {
     @GetMapping("query")
     @Operation(summary = "Query students", description = "Query students in current course with filters")
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse
+    @ValidateCourse(allowRoot = false)
     @ValidatePagination
     public DataResponse<PageListDto<StudentListView>> query(
             @CourseId Integer courseId,

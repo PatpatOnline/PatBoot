@@ -19,6 +19,9 @@ import java.lang.reflect.Method;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
+/**
+ * It injects {@link AuthPayload} object into the method arguments.
+ */
 @Component
 @Aspect
 @RequiredArgsConstructor

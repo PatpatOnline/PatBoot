@@ -62,17 +62,25 @@ public class CourseService extends BaseService {
         return courseMapper.findView(id);
     }
 
-    public Course tryGetCourse(AuthPayload auth, int courseId) {
+    public Course find(AuthPayload auth, int courseId) {
         if (auth.isTa()) {
             return courseMapper.find(courseId);
         }
         return courseMapper.findActive(courseId, auth.getId());
     }
 
+    public String getName(int courseId) {
+        Course course = courseMapper.find(courseId);
+        if (course == null) {
+            throw new NotFoundException(M("course.exists.not"));
+        }
+        return course.getName();
+    }
+
     public CourseTutorial updateTutorial(int courseId, String url) {
         CourseTutorial tutorial = new CourseTutorial(courseId, url);
         courseMapper.updateTutorial(tutorial);
-        return findTutorial(courseId);
+        return getTutorial(courseId);
     }
 
     public void deleteTutorial(int courseId) {
@@ -82,7 +90,7 @@ public class CourseService extends BaseService {
         }
     }
 
-    public CourseTutorial findTutorial(int courseId) {
+    public CourseTutorial getTutorial(int courseId) {
         var tutorial = courseMapper.findTutorial(courseId);
         if (tutorial == null) {
             throw new NotFoundException(M("course.tutorial.exists.not"));
@@ -93,7 +101,7 @@ public class CourseService extends BaseService {
     public CoursePayload getCoursePayload(int courseId, AuthPayload auth) {
         CoursePayload payload = new CoursePayload();
 
-        Course course = tryGetCourse(auth, courseId);
+        Course course = find(auth, courseId);
         if (course == null) {
             throw new NotFoundException(M("course.exists.not"));
         }

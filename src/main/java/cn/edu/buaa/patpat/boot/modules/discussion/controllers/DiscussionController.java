@@ -17,11 +17,13 @@ import cn.edu.buaa.patpat.boot.modules.discussion.dto.CreateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.DiscussionUpdateDto;
 import cn.edu.buaa.patpat.boot.modules.discussion.dto.UpdateDiscussionRequest;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
+import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Subscription;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.mappers.DiscussionFilter;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionWithReplyView;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.DiscussionService;
 import cn.edu.buaa.patpat.boot.modules.discussion.services.ReplyService;
+import cn.edu.buaa.patpat.boot.modules.discussion.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -39,6 +41,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class DiscussionController extends BaseController {
     private final DiscussionService discussionService;
     private final ReplyService replyService;
+    private final SubscriptionService subscriptionService;
 
     @PostMapping("create")
     @Operation(summary = "Create a new discussion", description = "Student create a new discussion in a course")
@@ -53,7 +56,10 @@ public class DiscussionController extends BaseController {
         if (discussion == null) {
             throw new BadRequestException(M("discussion.create.error"));
         }
-        var view = discussionService.detail(courseId, discussion.getId(), auth.getId());
+        var view = discussionService.get(courseId, discussion.getId(), auth.getId());
+
+        // The author of the discussion is automatically subscribed to the discussion.
+        subscriptionService.subscribe(new Subscription(auth.getId(), discussion.getId(), auth.getBuaaId()));
 
         log.info("User {} created discussion {}: {}", auth.getBuaaId(), discussion.getId(), discussion.getTitle());
 
@@ -103,7 +109,7 @@ public class DiscussionController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
-        var discussion = discussionService.detail(courseId, id, auth.getId());
+        var discussion = discussionService.get(courseId, id, auth.getId());
         var replies = replyService.query(discussion.getId(), auth.getId());
 
         return DataResponse.ok(new DiscussionWithReplyView(discussion, replies));
@@ -126,6 +132,30 @@ public class DiscussionController extends BaseController {
         return MessageResponse.ok(liked
                 ? M("discussion.like.success")
                 : M("discussion.unlike.success"));
+    }
+
+    @PutMapping("subscribe/{id}")
+    @Operation(summary = "Subscribe/Unsubscribe a discussion", description = "Student subscribe/unsubscribe a discussion")
+    @ValidatePermission
+    @ValidateCourse
+    public MessageResponse subscribe(
+            @PathVariable int id,
+            @RequestParam boolean subscribed,
+            AuthPayload auth,
+            @CourseId Integer courseId
+    ) {
+        if (!discussionService.exists(courseId, id)) {
+            throw new NotFoundException(M("discussion.exists.not"));
+        }
+        if (subscribed) {
+            subscriptionService.subscribe(new Subscription(auth.getId(), id, auth.getBuaaId()));
+        } else {
+            subscriptionService.unsubscribe(auth.getId(), id);
+        }
+
+        return MessageResponse.ok(subscribed
+                ? M("discussion.subscribe.success")
+                : M("discussion.unsubscribe.success"));
     }
 
     @GetMapping("query")

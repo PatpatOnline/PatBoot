@@ -23,6 +23,10 @@ import java.lang.reflect.Method;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
+/**
+ * It injects {@link CoursePayload} object or {@link Integer} parameter annotated with {@link CourseId}
+ * into the method arguments.
+ */
 @Component
 @Aspect
 @RequiredArgsConstructor

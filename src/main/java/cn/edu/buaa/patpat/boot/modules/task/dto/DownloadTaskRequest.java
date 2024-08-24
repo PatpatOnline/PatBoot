@@ -9,7 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class DownloadTaskRequest {
     private int id;
-
     private AuthPayload auth;
     private CoursePayload course;
 }

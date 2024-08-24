@@ -42,7 +42,7 @@ public class AnnouncementController extends BaseController {
             @PathVariable int id,
             @CourseId Integer courseId
     ) {
-        var announcement = announcementService.find(id, courseId);
+        var announcement = announcementService.get(id, courseId);
         return DataResponse.ok(announcement);
     }
 }

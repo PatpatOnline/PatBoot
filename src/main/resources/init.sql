@@ -108,6 +108,8 @@ CREATE TABLE task
     PRIMARY KEY (`id`)
 );
 
+CREATE INDEX `task_course_id_index` ON `task` (`course_id`);
+
 
 ############################################################
 #                      Course Material                     #
@@ -271,6 +273,19 @@ CREATE TABLE `like_reply`
 
 
 ############################################################
+#                      Subscription                        #
+############################################################
+DROP TABLE IF EXISTS `subscription`;
+CREATE TABLE `subscription`
+(
+    `account_id`    int         NOT NULL,
+    `discussion_id` int         NOT NULL,
+    `buaa_id`       varchar(10) NOT NULL,
+    PRIMARY KEY (`account_id`, `discussion_id`)
+);
+
+
+############################################################
 #                     Task Score                           #
 ############################################################
 # Actually a (`task_id`, `student_id`) can be the primary key.
@@ -301,9 +316,11 @@ CREATE INDEX `task_score_task_id_student_id_index` ON `task_score` (`task_id`, `
 DROP TABLE IF EXISTS `group_config`;
 CREATE TABLE `group_config`
 (
-    `course_id` int  NOT NULL,
-    `max_size`  int  NOT NULL,
-    `enabled`   bool NOT NULL,
+    `course_id`  int  NOT NULL,
+    `max_size`   int  NOT NULL,
+    `min_weight` int  NOT NULL,
+    `max_weight` int  NOT NULL,
+    `enabled`    bool NOT NULL,
     PRIMARY KEY (`course_id`)
 );
 
@@ -340,3 +357,68 @@ CREATE TABLE `group_member`
 );
 
 CREATE INDEX `group_member_group_id_index` ON `group_member` (`group_id`);
+
+
+############################################################\
+#                    Group Assignment                      #
+############################################################
+DROP TABLE IF EXISTS `group_assignment`;
+CREATE TABLE `group_assignment`
+(
+    `course_id`  int          NOT NULL,
+    `comment`    varchar(255) NOT NULL,
+    `visible`    bool         NOT NULL,
+    `start_time` datetime     NOT NULL,
+    `end_time`   datetime     NOT NULL,
+    PRIMARY KEY (`course_id`)
+);
+
+
+############################################################
+#                    Group Score                           #
+############################################################
+DROP TABLE IF EXISTS `group_score`;
+CREATE TABLE `group_score`
+(
+    `group_id`   int          NOT NULL,
+    `course_id`  int          NOT NULL,
+    `score`      int          NOT NULL,
+    `record`     varchar(255) NULL,
+    `created_at` datetime     NOT NULL,
+    `updated_at` datetime     NOT NULL,
+    PRIMARY KEY (`group_id`)
+);
+
+
+############################################################
+#                        Message                           #
+############################################################
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message`
+(
+    `id`         int      NOT NULL AUTO_INCREMENT,
+    `type`       int      NOT NULL,
+    `course_id`  int      NOT NULL,
+    `account_id` int      NOT NULL,
+    `content`    json     NOT NULL,
+    `argument`   json     NULL     DEFAULT NULL,
+    `read`       bool     NOT NULL DEFAULT FALSE,
+    `created_at` datetime NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `message_course_id_account_id_index` ON `message` (`course_id`, `account_id`);
+
+
+############################################################
+#                       Score Config                       #
+############################################################
+DROP TABLE IF EXISTS `score_config`;
+CREATE TABLE `score_config`
+(
+    `course_id`  int NOT NULL,
+    `lab_score`  int NOT NULL,
+    `iter_score` int NOT NULL,
+    `proj_score` int NOT NULL,
+    PRIMARY KEY (`course_id`)
+);

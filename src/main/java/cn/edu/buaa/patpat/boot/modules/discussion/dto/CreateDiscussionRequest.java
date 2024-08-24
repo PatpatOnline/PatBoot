@@ -7,14 +7,15 @@ import lombok.Data;
 
 @Data
 public class CreateDiscussionRequest {
-    @Min(0)
-    private int type;
-
-    @Size(min = 1, max = 255)
     @NotNull
+    @Min(0)
+    private Integer type;
+
+    @NotNull
+    @Size(min = 1, max = 255)
     private String title;
 
-    @Size(min = 1, max = 65535)
     @NotNull
+    @Size(min = 1, max = 65535)
     private String content;
 }

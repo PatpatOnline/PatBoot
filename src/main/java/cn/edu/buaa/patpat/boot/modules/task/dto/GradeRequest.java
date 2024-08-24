@@ -15,8 +15,8 @@ public class GradeRequest {
     @NotNull
     private List<Integer> ids;
 
+    @NotNull
     @Min(0)
     @Max(100)
-    @NotNull
-    private int score;
+    private Integer score;
 }

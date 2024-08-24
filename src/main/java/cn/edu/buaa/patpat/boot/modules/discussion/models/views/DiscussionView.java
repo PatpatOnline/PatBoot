@@ -28,5 +28,7 @@ public class DiscussionView extends HasCreatedAndUpdated {
     private boolean liked;
     private int replyCount;
 
+    private boolean subscribed;
+
     private DiscussionAccountView author;
 }

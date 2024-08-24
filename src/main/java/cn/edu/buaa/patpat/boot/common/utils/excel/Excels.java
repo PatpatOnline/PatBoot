@@ -1,8 +1,20 @@
 package cn.edu.buaa.patpat.boot.common.utils.excel;
 
+import cn.edu.buaa.patpat.boot.common.utils.Medias;
+import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+
+import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 public class Excels {
+    public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
     private Excels() {}
 
     /**
@@ -53,5 +65,20 @@ public class Excels {
             throw new ExcelException("Cell is null");
         }
         return cell.getStringCellValue();
+    }
+
+    public static Workbook getWorkbook() {
+        return new XSSFWorkbook();
+    }
+
+    public static Workbook getWorkbook(String path) throws IOException {
+        String extension = FilenameUtils.getExtension(path);
+        if ("xls".equalsIgnoreCase(extension)) {
+            return new HSSFWorkbook(Medias.getInputStream(path));
+        } else if ("xlsx".equalsIgnoreCase(extension)) {
+            return new XSSFWorkbook(Medias.getInputStream(path));
+        } else {
+            throw new BadRequestException(M("validation.file.type"));
+        }
     }
 }
