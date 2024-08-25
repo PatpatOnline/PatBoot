@@ -104,13 +104,17 @@ public class GroupController extends BaseController {
     @ValidateCourse
     @ValidatePermission
     @WithGroupConfig
-    @ValidateGroup(requireInGroup = true)
+    @ValidateGroup
     public DataResponse<GroupView> detail(
             @CourseId Integer courseId,
             AuthPayload auth,
             GroupConfig config,
             GroupMember member
     ) {
+        if (member == null) {
+            return DataResponse.ok(null);
+        }
+            
         GroupView view = groupService.getGroup(member.getGroupId(), config);
         return DataResponse.ok(view);
     }
