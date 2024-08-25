@@ -45,6 +45,15 @@ public abstract class GroupBaseService extends BaseService {
         return view;
     }
 
+    public GroupView findGroup(int id, GroupConfig config) {
+        GroupView view = groupFilterMapper.findGroup(id);
+        if (view != null) {
+            view.setMembers(getMembersInGroup(id));
+            view.setMaxSize(config.getMaxSize());
+        }
+        return view;
+    }
+
     public GroupMember findMember(int courseId, int accountId) {
         return groupMemberMapper.find(courseId, accountId);
     }
