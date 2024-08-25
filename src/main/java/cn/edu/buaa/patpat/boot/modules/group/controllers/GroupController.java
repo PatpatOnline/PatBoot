@@ -39,6 +39,17 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class GroupController extends BaseController {
     private final GroupService groupService;
 
+    @GetMapping("config")
+    @Operation(summary = "Get group configuration", description = "Get group configuration of the current course")
+    @ValidateCourse
+    @WithGroupConfig
+    public DataResponse<GroupConfig> getConfig(
+            @CourseId Integer courseId,
+            GroupConfig config
+    ) {
+        return DataResponse.ok(config);
+    }
+
     @PostMapping("create")
     @Operation(summary = "Student create a group", description = "Student create a group when they are not in any group")
     @ValidateCourse
@@ -77,6 +88,7 @@ public class GroupController extends BaseController {
     @Operation(summary = "Student dismiss their group", description = "Student dismiss a group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission
+    @WithGroupConfig(requireEnabled = true)
     @ValidateGroup(requireInGroup = true, requireOwner = true)
     public MessageResponse dismiss(
             @CourseId Integer courseId,

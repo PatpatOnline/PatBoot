@@ -36,25 +36,13 @@ public class GroupAdminController extends BaseController {
     private final GroupConfigService groupConfigService;
     private final GroupAdminService groupAdminService;
 
-    @GetMapping("config")
-    @Operation(summary = "Get group configuration", description = "Get group configuration of the current course")
-    @ValidateCourse
-    @ValidatePermission(AuthLevel.TA)
-    @WithGroupConfig
-    public DataResponse<GroupConfig> detail(
-            @CourseId Integer courseId,
-            GroupConfig config
-    ) {
-        return DataResponse.ok(config);
-    }
-
     @PutMapping("config/update")
     @Operation(summary = "Update group configuration", description = "Update group configuration of the current course")
     @ValidateParameters
     @ValidateCourse
     @ValidatePermission(AuthLevel.TA)
     @WithGroupConfig
-    public DataResponse<GroupConfig> update(
+    public DataResponse<GroupConfig> updateConfig(
             @RequestBody @Valid UpdateGroupConfigRequest request,
             @CourseId Integer courseId,
             GroupConfig config
