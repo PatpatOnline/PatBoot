@@ -6,12 +6,13 @@ import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeExcep
 import lombok.Data;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
-public class ProblemDescriptor {
+public class ProblemDescriptor implements Serializable {
     /**
      * Whether the problem has init files.
      */

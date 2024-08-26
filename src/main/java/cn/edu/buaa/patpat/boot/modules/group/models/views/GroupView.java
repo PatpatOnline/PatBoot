@@ -2,10 +2,11 @@ package cn.edu.buaa.patpat.boot.modules.group.models.views;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class GroupView {
+public class GroupView implements Serializable {
     private int id;
     private String name;
     private String description;

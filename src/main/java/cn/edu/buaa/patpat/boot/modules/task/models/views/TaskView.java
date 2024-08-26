@@ -7,11 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TaskView extends HasCreatedAndUpdated implements IHasTimeRange {
+public class TaskView extends HasCreatedAndUpdated implements IHasTimeRange, Serializable {
     private int id;
 
     private String title;

@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemScore extends HasCreatedAndUpdated {
+public class ProblemScore extends HasCreatedAndUpdated implements Serializable {
     private int problemId;
     private int accountId;
     private int score;

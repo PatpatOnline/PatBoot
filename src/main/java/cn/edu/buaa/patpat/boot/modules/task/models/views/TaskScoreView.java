@@ -2,8 +2,10 @@ package cn.edu.buaa.patpat.boot.modules.task.models.views;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class TaskScoreView {
+public class TaskScoreView implements Serializable {
     private int taskId;
     private int studentId;
     private int score;

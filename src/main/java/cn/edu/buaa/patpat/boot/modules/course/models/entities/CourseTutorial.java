@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class CourseTutorial extends HasCreatedAndUpdated {
+public class CourseTutorial extends HasCreatedAndUpdated implements Serializable {
     /**
      * The course only has one tutorial, so the course_id is the primary key.
      */

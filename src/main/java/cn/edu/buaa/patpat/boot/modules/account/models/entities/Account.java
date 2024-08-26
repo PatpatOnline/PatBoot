@@ -5,12 +5,14 @@ import cn.edu.buaa.patpat.boot.common.models.HasCreated;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 /**
  * Table: account
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Account extends HasCreated {
+public class Account extends HasCreated implements Serializable {
     private int id;
 
     /**
