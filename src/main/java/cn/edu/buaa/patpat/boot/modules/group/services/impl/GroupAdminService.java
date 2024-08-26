@@ -90,7 +90,9 @@ public class GroupAdminService extends GroupBaseService {
      * This should be used together with {@link #queryGroups(int, GroupConfig)}.
      */
     public List<GroupScoreListView> queryScores(int courseId) {
-        return groupScoreMapper.findInCourse(courseId);
+        var scores = groupScoreMapper.findInCourse(courseId);
+        scores.forEach(GroupScoreListView::initFilename);
+        return scores;
     }
 
     public Resource exportGroups(int courseId, GroupConfig config) {

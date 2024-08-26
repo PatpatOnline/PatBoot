@@ -85,7 +85,6 @@ public class GroupAssignmentController extends BaseController {
     ) {
         log.info("{} initiated download of group assignment for group {}", auth.getName(), member.getGroupId());
         Resource resource = groupAssignmentService.download(courseId, member.getGroupId(), false);
-        String filename = groupAssignmentService.getArtifactName(member.getGroupId());
-        return ResourceResponse.ok(resource, filename);
+        return ResourceResponse.ok(resource);
     }
 }

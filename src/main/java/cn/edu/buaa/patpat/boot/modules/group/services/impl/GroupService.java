@@ -8,7 +8,9 @@ import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateGroupRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
+import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupScoreMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
 import cn.edu.buaa.patpat.boot.modules.group.services.GroupBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @Service
 @RequiredArgsConstructor
 public class GroupService extends GroupBaseService {
+    private final GroupScoreMapper groupScoreMapper;
+
     @Transactional
     public Group create(int courseId, int accountId, CreateGroupRequest request) {
         if (groupMapper.existsByNameAndCourseId(request.getName(), courseId)) {
@@ -92,6 +96,14 @@ public class GroupService extends GroupBaseService {
         var member = getMember(courseId, groupId, accountId);
         member.setWeight(weight);
         groupMemberMapper.update(member);
+    }
+
+    public GroupScoreListView findScore(int groupId) {
+        var score = groupScoreMapper.findById(groupId);
+        if (score != null) {
+            score.initFilename();
+        }
+        return score;
     }
 
     private GroupMember getMember(int courseId, int groupId, int accountId) {
