@@ -4,9 +4,11 @@ import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Reply extends HasCreatedAndUpdated {
+public class Reply extends HasCreatedAndUpdated implements Serializable {
     private int id;
     private int discussionId;
     private int parentId;

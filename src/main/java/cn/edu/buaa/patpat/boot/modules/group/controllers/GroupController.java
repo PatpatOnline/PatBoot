@@ -114,7 +114,7 @@ public class GroupController extends BaseController {
         if (member == null) {
             return DataResponse.ok(null);
         }
-            
+
         GroupView view = groupService.getGroup(member.getGroupId(), config);
         return DataResponse.ok(view);
     }

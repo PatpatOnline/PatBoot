@@ -4,9 +4,11 @@ import cn.edu.buaa.patpat.boot.common.models.HasCreated;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class StudentListView extends HasCreated {
+public class StudentListView extends HasCreated implements Serializable {
     private int id;
     private int accountId;
     private String buaaId;

@@ -53,7 +53,6 @@ public interface ReplyMapper {
             FROM `reply`
             WHERE `id` = #{replyId}
             """)
-    @Options(useCache = true)
     Reply findUpdate(int replyId);
 
     @Select("""
@@ -61,11 +60,9 @@ public interface ReplyMapper {
             FROM `reply`
             WHERE `id` = #{replyId}
             """)
-    @Options(useCache = true)
     Reply findDelete(int replyId);
 
     @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
-    @Options(useCache = true)
     Reply findLike(int replyId);
 
     @Select("""

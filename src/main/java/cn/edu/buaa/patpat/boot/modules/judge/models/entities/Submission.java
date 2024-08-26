@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Submission extends JudgeTimestamp {
+public class Submission extends JudgeTimestamp implements Serializable {
     private int id;
     private int accountId;
     private String buaaId;

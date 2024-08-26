@@ -7,11 +7,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskScore extends HasCreatedAndUpdated {
+public class TaskScore extends HasCreatedAndUpdated implements Serializable {
     private int taskId;
     private int courseId;
     private int accountId;

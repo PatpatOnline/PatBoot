@@ -4,9 +4,11 @@ import cn.edu.buaa.patpat.boot.modules.judge.models.JudgeTimestamp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SubmissionListView extends JudgeTimestamp {
+public class SubmissionListView extends JudgeTimestamp implements Serializable {
     private int id;
     private int accountId;
 

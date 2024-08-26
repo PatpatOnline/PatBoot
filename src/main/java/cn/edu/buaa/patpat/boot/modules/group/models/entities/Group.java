@@ -2,8 +2,10 @@ package cn.edu.buaa.patpat.boot.modules.group.models.entities;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Group {
+public class Group implements Serializable {
     private int id;
     private int courseId;
 

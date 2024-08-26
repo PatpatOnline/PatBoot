@@ -2,8 +2,10 @@ package cn.edu.buaa.patpat.boot.modules.course.models.views;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class StudentExportView {
+public class StudentExportView implements Serializable {
     private String buaaId;
     private String name;
     private int gender;

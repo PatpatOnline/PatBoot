@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class Course extends HasCreatedAndUpdated {
+public class Course extends HasCreatedAndUpdated implements Serializable {
     private int id;
 
     /**

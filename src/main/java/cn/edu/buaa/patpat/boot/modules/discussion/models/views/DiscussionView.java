@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DiscussionView extends HasCreatedAndUpdated {
+public class DiscussionView extends HasCreatedAndUpdated implements Serializable {
     private static final int SUMMARY_CONTENT_LENGTH = 50;
 
     private int id;
