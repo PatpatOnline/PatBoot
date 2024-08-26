@@ -32,9 +32,9 @@ public interface GroupScoreMapper {
     @Select("SELECT * FROM `group_score` WHERE `group_id` = #{groupId}")
     GroupScore find(int groupId);
 
-    @Select("""
-            SELECT `group_id`, `score`, `created_at`, `updated_at`
-            FROM `group_score` WHERE `course_id` = #{courseId}
-            """)
+    @Select("SELECT * FROM `group_score` WHERE `course_id` = #{courseId}")
     List<GroupScoreListView> findInCourse(int courseId);
+
+    @Select("SELECT * FROM `group_score` WHERE `group_id` = #{groupId}")
+    GroupScoreListView findById(int groupId);
 }

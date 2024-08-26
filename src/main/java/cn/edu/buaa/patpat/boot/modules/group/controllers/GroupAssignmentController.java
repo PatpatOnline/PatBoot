@@ -4,7 +4,6 @@ import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
-import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
@@ -47,9 +46,9 @@ public class GroupAssignmentController extends BaseController {
             @CourseId Integer courseId,
             AuthPayload auth
     ) {
-        GroupAssignment assignment = groupAssignmentService.get(courseId);
-        if (!assignment.isVisible() && auth.isStudent()) {
-            throw new NotFoundException(M("group.assignment.exists.not"));
+        GroupAssignment assignment = groupAssignmentService.find(courseId);
+        if ((assignment == null) || (!assignment.isVisible() && auth.isStudent())) {
+            return DataResponse.ok(null);
         }
         return DataResponse.ok(mappers.map(assignment, GroupAssignmentDto.class));
     }
@@ -86,7 +85,6 @@ public class GroupAssignmentController extends BaseController {
     ) {
         log.info("{} initiated download of group assignment for group {}", auth.getName(), member.getGroupId());
         Resource resource = groupAssignmentService.download(courseId, member.getGroupId(), false);
-        String filename = groupAssignmentService.getArtifactName(member.getGroupId());
-        return ResourceResponse.ok(resource, filename);
+        return ResourceResponse.ok(resource);
     }
 }

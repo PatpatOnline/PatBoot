@@ -17,8 +17,7 @@ import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateWeightRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.*;
 import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -105,7 +104,7 @@ public class GroupController extends BaseController {
     @ValidatePermission
     @WithGroupConfig
     @ValidateGroup
-    public DataResponse<GroupView> detail(
+    public DataResponse<GroupWithScoreView> detail(
             @CourseId Integer courseId,
             AuthPayload auth,
             GroupConfig config,
@@ -115,8 +114,11 @@ public class GroupController extends BaseController {
             return DataResponse.ok(null);
         }
 
-        GroupView view = groupService.getGroup(member.getGroupId(), config);
-        return DataResponse.ok(view);
+        GroupView group = groupService.getGroup(member.getGroupId(), config);
+        GroupScoreListView score = groupService.findScore(member.getGroupId());
+        return DataResponse.ok(new GroupWithScoreView(
+                group,
+                mappers.map(score, GroupScoreListStudentView.class)));
     }
 
     @PostMapping("join/{id}")
