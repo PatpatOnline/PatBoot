@@ -121,7 +121,7 @@ public class GroupController extends BaseController {
         GroupScoreListView score = groupService.findScore(member.getGroupId());
         return DataResponse.ok(new GroupWithScoreView(
                 group,
-                mappers.map(score, GroupScoreListStudentView.class)));
+                (score == null) ? null : mappers.map(score, GroupScoreListStudentView.class)));
     }
 
     @PostMapping("join/{id}")
