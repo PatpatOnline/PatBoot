@@ -164,12 +164,12 @@ public class DiscussionController extends BaseController {
     @ValidatePermission
     @ValidateCourse
     public DataResponse<PageListDto<DiscussionView>> query(
-            @CourseId Integer courseId,
-            AuthPayload auth,
             @RequestParam(value = "p") @Page int page,
             @RequestParam(value = "ps") @PageSize int pageSize,
             @RequestParam(required = false) String query,
-            @RequestParam(required = false) Integer type
+            @RequestParam(required = false) Integer type,
+            @CourseId Integer courseId,
+            AuthPayload auth
     ) {
         DiscussionFilter filter = new DiscussionFilter(query, type);
         PageListDto<DiscussionView> dto = discussionService.query(courseId, auth.getId(), page, pageSize, filter);
