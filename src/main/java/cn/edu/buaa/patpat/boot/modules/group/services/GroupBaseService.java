@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -83,14 +84,8 @@ public abstract class GroupBaseService extends BaseService {
         });
         members.forEach(member -> {
             member.setAvatar(bucketApi.recordToUrl(member.getAvatar()));
-            GroupView group = groupMap.get(member.getGroupId());
-            if (group != null) {
-                if (member.isOwner()) {
-                    group.getMembers().add(0, member);
-                } else {
-                    group.getMembers().add(member);
-                }
-            }
+            Optional.ofNullable(groupMap.get(member.getGroupId()))
+                    .ifPresent(value -> value.getMembers().add(member));
         });
 
         return groups;
