@@ -17,7 +17,10 @@ import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateWeightRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.*;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListStudentView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupWithScoreView;
 import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -186,11 +189,11 @@ public class GroupController extends BaseController {
     @Operation(summary = "Query groups", description = "Query all groups in the current course")
     @ValidateCourse
     @WithGroupConfig
-    public DataResponse<List<GroupListView>> query(
+    public DataResponse<List<GroupView>> query(
             @CourseId Integer courseId,
             GroupConfig config
     ) {
-        List<GroupListView> groups = groupService.querySummarizedGroups(courseId, config);
+        List<GroupView> groups = groupService.queryGroups(courseId, config);
         return DataResponse.ok(groups);
     }
 

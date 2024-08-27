@@ -9,14 +9,11 @@ import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupScoreMapper;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
 import cn.edu.buaa.patpat.boot.modules.group.services.GroupBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -84,12 +81,6 @@ public class GroupService extends GroupBaseService {
             throw new ForbiddenException(M("group.kick.owner"));
         }
         groupMemberMapper.delete(courseId, accountId);
-    }
-
-    public List<GroupListView> querySummarizedGroups(int courseId, GroupConfig config) {
-        List<GroupListView> groups = groupFilterMapper.querySummarizedGroups(courseId);
-        groups.forEach(group -> group.setMaxSize(config.getMaxSize()));
-        return groups;
     }
 
     public void updateWeight(int courseId, int groupId, int accountId, int weight) {
