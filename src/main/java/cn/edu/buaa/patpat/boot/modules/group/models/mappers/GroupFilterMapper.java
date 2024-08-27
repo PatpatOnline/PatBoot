@@ -4,12 +4,14 @@ import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.RogueStudentView;
+import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
+@CacheNamespaceRef(GroupMapper.class)
 public interface GroupFilterMapper {
     @Select("""
             SELECT `m`.`account_id`, `m`.`owner`, `m`.`weight`, `m`.`group_id`,

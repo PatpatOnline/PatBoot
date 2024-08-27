@@ -1,6 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.DiscussionView;
+import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -8,6 +9,7 @@ import org.apache.ibatis.annotations.SelectProvider;
 import java.util.List;
 
 @Mapper
+@CacheNamespaceRef(DiscussionMapper.class)
 public interface DiscussionFilterMapper {
     @Select("""
             SELECT `id`, `type`, `author_id`, `course_id`, `title`, `content`,
@@ -20,7 +22,6 @@ public interface DiscussionFilterMapper {
             WHERE `id` = #{discussionId} AND `course_id` = #{courseId}
             """)
     DiscussionView find(int courseId, int discussionId, int accountId);
-
 
     @Select("SELECT COUNT(*) FROM `discussion` WHERE `id` = #{discussionId} AND `course_id` = #{courseId}")
     boolean exists(int courseId, int discussionId);

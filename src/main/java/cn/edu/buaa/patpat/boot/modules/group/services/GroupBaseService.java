@@ -13,7 +13,10 @@ import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -63,5 +66,33 @@ public abstract class GroupBaseService extends BaseService {
         members.forEach(member -> member.setAvatar(
                 bucketApi.recordToUrl(member.getAvatar())));
         return members;
+    }
+
+    /**
+     * This method ensures that the group leader is always the first member in the group.
+     */
+    public List<GroupView> queryGroups(int courseId, GroupConfig config) {
+        List<GroupView> groups = groupFilterMapper.queryGroups(courseId);
+        List<GroupMemberView> members = groupFilterMapper.findMemberViewsInCourse(courseId);
+        Map<Integer, GroupView> groupMap = groups.stream()
+                .collect(Collectors.toMap(GroupView::getId, group -> group));
+
+        groups.forEach(group -> {
+            group.setMaxSize(config.getMaxSize());
+            group.setMembers(new ArrayList<>());
+        });
+        members.forEach(member -> {
+            member.setAvatar(bucketApi.recordToUrl(member.getAvatar()));
+            GroupView group = groupMap.get(member.getGroupId());
+            if (group != null) {
+                if (member.isOwner()) {
+                    group.getMembers().add(0, member);
+                } else {
+                    group.getMembers().add(member);
+                }
+            }
+        });
+
+        return groups;
     }
 }

@@ -1,12 +1,10 @@
 package cn.edu.buaa.patpat.boot.modules.group.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupAssignment;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespace
 public interface GroupAssignmentMapper {
     @Insert("""
             INSERT INTO `group_assignment` (`course_id`, `comment`, `visible`, `start_time`, `end_time`)

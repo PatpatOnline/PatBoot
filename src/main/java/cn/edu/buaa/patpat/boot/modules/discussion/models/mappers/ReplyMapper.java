@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespaceRef(DiscussionMapper.class)
 public interface ReplyMapper {
     @Insert("""
             INSERT INTO `reply` (

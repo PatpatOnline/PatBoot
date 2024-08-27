@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.problem.dto;
 
 import cn.edu.buaa.patpat.boot.common.models.HasCreatedAndUpdated;
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.Problem;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.ProblemDescriptor;
 import lombok.Data;

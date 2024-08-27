@@ -14,4 +14,8 @@ public class GroupView implements Serializable {
     private int maxSize;
 
     private List<GroupMemberView> members;
+
+    public int getMemberCount() {
+        return members.size();
+    }
 }

@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.auth.services;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.jwt.IJwtIssuer;
 import cn.edu.buaa.patpat.boot.extensions.jwt.JwtIssueException;
@@ -13,12 +13,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService extends BaseService {
     private final IJwtIssuer jwtIssuer;
     private final IJwtIssuer refreshIssuer;
     private final ICookieSetter jwtCookieSetter;
     private final ICookieSetter refreshCookieSetter;
-    private final Mappers mappers;
 
     public String issueJwt(AuthPayload auth) throws JwtIssueException {
         String subject;

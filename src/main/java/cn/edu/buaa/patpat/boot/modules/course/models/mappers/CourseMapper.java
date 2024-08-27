@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
+@CacheNamespace
 public interface CourseMapper {
     @Insert("""
             INSERT INTO `course` (

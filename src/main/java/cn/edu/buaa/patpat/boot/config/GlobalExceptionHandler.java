@@ -60,13 +60,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(FileException.class)
-    public ResponseEntity<MessageResponse> handleFileException(FileException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError(e.getMessage())
-        );
-    }
-
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<MessageResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(

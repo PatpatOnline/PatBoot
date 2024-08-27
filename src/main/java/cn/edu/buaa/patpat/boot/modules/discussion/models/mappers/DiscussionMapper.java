@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespace
 public interface DiscussionMapper {
     @Insert("""
             INSERT INTO `discussion` (

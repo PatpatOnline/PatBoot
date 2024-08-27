@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.judge.dto;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.judge.models.JudgeTimestamp;
 import cn.edu.buaa.patpat.boot.modules.judge.models.entities.Submission;
 import lombok.Data;

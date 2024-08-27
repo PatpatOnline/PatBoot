@@ -14,7 +14,6 @@ import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateGroupConfigRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupScore;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.RogueStudentView;
 import cn.edu.buaa.patpat.boot.modules.group.services.GroupConfigService;
 import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupAdminService;
@@ -49,19 +48,6 @@ public class GroupAdminController extends BaseController {
     ) {
         config = groupConfigService.update(config, request);
         return DataResponse.ok(config);
-    }
-
-    @GetMapping("query")
-    @Operation(summary = "Query groups", description = "Get all groups of the current course")
-    @ValidateCourse
-    @ValidatePermission(AuthLevel.TA)
-    @WithGroupConfig
-    public DataResponse<List<GroupView>> query(
-            @CourseId Integer courseId,
-            GroupConfig config
-    ) {
-        List<GroupView> groups = groupAdminService.queryGroups(courseId, config);
-        return DataResponse.ok(groups);
     }
 
     @GetMapping("query/rogue")

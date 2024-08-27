@@ -70,7 +70,7 @@ public class CourseService extends BaseService {
     }
 
     public String getName(int courseId) {
-        Course course = courseMapper.find(courseId);
+        Course course = courseMapper.findName(courseId);
         if (course == null) {
             throw new NotFoundException(M("course.exists.not"));
         }

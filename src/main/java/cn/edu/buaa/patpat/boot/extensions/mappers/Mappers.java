@@ -1,4 +1,4 @@
-package cn.edu.buaa.patpat.boot.common.utils;
+package cn.edu.buaa.patpat.boot.extensions.mappers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

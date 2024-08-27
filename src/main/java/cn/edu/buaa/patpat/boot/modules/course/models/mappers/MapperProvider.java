@@ -2,7 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 
-public class MapperProvider {
+class MapperProvider {
     public String count(int courseId, StudentFilter filter) {
         return String.format("""
                         SELECT COUNT(*)

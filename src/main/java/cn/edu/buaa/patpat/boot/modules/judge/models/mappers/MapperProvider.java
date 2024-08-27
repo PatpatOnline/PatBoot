@@ -2,7 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.judge.models.mappers;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 
-public class MapperProvider {
+class MapperProvider {
     /**
      * If filter.id is not null, then it should be handled outside of this method.
      * If accountIds is not null, then its length should be greater than 0.
