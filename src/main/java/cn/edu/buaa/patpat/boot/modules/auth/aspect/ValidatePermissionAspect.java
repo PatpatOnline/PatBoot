@@ -2,6 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.auth.aspect;
 
 
 import cn.edu.buaa.patpat.boot.common.utils.Requests;
+import cn.edu.buaa.patpat.boot.exceptions.ForbiddenException;
 import cn.edu.buaa.patpat.boot.exceptions.UnauthorizedException;
 import cn.edu.buaa.patpat.boot.modules.auth.api.AuthApi;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -60,10 +61,10 @@ public class ValidatePermissionAspect {
             throw new UnauthorizedException(M("auth.login.not"));
         } else if ((level == AuthLevel.TEACHER) && !auth.isTeacher()) {
             log.error("Require teacher permission for method {}", method.getName());
-            throw new UnauthorizedException(M("auth.permission.denied"));
+            throw new ForbiddenException(M("auth.permission.denied"));
         } else if ((level == AuthLevel.TA) && !auth.isTa()) {
             log.error("Require T.A. permission for method {}", method.getName());
-            throw new UnauthorizedException(M("auth.permission.denied"));
+            throw new ForbiddenException(M("auth.permission.denied"));
         }
         return auth;
     }
