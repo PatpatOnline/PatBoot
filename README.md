@@ -1,12 +1,14 @@
 # PatBoot
 
-> Main application for Patpat Online
+> Main application for Patpat Online, made with 💖.
 
 ---
 
-## Before you start
+## 部署 & 运行
 
-To run the project locally, you need to set up the following environment variables in your IDEA configuration.
+在生产环境部署项目，参见 [PatpatDeploy](https://github.com/JavaEE-PatPatOnline/PatpatDeploy)。
+
+在本地运行项目，同样需要先在服务器或本地配置好 MySQL 和 RabbitMQ，在 IntelliJ IDEA 中创建运行配置，添加命令行参数  `--spring.profiles.active=dev`，并添加如下环境变量。
 
 - MySQL
   - `MYSQL_HOST`: The host of the MySQL server
@@ -21,26 +23,22 @@ To run the project locally, you need to set up the following environment variabl
   - `RABBITMQ_PASSWORD`: The password of the RabbitMQ server
 - JWT
   - `JWT_SECRET`: The secret key for JWT
-- Base URL
-  - `HTTP_URL`: The base URL of the application, default is `http://localhost:8080`
-  - `WS_URL`: The base URL of the WebSocket server, default is `ws://localhost:8080`
+
+本地运行时，还需要额外创建目录。在项目同级创建如下目录。
+
+```
+.
+|-- PatBoot
+|-- PatJudge
+\-- volume
+    |-- bucket
+    |   |-- problem
+    |   \-- submission
+    \-- wwwroot
+```
 
 ---
 
-## Volume Structure
+## 贡献代码
 
-- `/log/`: The log directory
-- `/bucket/`: The private bucket for storing files
-  - `${buaa-id}/`: Private files uploaded by the user
-  - `problem/${problem-id}/`: The problem directory
-  - `course/${course-id}/`: Course material directory
-  - `lab/${lab-id}/${buaa-id}-${name}`: Lab report directory
-  - `iter/${iter-id}/${buaa-id}-${name}`: Iteration submission directory
-  - `proj/${course-id}/${group-id}`: Group project directory~~~~
-  - `submission/${submission-id}/${buaa-id}`: Problem submission directory
-  - `temp/`: Temporary files
-- `/judge/`: The judge sandbox directory
-  - `${random}/`: A copy of a submission for judging
-- `/wwwroot`: The public bucket for storing files
-  - `${buaa-id}/`: Public files uploaded by the user, e.g. avatar
-  - `${files}`: Global public files
+如果你想让 PatBoot 继续运行下去，欢迎加入我们维护该项目，具体参考 [CONTRIBUTING.md](CONTRIBUTING.md)。
