@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

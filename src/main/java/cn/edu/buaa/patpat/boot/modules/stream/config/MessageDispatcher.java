@@ -1,6 +1,6 @@
 package cn.edu.buaa.patpat.boot.modules.stream.config;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.stream.dto.WebSocketPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -4,6 +4,7 @@ import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespace
 public interface GroupMapper {
     @Insert("""
             INSERT INTO `group` (`course_id`, `name`, `description`, `locked`)

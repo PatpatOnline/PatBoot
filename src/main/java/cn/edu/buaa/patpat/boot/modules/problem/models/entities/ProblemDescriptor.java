@@ -1,7 +1,7 @@
 package cn.edu.buaa.patpat.boot.modules.problem.models.entities;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import lombok.Data;
 

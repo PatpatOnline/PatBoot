@@ -1,11 +1,11 @@
 package cn.edu.buaa.patpat.boot.modules.problem.services;
 
 import cn.edu.buaa.patpat.boot.common.Globals;
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.common.utils.Zips;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import cn.edu.buaa.patpat.boot.modules.problem.models.entities.ProblemDescriptor;

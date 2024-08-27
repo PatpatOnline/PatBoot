@@ -1,9 +1,9 @@
 package cn.edu.buaa.patpat.boot.modules.course.api;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
 import cn.edu.buaa.patpat.boot.modules.course.dto.CoursePayload;
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
