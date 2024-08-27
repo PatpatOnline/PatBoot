@@ -18,11 +18,11 @@ public interface GroupFilterMapper {
                 `a`.`buaa_id`, `a`.`name`, `a`.`avatar`
             FROM (
                 SELECT * FROM `group_member` WHERE `group_id` = #{groupId}
-                ORDER BY `owner` DESC
             ) AS m LEFT JOIN (
                 SELECT `id`, `buaa_id`, `name`, `avatar`
                 FROM `account`
             ) AS a ON m.`account_id` = a.`id`
+            ORDER BY `m`.`owner` DESC
             """)
     List<GroupMemberView> findMemberViewsInGroup(int groupId);
 
@@ -31,11 +31,11 @@ public interface GroupFilterMapper {
                 `a`.`buaa_id`, `a`.`name`, `a`.`avatar`
             FROM (
                 SELECT * FROM `group_member` WHERE `course_id` = #{courseId}
-                ORDER BY `owner` DESC
             ) AS m LEFT JOIN (
                 SELECT `id`, `buaa_id`, `name`, `avatar`
                 FROM `account`
             ) AS a ON m.`account_id` = a.`id`
+            ORDER BY `m`.`owner` DESC
             """)
     List<GroupMemberView> findMemberViewsInCourse(int courseId);
 
