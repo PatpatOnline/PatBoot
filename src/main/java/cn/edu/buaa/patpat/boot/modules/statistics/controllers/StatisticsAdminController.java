@@ -51,8 +51,8 @@ public class StatisticsAdminController extends BaseController {
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
     public DataResponse<ScoreConfigDto> updateScoreConfig(
-            @CourseId Integer courseId,
-            @RequestBody @Valid UpdateScoreConfigRequest request
+            @RequestBody @Valid UpdateScoreConfigRequest request,
+            @CourseId Integer courseId
     ) {
         var config = scoreConfigService.update(courseId, request);
         return DataResponse.ok(mappers.map(config, ScoreConfigDto.class));

@@ -71,7 +71,7 @@ public interface CourseMapper {
             VALUES (#{courseId}, #{url}, #{createdAt}, #{updatedAt})
             ON DUPLICATE KEY UPDATE `url` = VALUES(`url`), `updated_at` = VALUES(`updated_at`)
             """)
-    void updateTutorial(CourseTutorial tutorial);
+    void saveOrUpdateTutorial(CourseTutorial tutorial);
 
     @Delete("DELETE FROM `course_tutorial` WHERE `course_id` = #{courseId}")
     int deleteTutorial(int courseId);

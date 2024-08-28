@@ -120,7 +120,7 @@ public class CourseAdminController extends BaseController {
     public DataResponse<CourseTutorialDto> getTutorial(
             @CourseId Integer courseId
     ) {
-        CourseTutorial tutorial = courseService.getTutorial(courseId);
-        return DataResponse.ok(mappers.map(tutorial, CourseTutorialDto.class));
+        CourseTutorial tutorial = courseService.findTutorial(courseId);
+        return DataResponse.ok(tutorial == null ? null : mappers.map(tutorial, CourseTutorialDto.class));
     }
 }

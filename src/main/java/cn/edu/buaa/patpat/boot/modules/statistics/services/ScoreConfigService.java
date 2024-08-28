@@ -37,7 +37,7 @@ public class ScoreConfigService extends BaseService {
         ScoreConfig config = get(courseId);
         mappers.map(request, config);
         if (config.getTotalScore() > 100) {
-            throw new BadRequestException(M("score.total.invalid"));
+            throw new BadRequestException(M("score.total.exceed"));
         }
         scoreConfigMapper.saveOrUpdate(config);
         return config;
