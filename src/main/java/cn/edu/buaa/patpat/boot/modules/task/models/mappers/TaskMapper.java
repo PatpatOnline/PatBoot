@@ -7,8 +7,12 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * We use readonly cache for tasks to improve the performance.
+ * Therefore, the return results should not be modified unless @Options(useCache = false) is used.
+ */
 @Mapper
-@CacheNamespace
+@CacheNamespace(readWrite = false)
 public interface TaskMapper {
     @Insert("""
             INSERT INTO `task` (
@@ -28,6 +32,7 @@ public interface TaskMapper {
             FROM `task`
             WHERE `id` = #{id} AND `course_id` = #{courseId} AND `type` = #{type}
             """)
+    @Options(useCache = false)
     Task findUpdate(int id, int courseId, int type);
 
     @Update("""

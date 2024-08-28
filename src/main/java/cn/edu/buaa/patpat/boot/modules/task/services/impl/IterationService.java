@@ -60,7 +60,7 @@ public class IterationService extends TaskSubmissionService {
         return judgeApi.submit(submitRequest);
     }
 
-    public ProblemDto getProblem(int taskId, int courseId, AuthPayload auth) {
+    public ProblemDto getIterationProblem(int taskId, int courseId, AuthPayload auth) {
         checkSubmissionStatus(taskId, courseId, TaskTypes.ITERATION, auth);
 
         List<TaskProblem> problems = taskProblemMapper.find(taskId);

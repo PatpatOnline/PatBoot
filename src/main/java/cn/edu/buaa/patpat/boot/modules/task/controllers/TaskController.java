@@ -181,7 +181,7 @@ public class TaskController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
-        var problem = iterationService.getProblem(id, courseId, auth);
+        var problem = iterationService.getIterationProblem(id, courseId, auth);
         return DataResponse.ok(problem);
     }
 }

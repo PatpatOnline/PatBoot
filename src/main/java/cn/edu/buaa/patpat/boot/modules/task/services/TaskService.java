@@ -72,7 +72,7 @@ public class TaskService extends BaseService {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
         }
         if (validateTime) {
-            validateTime(type, task);
+            validateStartTime(type, task);
         }
         return task;
     }
@@ -127,7 +127,7 @@ public class TaskService extends BaseService {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
         }
         if (validateTime) {
-            validateTime(type, task);
+            validateStartTime(type, task);
         }
         var problems = taskProblemMapper.findTaskProblems(id, accountId);
         problems.forEach(TaskProblemView::eraseTimestampIfNotSubmitted);
@@ -140,7 +140,7 @@ public class TaskService extends BaseService {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
         }
         if (validateTime) {
-            validateTime(type, task);
+            validateStartTime(type, task);
         }
 
         TaskScore score = taskScoreMapper.find(id, courseId, accountId);
@@ -151,13 +151,10 @@ public class TaskService extends BaseService {
         return score;
     }
 
-    private void validateTime(int type, IHasTimeRange range) {
+    private void validateStartTime(int type, IHasTimeRange range) {
         var now = LocalDateTime.now();
         if (range.getStartTime().isAfter(now)) {
             throw new ForbiddenException(M("task.started.not", TaskTypes.toString(type)));
-        }
-        if (now.isAfter(range.getEndTime())) {
-            throw new ForbiddenException(M("task.ended", TaskTypes.toString(type)));
         }
     }
 }
