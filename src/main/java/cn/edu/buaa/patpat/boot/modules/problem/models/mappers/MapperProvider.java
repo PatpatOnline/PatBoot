@@ -2,7 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.problem.models.mappers;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 
-class MapperProvider {
+public class MapperProvider {
     public String count(ProblemFilter filter) {
         if (filter.isEmpty()) {
             return "SELECT COUNT(*) FROM `problem`";

@@ -3,7 +3,7 @@ package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import org.apache.ibatis.annotations.Param;
 
-class MapperProvider {
+public class MapperProvider {
     public String getBadgesByIds(@Param("ids") Iterable<Integer> ids) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT `id`, `buaa_id`, `name`, `avatar`, `ta`, `teacher`");

@@ -2,7 +2,7 @@ package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 
-class MapperProvider {
+public class MapperProvider {
     /**
      * If filter.id is not null, it should be handled earlier.
      */
