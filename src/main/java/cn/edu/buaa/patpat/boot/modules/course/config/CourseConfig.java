@@ -15,7 +15,7 @@ public class CourseConfig {
                 cookiesOptions.getDomain(),
                 CookiesOptions.PATH,
                 Integer.MAX_VALUE,
-                true,
+                false,
                 cookiesOptions.isSecure());
     }
 }
