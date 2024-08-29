@@ -118,7 +118,7 @@ public class ReplyService extends BaseService {
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));
         }
-        var badge = discussionAccountMapper.find(reply.getAuthorId());
+        var badge = discussionAccountService.findBadge(reply.getAuthorId());
         reply.setAuthor(badge);
         return reply;
     }
