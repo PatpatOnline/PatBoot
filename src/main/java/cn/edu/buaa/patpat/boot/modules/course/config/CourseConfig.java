@@ -1,8 +1,13 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.course.config;
 
+import cn.edu.buaa.patpat.boot.config.options.CookiesOptions;
 import cn.edu.buaa.patpat.boot.extensions.cookies.CookieSetter;
 import cn.edu.buaa.patpat.boot.extensions.cookies.ICookieSetter;
-import cn.edu.buaa.patpat.boot.options.CookiesOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +20,7 @@ public class CourseConfig {
                 cookiesOptions.getDomain(),
                 CookiesOptions.PATH,
                 Integer.MAX_VALUE,
-                true,
+                false,
                 cookiesOptions.isSecure());
     }
 }

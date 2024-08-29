@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.group.controllers;
 
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
@@ -17,8 +22,10 @@ import cn.edu.buaa.patpat.boot.modules.group.dto.UpdateWeightRequest;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
-import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListStudentView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupWithScoreView;
 import cn.edu.buaa.patpat.boot.modules.group.services.impl.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +45,17 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 @Tag(name = "Group", description = "Group API")
 public class GroupController extends BaseController {
     private final GroupService groupService;
+
+    @GetMapping("config")
+    @Operation(summary = "Get group configuration", description = "Get group configuration of the current course")
+    @ValidateCourse
+    @WithGroupConfig
+    public DataResponse<GroupConfig> getConfig(
+            @CourseId Integer courseId,
+            GroupConfig config
+    ) {
+        return DataResponse.ok(config);
+    }
 
     @PostMapping("create")
     @Operation(summary = "Student create a group", description = "Student create a group when they are not in any group")
@@ -77,6 +95,7 @@ public class GroupController extends BaseController {
     @Operation(summary = "Student dismiss their group", description = "Student dismiss a group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission
+    @WithGroupConfig(requireEnabled = true)
     @ValidateGroup(requireInGroup = true, requireOwner = true)
     public MessageResponse dismiss(
             @CourseId Integer courseId,
@@ -92,15 +111,22 @@ public class GroupController extends BaseController {
     @ValidateCourse
     @ValidatePermission
     @WithGroupConfig
-    @ValidateGroup(requireInGroup = true)
-    public DataResponse<GroupView> detail(
+    @ValidateGroup
+    public DataResponse<GroupWithScoreView> detail(
             @CourseId Integer courseId,
             AuthPayload auth,
             GroupConfig config,
             GroupMember member
     ) {
-        GroupView view = groupService.getGroup(member.getGroupId(), config);
-        return DataResponse.ok(view);
+        if (member == null) {
+            return DataResponse.ok(null);
+        }
+
+        GroupView group = groupService.getGroup(member.getGroupId(), config);
+        GroupScoreListView score = groupService.findScore(member.getGroupId());
+        return DataResponse.ok(new GroupWithScoreView(
+                group,
+                (score == null) ? null : mappers.map(score, GroupScoreListStudentView.class)));
     }
 
     @PostMapping("join/{id}")
@@ -168,11 +194,11 @@ public class GroupController extends BaseController {
     @Operation(summary = "Query groups", description = "Query all groups in the current course")
     @ValidateCourse
     @WithGroupConfig
-    public DataResponse<List<GroupListView>> query(
+    public DataResponse<List<GroupView>> query(
             @CourseId Integer courseId,
             GroupConfig config
     ) {
-        List<GroupListView> groups = groupService.querySummarizedGroups(courseId, config);
+        List<GroupView> groups = groupService.queryGroups(courseId, config);
         return DataResponse.ok(groups);
     }
 

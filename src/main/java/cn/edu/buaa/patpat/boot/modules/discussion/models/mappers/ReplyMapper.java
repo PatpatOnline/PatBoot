@@ -1,9 +1,15 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Reply;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespaceRef(DiscussionMapper.class)
 public interface ReplyMapper {
     @Insert("""
             INSERT INTO `reply` (
@@ -53,7 +59,6 @@ public interface ReplyMapper {
             FROM `reply`
             WHERE `id` = #{replyId}
             """)
-    @Options(useCache = true)
     Reply findUpdate(int replyId);
 
     @Select("""
@@ -61,11 +66,9 @@ public interface ReplyMapper {
             FROM `reply`
             WHERE `id` = #{replyId}
             """)
-    @Options(useCache = true)
     Reply findDelete(int replyId);
 
     @Select("SELECT `id`, `discussion_id` FROM `reply` WHERE `id` = #{replyId}")
-    @Options(useCache = true)
     Reply findLike(int replyId);
 
     @Select("""

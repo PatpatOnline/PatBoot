@@ -1,12 +1,18 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.statistics.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.statistics.models.entities.ScoreConfig;
+import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
+@CacheNamespace
 public interface ScoreConfigMapper {
     @Insert("""
             INSERT INTO `score_config` (
@@ -21,6 +27,5 @@ public interface ScoreConfigMapper {
     void saveOrUpdate(ScoreConfig config);
 
     @Select("SELECT * FROM `score_config` WHERE `course_id` = #{courseId}")
-    @Options(useCache = true)
     ScoreConfig find(int courseId);
 }

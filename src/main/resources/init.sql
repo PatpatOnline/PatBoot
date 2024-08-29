@@ -20,7 +20,7 @@ CREATE TABLE `account`
 CREATE INDEX `account_buaa_id_index` ON `account` (`buaa_id`);
 CREATE INDEX `account_name_index` ON `account` (`name`);
 
-# Insert super user.
+# Insert root user.
 INSERT INTO `account` (`buaa_id`, `name`, `password`, `gender`, `school`, `teacher`, `ta`, `avatar`, `created_at`)
 VALUES ('java', 'Java', 'password', 0, 'Oracle', true, true, 'default.svg', NOW());
 

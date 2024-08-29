@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.CourseMaterial;
@@ -6,6 +11,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
+@CacheNamespace
 public interface CourseMaterialMapper {
     @Insert("""
             INSERT INTO `course_material` (

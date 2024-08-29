@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.group.services;
 
 import cn.edu.buaa.patpat.boot.common.Globals;
@@ -89,7 +94,7 @@ public class GroupAssignmentService extends BaseService {
     public GroupScore submit(SubmitGroupAssignmentRequest request) {
         validateAssignment(request.getCourseId(), true, true);
 
-        var submitPath = getSubmitFileRecord(request.getCourseId(), request.getGroup().getId());
+        var submitPath = getSubmitFileRecord(request);
         try {
             Medias.ensureEmptyParentPath(submitPath.second);
             Medias.save(submitPath.second, request.getFile());
@@ -99,10 +104,16 @@ public class GroupAssignmentService extends BaseService {
             throw new InternalServerErrorException(M("system.error.io"));
         }
 
-        GroupScore score = new GroupScore();
-        score.setGroupId(request.getGroup().getId());
-        score.setCourseId(request.getCourseId());
-        score.setScore(Globals.NOT_GRADED);
+        GroupScore score = groupScoreMapper.find(request.getGroup().getId());
+        if (score != null) {
+            String oldPath = bucketApi.recordToPrivatePath(score.getRecord());
+            Medias.removeSilently(oldPath);
+        } else {
+            score = new GroupScore();
+            score.setGroupId(request.getGroup().getId());
+            score.setCourseId(request.getCourseId());
+            score.setScore(Globals.NOT_GRADED);
+        }
         score.setRecord(submitPath.first);
         groupScoreMapper.saveOrUpdate(score);
         return groupScoreMapper.find(score.getGroupId());
@@ -111,9 +122,9 @@ public class GroupAssignmentService extends BaseService {
     public Resource download(int courseId, int groupId, boolean admin) {
         validateAssignment(courseId, !admin, false);
         if (admin) {
-            return downloadAdmin(courseId, groupId);
+            return downloadAdmin(groupId);
         } else {
-            return downloadStudent(courseId, groupId);
+            return downloadStudent(groupId);
         }
     }
 
@@ -148,8 +159,12 @@ public class GroupAssignmentService extends BaseService {
                 DateTimeFormatter.ofPattern(Globals.FILE_DATE_FORMAT).format(LocalDateTime.now()));
     }
 
-    private Resource downloadAdmin(int courseId, int groupId) {
-        String path = Medias.getParentPath(getSubmitFileRecord(courseId, groupId).second).toString();
+    private Resource downloadAdmin(int groupId) {
+        var score = groupScoreMapper.find(groupId);
+        if (score == null) {
+            throw new NotFoundException("group.assignment.submit.not");
+        }
+        String path = bucketApi.recordToPrivatePath(score.getRecord());
         try {
             String zipFilePath = bucketApi.getRandomTempFile("zip");
             Zips.zip(path, zipFilePath, false);
@@ -159,8 +174,12 @@ public class GroupAssignmentService extends BaseService {
         }
     }
 
-    private Resource downloadStudent(int courseId, int groupId) {
-        String path = getSubmitFileRecord(courseId, groupId).second;
+    private Resource downloadStudent(int groupId) {
+        var score = groupScoreMapper.find(groupId);
+        if (score == null) {
+            throw new NotFoundException("group.assignment.submit.not");
+        }
+        String path = bucketApi.recordToPrivatePath(score.getRecord());
         try {
             return Medias.loadAsResource(path);
         } catch (IOException e) {
@@ -181,12 +200,12 @@ public class GroupAssignmentService extends BaseService {
         }
     }
 
-    private Tuple<String, String> getSubmitFileRecord(int courseId, int groupId) {
+    private Tuple<String, String> getSubmitFileRecord(SubmitGroupAssignmentRequest request) {
         String record = bucketApi.toRecord(
                 Globals.PROJECT_TAG,
-                String.valueOf(courseId),
-                String.valueOf(groupId),
-                getArtifactName(groupId)
+                String.valueOf(request.getCourseId()),
+                String.valueOf(request.getGroup().getId()),
+                request.getFile().getOriginalFilename()
         );
         String path = bucketApi.recordToPrivatePath(record);
         return new Tuple<>(record, path);

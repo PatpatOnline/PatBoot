@@ -1,17 +1,23 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.problem.models.entities;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
 import lombok.Data;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
-public class ProblemDescriptor {
+public class ProblemDescriptor implements Serializable {
     /**
      * Whether the problem has init files.
      */

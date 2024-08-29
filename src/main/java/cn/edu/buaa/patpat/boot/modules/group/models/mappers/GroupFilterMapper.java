@@ -1,26 +1,33 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.group.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupListView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.RogueStudentView;
+import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
+@CacheNamespaceRef(GroupMapper.class)
 public interface GroupFilterMapper {
     @Select("""
             SELECT `m`.`account_id`, `m`.`owner`, `m`.`weight`, `m`.`group_id`,
                 `a`.`buaa_id`, `a`.`name`, `a`.`avatar`
             FROM (
                 SELECT * FROM `group_member` WHERE `group_id` = #{groupId}
-                ORDER BY `owner` DESC
             ) AS m LEFT JOIN (
                 SELECT `id`, `buaa_id`, `name`, `avatar`
                 FROM `account`
             ) AS a ON m.`account_id` = a.`id`
+            ORDER BY `m`.`owner` DESC
             """)
     List<GroupMemberView> findMemberViewsInGroup(int groupId);
 
@@ -29,11 +36,11 @@ public interface GroupFilterMapper {
                 `a`.`buaa_id`, `a`.`name`, `a`.`avatar`
             FROM (
                 SELECT * FROM `group_member` WHERE `course_id` = #{courseId}
-                ORDER BY `owner` DESC
             ) AS m LEFT JOIN (
                 SELECT `id`, `buaa_id`, `name`, `avatar`
                 FROM `account`
             ) AS a ON m.`account_id` = a.`id`
+            ORDER BY `m`.`owner` DESC
             """)
     List<GroupMemberView> findMemberViewsInCourse(int courseId);
 

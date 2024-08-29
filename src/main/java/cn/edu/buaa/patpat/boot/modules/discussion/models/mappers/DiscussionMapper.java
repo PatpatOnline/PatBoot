@@ -1,9 +1,15 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.discussion.models.entities.Discussion;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@CacheNamespace
 public interface DiscussionMapper {
     @Insert("""
             INSERT INTO `discussion` (

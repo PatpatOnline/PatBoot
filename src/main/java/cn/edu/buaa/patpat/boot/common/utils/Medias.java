@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.common.utils;
 
 import jakarta.annotation.Nonnull;
@@ -20,6 +25,9 @@ public class Medias {
         return getParentPath(Path.of(path));
     }
 
+    /***
+     * Get the parent path of the given path.
+     */
     public static Path getParentPath(Path path) {
         return path.getParent();
     }
@@ -28,6 +36,9 @@ public class Medias {
         ensureParentPath(Path.of(path));
     }
 
+    /**
+     * Ensure the parent path of the given path exists.
+     */
     public static void ensureParentPath(Path path) throws IOException {
         ensurePath(path.getParent());
     }
@@ -39,6 +50,9 @@ public class Medias {
         ensurePath(Path.of(path));
     }
 
+    /**
+     * Ensure the given path exists.
+     */
     public static void ensurePath(Path path) throws IOException {
         Files.createDirectories(path);
     }
@@ -48,6 +62,9 @@ public class Medias {
         ensurePath(path);
     }
 
+    /**
+     * Ensure the given path exists and is empty.
+     */
     public static void ensureEmptyPath(Path path) throws IOException {
         remove(path);
         ensurePath(path);
@@ -57,6 +74,9 @@ public class Medias {
         ensureEmptyParentPath(Path.of(path));
     }
 
+    /**
+     * Ensure the parent path of the given path exists and is empty.
+     */
     public static void ensureEmptyParentPath(Path path) throws IOException {
         ensureEmptyPath(path.getParent());
     }
@@ -65,6 +85,9 @@ public class Medias {
         save(Path.of(path), file);
     }
 
+    /**
+     * Save file to the given path.
+     */
     public static void save(Path path, InputStreamSource file) throws IOException {
         ensureParentPath(path);
         FileCopyUtils.copy(file.getInputStream(), Files.newOutputStream(path));
@@ -74,6 +97,9 @@ public class Medias {
         save(Path.of(path), content);
     }
 
+    /**
+     * Save content to the given path.
+     */
     public static void save(Path path, String content) throws IOException {
         Files.writeString(path, content);
     }
@@ -82,6 +108,9 @@ public class Medias {
         remove(Path.of(path));
     }
 
+    /**
+     * Remove file or directory.
+     */
     public static void remove(Path path) throws IOException {
         // delete file or directory recursively
         if (Files.isDirectory(path)) {
@@ -95,6 +124,9 @@ public class Medias {
         removeSilently(Path.of(path));
     }
 
+    /**
+     * Remove file or directory without throwing exception if failed.
+     */
     public static void removeSilently(Path path) {
         try {
             remove(path);
@@ -107,6 +139,9 @@ public class Medias {
         return exists(Path.of(path));
     }
 
+    /**
+     * Check if the given path exists.
+     */
     public static boolean exists(Path path) {
         return Files.exists(path);
     }
@@ -117,10 +152,6 @@ public class Medias {
 
     /**
      * Copy file from src to target directory.
-     *
-     * @param src  source file path
-     * @param dest target directory path
-     * @throws IOException if an I/O error occurs
      */
     public static void copyFile(Path src, Path dest) throws IOException {
         ensurePath(dest);
@@ -131,6 +162,9 @@ public class Medias {
         copyDirectory(Path.of(src), Path.of(dest));
     }
 
+    /**
+     * Copy directory from src to target directory.
+     */
     public static void copyDirectory(Path src, Path dest) throws IOException {
         FileUtils.copyDirectory(src.toFile(), dest.toFile());
     }
@@ -139,6 +173,9 @@ public class Medias {
         return loadAsResource(path, false);
     }
 
+    /**
+     * Load a file as resource to return.
+     */
     public static Resource loadAsResource(String path, boolean autoDelete) throws IOException {
         return loadAsResource(Path.of(path), autoDelete);
     }
@@ -147,6 +184,14 @@ public class Medias {
         return loadAsResource(path, false);
     }
 
+    /**
+     * Load a file as resource to return.
+     *
+     * @param path       file path to load
+     * @param autoDelete whether to delete the file after reading
+     * @return resource
+     * @throws IOException if failed to load resource
+     */
     public static Resource loadAsResource(Path path, boolean autoDelete) throws IOException {
         Resource resource = autoDelete ? new AutoDeleteFileSystemResource(path) : new FileSystemResource(path);
         if (resource.exists() || resource.isReadable()) {
@@ -161,6 +206,9 @@ public class Medias {
         return loadAsResource(Path.of(path), deleteAction);
     }
 
+    /**
+     * Load a file as resource to return. And apply the delete action after reading.
+     */
     public static Resource loadAsResource(Path path, Consumer<Path> deleteAction) throws IOException {
         Resource resource = deleteAction == null
                 ? new FileSystemResource(path)
@@ -176,6 +224,9 @@ public class Medias {
         return getInputStream(Path.of(path));
     }
 
+    /**
+     * Load file as input stream.
+     */
     public static InputStream getInputStream(Path path) throws IOException {
         return Files.newInputStream(path);
     }
@@ -184,6 +235,9 @@ public class Medias {
         return getOutputStream(Path.of(path));
     }
 
+    /**
+     * Get output stream for the given path.
+     */
     public static OutputStream getOutputStream(Path path) throws IOException {
         ensureParentPath(path);
         return Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

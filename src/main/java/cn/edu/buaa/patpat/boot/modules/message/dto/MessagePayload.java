@@ -1,6 +1,11 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.message.dto;
 
-import cn.edu.buaa.patpat.boot.common.utils.Mappers;
+import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.message.models.entities.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AccessLevel;

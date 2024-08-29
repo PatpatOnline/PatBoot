@@ -1,6 +1,11 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.config;
 
-import cn.edu.buaa.patpat.boot.options.CorsOptions;
+import cn.edu.buaa.patpat.boot.config.options.CorsOptions;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

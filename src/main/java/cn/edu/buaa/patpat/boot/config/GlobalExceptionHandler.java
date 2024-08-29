@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.config;
 
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
@@ -57,13 +62,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleForbidden(ForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 MessageResponse.forbidden(e.getMessage())
-        );
-    }
-
-    @ExceptionHandler(FileException.class)
-    public ResponseEntity<MessageResponse> handleFileException(FileException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                MessageResponse.internalServerError(e.getMessage())
         );
     }
 

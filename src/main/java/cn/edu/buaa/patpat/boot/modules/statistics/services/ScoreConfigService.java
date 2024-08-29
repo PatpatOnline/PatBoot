@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.statistics.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
@@ -37,7 +42,7 @@ public class ScoreConfigService extends BaseService {
         ScoreConfig config = get(courseId);
         mappers.map(request, config);
         if (config.getTotalScore() > 100) {
-            throw new BadRequestException(M("score.total.invalid"));
+            throw new BadRequestException(M("score.total.exceed"));
         }
         scoreConfigMapper.saveOrUpdate(config);
         return config;

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.common;
 
 public class Globals {
@@ -20,6 +25,6 @@ public class Globals {
     public static final int NOT_SUBMITTED = -2;
     public static final int NOT_GRADED = -1;
 
-    public static final int TEXT_MSG = 1;
-    public static final int DISCUSSION_MSG = 2;
+    public static final int MSG_TEXT = 1;
+    public static final int MSG_DISCUSSION = 2;
 }

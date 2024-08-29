@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.discussion.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
@@ -118,7 +123,7 @@ public class ReplyService extends BaseService {
         if (reply == null) {
             throw new NotFoundException(M("reply.exists.not"));
         }
-        var badge = discussionAccountMapper.find(reply.getAuthorId());
+        var badge = discussionAccountService.findBadge(reply.getAuthorId());
         reply.setAuthor(badge);
         return reply;
     }

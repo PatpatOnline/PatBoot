@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.statistics.controllers;
 
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
@@ -51,8 +56,8 @@ public class StatisticsAdminController extends BaseController {
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
     public DataResponse<ScoreConfigDto> updateScoreConfig(
-            @CourseId Integer courseId,
-            @RequestBody @Valid UpdateScoreConfigRequest request
+            @RequestBody @Valid UpdateScoreConfigRequest request,
+            @CourseId Integer courseId
     ) {
         var config = scoreConfigService.update(courseId, request);
         return DataResponse.ok(mappers.map(config, ScoreConfigDto.class));

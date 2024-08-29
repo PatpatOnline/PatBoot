@@ -1,4 +1,9 @@
-package cn.edu.buaa.patpat.boot.options;
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
+package cn.edu.buaa.patpat.boot.config.options;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

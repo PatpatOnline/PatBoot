@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.task.services.impl;
 
 import cn.edu.buaa.patpat.boot.common.Globals;
@@ -60,7 +65,7 @@ public class IterationService extends TaskSubmissionService {
         return judgeApi.submit(submitRequest);
     }
 
-    public ProblemDto getProblem(int taskId, int courseId, AuthPayload auth) {
+    public ProblemDto getIterationProblem(int taskId, int courseId, AuthPayload auth) {
         checkSubmissionStatus(taskId, courseId, TaskTypes.ITERATION, auth);
 
         List<TaskProblem> problems = taskProblemMapper.find(taskId);

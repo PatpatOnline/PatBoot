@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.course.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
@@ -70,7 +75,7 @@ public class CourseService extends BaseService {
     }
 
     public String getName(int courseId) {
-        Course course = courseMapper.find(courseId);
+        Course course = courseMapper.findName(courseId);
         if (course == null) {
             throw new NotFoundException(M("course.exists.not"));
         }
@@ -79,8 +84,8 @@ public class CourseService extends BaseService {
 
     public CourseTutorial updateTutorial(int courseId, String url) {
         CourseTutorial tutorial = new CourseTutorial(courseId, url);
-        courseMapper.updateTutorial(tutorial);
-        return getTutorial(courseId);
+        courseMapper.saveOrUpdateTutorial(tutorial);
+        return findTutorial(courseId);
     }
 
     public void deleteTutorial(int courseId) {
@@ -90,12 +95,8 @@ public class CourseService extends BaseService {
         }
     }
 
-    public CourseTutorial getTutorial(int courseId) {
-        var tutorial = courseMapper.findTutorial(courseId);
-        if (tutorial == null) {
-            throw new NotFoundException(M("course.tutorial.exists.not"));
-        }
-        return tutorial;
+    public CourseTutorial findTutorial(int courseId) {
+        return courseMapper.findTutorial(courseId);
     }
 
     public CoursePayload getCoursePayload(int courseId, AuthPayload auth) {

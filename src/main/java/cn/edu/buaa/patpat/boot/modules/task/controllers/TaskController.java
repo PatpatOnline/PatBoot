@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.task.controllers;
 
 import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
@@ -181,7 +186,7 @@ public class TaskController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
-        var problem = iterationService.getProblem(id, courseId, auth);
+        var problem = iterationService.getIterationProblem(id, courseId, auth);
         return DataResponse.ok(problem);
     }
 }

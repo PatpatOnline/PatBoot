@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.statistics.services.impl;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
@@ -21,6 +26,18 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class ExportScoreRequest {
+    /**
+     * taskId -> (accountId -> score)
+     */
+    private final Map<Integer, Map<Integer, TaskScoreIndexView>> taskScores = new HashMap<>();
+    /**
+     * accountId -> total lab score
+     */
+    private final Map<Integer, Integer> labScores = new HashMap<>();
+    /**
+     * accountId -> total iter score
+     */
+    private final Map<Integer, Integer> iterScores = new HashMap<>();
     @Setter
     private int courseId;
     @Setter
@@ -33,29 +50,11 @@ public class ExportScoreRequest {
     private List<TeacherIndexView> teachers;
     @Setter
     private List<StudentIndexView> students;
-
     private List<TaskIndexView> tasks;
-
-    /**
-     * taskId -> (accountId -> score)
-     */
-    private final Map<Integer, Map<Integer, TaskScoreIndexView>> taskScores = new HashMap<>();
-
     /**
      * accountId -> score
      */
     private Map<Integer, GroupScoreIndexView> groupScores;
-
-    /**
-     * accountId -> total lab score
-     */
-    private final Map<Integer, Integer> labScores = new HashMap<>();
-
-    /**
-     * accountId -> total iter score
-     */
-    private final Map<Integer, Integer> iterScores = new HashMap<>();
-
     private int totalLabs;
     private int totalIters;
 

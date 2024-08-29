@@ -1,12 +1,19 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.discussion.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.discussion.models.views.ReplyView;
+import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
+@CacheNamespaceRef(DiscussionMapper.class)
 public interface ReplyFilterMapper {
     @Select("""
             SELECT `id`, `parent_id`, `to_id`, `author_id`, `content`, `verified`, `created_at`, `updated_at`, `l`.`like_count`,

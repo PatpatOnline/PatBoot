@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.discussion.services;
 
 import cn.edu.buaa.patpat.boot.common.Globals;
@@ -38,7 +43,7 @@ public class SubscriptionService extends BaseService {
 
         // send messages to all subscribers
         List<MessageWrapper> wrappers = new ArrayList<>();
-        MessagePayload<?> payload = MessagePayload.of(Globals.DISCUSSION_MSG, data);
+        MessagePayload<?> payload = MessagePayload.of(Globals.MSG_DISCUSSION, data);
         for (var subscriber : subscribers) {
             if (subscriber.getAccountId() == auth.getId()) {
                 continue;

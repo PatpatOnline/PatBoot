@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.modules.course.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.course.models.entities.Course;
@@ -8,6 +13,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
+@CacheNamespace
 public interface CourseMapper {
     @Insert("""
             INSERT INTO `course` (
@@ -70,7 +76,7 @@ public interface CourseMapper {
             VALUES (#{courseId}, #{url}, #{createdAt}, #{updatedAt})
             ON DUPLICATE KEY UPDATE `url` = VALUES(`url`), `updated_at` = VALUES(`updated_at`)
             """)
-    void updateTutorial(CourseTutorial tutorial);
+    void saveOrUpdateTutorial(CourseTutorial tutorial);
 
     @Delete("DELETE FROM `course_tutorial` WHERE `course_id` = #{courseId}")
     int deleteTutorial(int courseId);
