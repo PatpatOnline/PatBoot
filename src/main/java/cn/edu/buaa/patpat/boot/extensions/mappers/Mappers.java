@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Patpat Online 2024
+ * Made with love by Tony Skywalker
+ */
+
 package cn.edu.buaa.patpat.boot.extensions.mappers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
