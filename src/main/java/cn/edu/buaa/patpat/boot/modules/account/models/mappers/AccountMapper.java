@@ -63,6 +63,12 @@ public interface AccountMapper {
     @Update("UPDATE `account` SET `password` = #{password} WHERE `id` = #{id}")
     void updatePassword(Account account);
 
+    @Select("SELECT `id`, `avatar` FROM `account` WHERE `id` = #{id} LIMIT 1")
+    Account findUpdateAvatar(int id);
+
+    @Update("UPDATE `account` SET `avatar` = #{avatar} WHERE `id` = #{id}")
+    void updateAvatar(Account account);
+
     @Delete("DELETE FROM `account` WHERE `id` = #{id}")
     void delete(int id);
 }

@@ -7,10 +7,17 @@ package cn.edu.buaa.patpat.boot.modules.account.models.entities;
 
 import cn.edu.buaa.patpat.boot.modules.account.config.AccountConfig;
 
+import java.util.Set;
+
 public class Gender {
     public static final int SECRET = 0;
     public static final int BOY = 1;
     public static final int GIRL = 2;
+
+    private static final Set<String> DEFAULT_AVATARS = Set.of(
+            AccountConfig.DEFAULT_AVATAR,
+            AccountConfig.BOY_AVATAR,
+            AccountConfig.GIRL_AVATAR);
 
     public static int fromString(String gender) {
         return switch (gender) {
@@ -42,5 +49,9 @@ public class Gender {
             case GIRL -> AccountConfig.GIRL_AVATAR;
             default -> AccountConfig.DEFAULT_AVATAR;
         };
+    }
+
+    public static boolean isDefaultAvatar(String avatar) {
+        return DEFAULT_AVATARS.contains(avatar);
     }
 }
