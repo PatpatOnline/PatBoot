@@ -127,13 +127,17 @@ public class TaskController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
-        var score = taskService.getScore(
+        var score = taskService.findScore(
                 id,
                 courseId,
                 TaskTypes.fromString(type),
                 auth.getId(),
                 auth.isStudent()
         );
+
+        if (score == null) {
+            return DataResponse.ok(null);
+        }
         var dto = mappers.map(score, TaskScoreDto.class);
         dto.initFilename();
 

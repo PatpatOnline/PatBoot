@@ -139,7 +139,7 @@ public class TaskService extends BaseService {
         return problems;
     }
 
-    public TaskScore getScore(int id, int courseId, int type, int accountId, boolean validateTime) {
+    public TaskScore findScore(int id, int courseId, int type, int accountId, boolean validateTime) {
         TaskView task = taskMapper.query(id, courseId, type);
         if (task == null) {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
@@ -148,12 +148,7 @@ public class TaskService extends BaseService {
             validateStartTime(type, task);
         }
 
-        TaskScore score = taskScoreMapper.find(id, courseId, accountId);
-        if (score == null) {
-            throw new NotFoundException(M("task.score.exists.not"));
-        }
-
-        return score;
+        return taskScoreMapper.find(id, courseId, accountId);
     }
 
     private void validateStartTime(int type, IHasTimeRange range) {
