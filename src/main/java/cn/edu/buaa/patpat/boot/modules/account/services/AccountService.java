@@ -7,6 +7,7 @@ package cn.edu.buaa.patpat.boot.modules.account.services;
 
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
+import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.account.dto.AccountDto;
@@ -25,7 +26,9 @@ import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
@@ -85,6 +88,31 @@ public class AccountService extends BaseService {
         }
         account.setPassword(account.getBuaaId());
         accountMapper.updatePassword(account);
+    }
+
+    public String updateAvatar(int accountId, String buaaId, MultipartFile file) {
+        var account = accountMapper.findUpdateAvatar(accountId);
+        if (account == null) {
+            throw new NotFoundException(M("account.exists.not"));
+        }
+        if (!Gender.isDefaultAvatar(account.getAvatar())) {
+            Medias.removeSilently(bucketApi.recordToPublicPath(account.getAvatar()));
+        }
+        String filename = file.getOriginalFilename();
+        String record = bucketApi.toRandomRecord(buaaId, filename);
+        String path = bucketApi.recordToPublicPath(record);
+
+        try {
+            Medias.save(path, file);
+        } catch (IOException e) {
+            log.error("Failed to save avatar: {}", e.getMessage());
+            throw new BadRequestException(M("account.avatar.save.error"));
+        }
+
+        account.setAvatar(record);
+        accountMapper.updateAvatar(account);
+
+        return bucketApi.recordToUrl(record);
     }
 
     public AccountDto update(int accountId, UpdateAccountRequest request) {

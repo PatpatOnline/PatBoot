@@ -205,3 +205,31 @@ WebSocket 消息包含 Type 和 Payload 两部分，具体消息类型见 `Globa
 
 如果要获得当前学生所在的团队，可以为方法添加 `@ValidateGroup`，其中可以设置对组的一些约束，如要求在组里，要求不在组里，以及要求是组长。该方法会注入 `GroupMember` 和  `Group` 参数。其依赖于 `@ValidateCourse` 和 `@ValidatePermission`，因此请求方法中也需要包含 `@CourseId` 注解的课程 ID 和 `AuthPayload`，尽管你没有用到。需要注意的是，`GroupMember` 和 `Group` 都可以获取所在组的 ID，如果只关心小组 ID，注入 `Group Member` 可以避免对 Group的查询。此外，如果没有设置 `requireInGroup`，那么注入的 `GroupMember` 或 `Group` 可能为 `null`。
 
+---
+
+## 附录
+
+这里给出一些复杂用例的 UML 图。
+
+### 提交 Lab 报告
+
+提交 Lab 报告时，为了之后打包方便，将助教和学生的提交分开存放。提交后，为学生创建此次 Lab 的成绩，但默认没有分数，需要之后打分。该用例的活动图如下。
+
+![submit-report](assets/submit-report.png)
+
+### 提交评测
+
+提交评测涉及如下几个动作：
+
+- 用户提交待评测文件
+- PatBoot 向 PatJudge 提交评测请求
+- PatJudge 向 PatBoot 返回评测结果
+- PatBoot 根据评测结果更新提交信息，以及相关分数，注意当题目为迭代时，还应更新迭代分数。
+
+该用例的顺序图如下。
+
+![submit-sequence](assets/submit-sequence.png)
+
+对应的活动图如下。
+
+![submit-activity](assets/submit-activity.png)

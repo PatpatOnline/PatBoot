@@ -5,6 +5,7 @@
 
 package cn.edu.buaa.patpat.boot.modules.account.controllers;
 
+import cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,6 +44,18 @@ public class AccountController extends BaseController {
     ) {
         accountService.updatePassword(auth.getId(), request.getOldPassword(), request.getNewPassword());
         return MessageResponse.ok(M("account.password.update.success"));
+    }
+
+    @PostMapping("avatar")
+    @Operation(summary = "Update avatar", description = "Update avatar of the current account")
+    @ValidateMultipartFile(maxSize = 10, extensions = { "jpg", "jpeg", "png", "svg", "gif" })
+    @ValidatePermission
+    public DataResponse<String> updateAvatar(
+            @RequestParam MultipartFile file,
+            AuthPayload auth
+    ) {
+        var url = accountService.updateAvatar(auth.getId(), auth.getBuaaId(), file);
+        return DataResponse.ok(url);
     }
 
     @GetMapping("self")
