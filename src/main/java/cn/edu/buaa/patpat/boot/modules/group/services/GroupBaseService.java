@@ -7,7 +7,8 @@ package cn.edu.buaa.patpat.boot.modules.group.services;
 
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
-import cn.edu.buaa.patpat.boot.modules.bucket.api.BucketApi;
+import cn.edu.buaa.patpat.boot.modules.account.api.AccountApi;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountBadgeView;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupConfig;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupMember;
@@ -34,7 +35,7 @@ public abstract class GroupBaseService extends BaseService {
     @Autowired
     protected GroupMemberMapper groupMemberMapper;
     @Autowired
-    protected BucketApi bucketApi;
+    private AccountApi accountApi;
 
     public Group getGroup(int id) {
         Group group = groupMapper.find(id);
@@ -54,23 +55,13 @@ public abstract class GroupBaseService extends BaseService {
         return view;
     }
 
-    public GroupView findGroup(int id, GroupConfig config) {
-        GroupView view = groupFilterMapper.findGroup(id);
-        if (view != null) {
-            view.setMembers(getMembersInGroup(id));
-            view.setMaxSize(config.getMaxSize());
-        }
-        return view;
-    }
-
     public GroupMember findMember(int courseId, int accountId) {
         return groupMemberMapper.find(courseId, accountId);
     }
 
     public List<GroupMemberView> getMembersInGroup(int groupId) {
         var members = groupFilterMapper.findMemberViewsInGroup(groupId);
-        members.forEach(member -> member.setAvatar(
-                bucketApi.recordToUrl(member.getAvatar())));
+        mendMembers(members);
         return members;
     }
 
@@ -79,20 +70,26 @@ public abstract class GroupBaseService extends BaseService {
      */
     public List<GroupView> queryGroups(int courseId, GroupConfig config) {
         List<GroupView> groups = groupFilterMapper.queryGroups(courseId);
-        List<GroupMemberView> members = groupFilterMapper.findMemberViewsInCourse(courseId);
-        Map<Integer, GroupView> groupMap = groups.stream()
-                .collect(Collectors.toMap(GroupView::getId, group -> group));
-
+        Map<Integer, GroupView> groupMap = groups.stream().collect(Collectors.toMap(GroupView::getId, group -> group));
         groups.forEach(group -> {
             group.setMaxSize(config.getMaxSize());
             group.setMembers(new ArrayList<>());
         });
-        members.forEach(member -> {
-            member.setAvatar(bucketApi.recordToUrl(member.getAvatar()));
-            Optional.ofNullable(groupMap.get(member.getGroupId()))
-                    .ifPresent(value -> value.getMembers().add(member));
-        });
+
+        List<GroupMemberView> members = groupFilterMapper.findMemberViewsInCourse(courseId);
+        mendMembers(members);
+        members.forEach(member -> Optional.ofNullable(groupMap.get(member.getGroupId()))
+                .ifPresent(value -> value.getMembers().add(member)));
 
         return groups;
+    }
+
+    private void mendMembers(List<GroupMemberView> members) {
+        var badgeMap = accountApi.queryBadges(members.stream()
+                .map(GroupMemberView::getAccountId)
+                .toList()).stream().collect(
+                Collectors.toMap(AccountBadgeView::getId, badge -> badge));
+        members.forEach(member -> Optional.ofNullable(badgeMap.get(member.getAccountId()))
+                .ifPresent(value -> mappers.map(value, member)));
     }
 }

@@ -19,6 +19,7 @@ import cn.edu.buaa.patpat.boot.modules.account.models.entities.Gender;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilter;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountMapper;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountBadgeView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
@@ -177,5 +178,11 @@ public class AccountService extends BaseService {
 
     public TeacherIndexView queryTeacher(int id) {
         return accountFilterMapper.queryTeacher(id);
+    }
+
+    public List<AccountBadgeView> queryBadges(List<Integer> ids) {
+        var badges = accountFilterMapper.queryBadges(ids);
+        badges.forEach(badge -> badge.setAvatar(bucketApi.recordToUrl(badge.getAvatar())));
+        return badges;
     }
 }
