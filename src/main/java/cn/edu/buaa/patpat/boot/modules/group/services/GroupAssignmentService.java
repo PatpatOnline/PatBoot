@@ -21,8 +21,8 @@ import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupAssignment;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupScore;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupAssignmentMapper;
+import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupScoreMapper;
-import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupStatisticsMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupInfoView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreInfoView;
@@ -39,6 +39,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -49,8 +50,8 @@ public class GroupAssignmentService extends BaseService {
     private final GroupAssignmentMapper groupAssignmentMapper;
     private final BucketApi bucketApi;
     private final GroupScoreMapper groupScoreMapper;
-    private final GroupStatisticsMapper groupStatisticsMapper;
     private final DownloadAgent downloadAgent = new DownloadAgent();
+    private final GroupMapper groupMapper;
 
     public GroupAssignment create(int courseId, CreateGroupAssignmentRequest request) {
         GroupAssignment assignment = mappers.map(request, GroupAssignment.class);
@@ -135,13 +136,13 @@ public class GroupAssignmentService extends BaseService {
     public Resource downloadAll(int courseId) {
         get(courseId);  // ensure the assignment exists
 
-        List<GroupInfoView> groups = groupStatisticsMapper.getGroups(courseId);
-        List<GroupScoreInfoView> scores = groupStatisticsMapper.getGroupScores(courseId);
+        List<GroupInfoView> groups = groupMapper.getGroups(courseId);
+        List<GroupScoreInfoView> scores = groupScoreMapper.getGroupScores(courseId);
         String submissionPath = getGroupProjectSubmissionPath(courseId);
         String archivePath = bucketApi.getRandomTempPath();
         String archiveName = getArchiveName();
         try {
-            Medias.ensurePath(submissionPath);  // prevent empty zip error
+            prepareDownload(groups, submissionPath);
             return downloadAgent.download(groups, scores, submissionPath, archivePath, archiveName);
         } catch (IOException e) {
             log.error("Failed to download group projects", e);
@@ -232,5 +233,27 @@ public class GroupAssignmentService extends BaseService {
         Files.writeString(Path.of(path, "README.txt"),
                 builder.toString(),
                 StandardOpenOption.CREATE);
+    }
+
+    /**
+     * If the group submitted anything before dismiss, it will leave a junk directory in the submission path.
+     * This method will remove all junk directories and keep only the directories of the given groups.
+     * Also, it ensures the submission path exists.
+     *
+     * @param groups         the groups to keep
+     * @param submissionPath the submission path
+     */
+    private void prepareDownload(List<GroupInfoView> groups, String submissionPath) throws IOException {
+        Set<String> groupIds = Set.of(groups.stream().map(GroupInfoView::getId).map(String::valueOf).toArray(String[]::new));
+
+        Medias.ensurePath(submissionPath);  // prevent empty zip error
+        // list all directories under the submission path
+        try (var directories = Files.list(Path.of(submissionPath))) {
+            directories.forEach(path -> {
+                if (!groupIds.contains(path.getFileName().toString())) {
+                    Medias.removeSilently(path);
+                }
+            });
+        }
     }
 }
