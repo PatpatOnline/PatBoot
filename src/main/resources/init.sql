@@ -34,7 +34,7 @@ CREATE TABLE `course`
     `id`         int          NOT NULL AUTO_INCREMENT,
     `name`       varchar(255) NOT NULL,
     `code`       varchar(15)  NOT NULL,
-    `semester`   varchar(15)  NOT NULL,
+    `semester`   varchar(63)  NOT NULL,
     `active`     bool         NOT NULL DEFAULT true,
     `created_at` timestamp    NOT NULL,
     `updated_at` timestamp    NOT NULL,
