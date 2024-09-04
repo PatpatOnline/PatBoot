@@ -30,13 +30,13 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
  */
 @Component
 @Aspect
+@Order(200)
 @RequiredArgsConstructor
 @Slf4j
 public class ValidatePermissionAspect {
     private final AuthApi authApi;
 
     @Around("@annotation(cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission)")
-    @Order(200)
     public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();

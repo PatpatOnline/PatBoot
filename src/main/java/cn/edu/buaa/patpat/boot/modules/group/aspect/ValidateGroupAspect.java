@@ -38,13 +38,13 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
  */
 @Component
 @Aspect
+@Order(401)
 @RequiredArgsConstructor
 public class ValidateGroupAspect {
     private final GroupConfigService groupConfigService;
     private final GroupService groupService;
 
     @Around("@annotation(cn.edu.buaa.patpat.boot.modules.group.aspect.ValidateGroup)")
-    @Order(401)
     public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
