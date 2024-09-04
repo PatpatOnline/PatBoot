@@ -24,11 +24,11 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Component
 @Aspect
+@Order(102)
 @RequiredArgsConstructor
 @Slf4j
 public class ValidateMultipartFileAspect {
     @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidateMultipartFile)")
-    @Order(102)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();

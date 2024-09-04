@@ -28,12 +28,12 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
  */
 @Component
 @Aspect
+@Order(400)
 @RequiredArgsConstructor
 public class WithGroupConfigAspect {
     private final GroupConfigService groupConfigService;
 
     @Around("@annotation(cn.edu.buaa.patpat.boot.modules.group.aspect.WithGroupConfig)")
-    @Order(400)
     public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();

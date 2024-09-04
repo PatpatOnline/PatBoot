@@ -20,10 +20,10 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
 @Component
 @Aspect
+@Order(101)
 @RequiredArgsConstructor
 public class ValidatePaginationAspect {
     @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidatePagination)")
-    @Order(101)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
