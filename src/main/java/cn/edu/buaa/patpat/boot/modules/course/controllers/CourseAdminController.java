@@ -75,15 +75,14 @@ public class CourseAdminController extends BaseController {
                 course);
     }
 
-    @PutMapping("update")
+    @PutMapping("update/{id}")
     @Operation(summary = "Update a course", description = "Teacher updates a course, use null to keep the original value")
     @ValidatePermission(AuthLevel.TEACHER)
-    @ValidateCourse(allowRoot = false)
     public DataResponse<Course> update(
-            @RequestBody @Valid UpdateCourseRequest request,
-            @CourseId Integer courseId
+            @PathVariable int id,
+            @RequestBody @Valid UpdateCourseRequest request
     ) {
-        Course course = courseService.update(courseId, request);
+        Course course = courseService.update(id, request);
         if (course == null) {
             throw new NotFoundException(M("course.exists.not"));
         }
