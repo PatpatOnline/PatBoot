@@ -22,6 +22,8 @@ public class Globals {
     public static final String WS_SUBMIT = "submit";
     public static final String WS_MESSAGE = "message";
 
+    public static final int FULL_SCORE = 100;
+    public static final double FULL_SCORE_DOUBLE = FULL_SCORE;
     public static final int NOT_SUBMITTED = -2;
     public static final int NOT_GRADED = -1;
 

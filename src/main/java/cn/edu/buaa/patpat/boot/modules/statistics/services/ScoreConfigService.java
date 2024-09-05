@@ -5,6 +5,7 @@
 
 package cn.edu.buaa.patpat.boot.modules.statistics.services;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.requets.BaseService;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.modules.statistics.dto.UpdateScoreConfigRequest;
@@ -41,7 +42,7 @@ public class ScoreConfigService extends BaseService {
     public ScoreConfig update(int courseId, UpdateScoreConfigRequest request) {
         ScoreConfig config = get(courseId);
         mappers.map(request, config);
-        if (config.getTotalScore() > 100) {
+        if (config.getTotalScore() > Globals.FULL_SCORE) {
             throw new BadRequestException(M("score.total.exceed"));
         }
         scoreConfigMapper.saveOrUpdate(config);

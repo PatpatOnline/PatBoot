@@ -14,12 +14,14 @@ public class MapperProvider {
      */
     public String count(int courseId, SubmissionFilter filter) {
         return String.format("""
+                        %s
                         SELECT COUNT(*)
                         FROM `submission`
                         WHERE `course_id` = #{courseId} AND %s AND %s AND %s AND %s AND %s
                         """,
+                Strings.isNullOrBlank(filter.getName()) ? "" : "WITH `account_ids` AS (SELECT `id` FROM `account` WHERE `name` LIKE CONCAT('%', #{filter.name}, '%'))",
                 Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
-                Strings.isNullOrBlank(filter.getAccountIds()) ? "TRUE" : "`account_id` IN (#{filter.accountIds})",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`account_id` IN (SELECT `id` FROM `account_ids`)",
                 filter.getProblemId() == null ? "TRUE" : "`problem_id` = #{filter.problemId}",
                 filter.getMinScore() == null ? "TRUE" : "`score` >= #{filter.minScore}",
                 filter.getMaxScore() == null ? "TRUE" : "`score` <= #{filter.maxScore}");
@@ -27,6 +29,7 @@ public class MapperProvider {
 
     public String query(int courseId, int pageSize, int offset, SubmissionFilter filter) {
         return String.format("""
+                        %s
                         SELECT `s`.`id`, `s`.`account_id`, `s`.`language`, `s`.`score`,
                                `s`.`submit_time`, `s`.`start_time`, `s`.`end_time`,
                                `s`.`buaa_id`, `a`.`name`, `s`.`problem_id`, `p`.`problem_name`
@@ -35,16 +38,18 @@ public class MapperProvider {
                             `score`, `submit_time`, `start_time`, `end_time`
                             FROM `submission`
                             WHERE `course_id` = #{courseId} AND %s AND %s AND %s AND %s AND %s
-                            ORDER BY `id` DESC
+                            ORDER BY `submit_time` DESC
                             LIMIT #{pageSize} OFFSET #{offset}
                         ) AS `s` JOIN (
                             SELECT `id`, `name` FROM `account`
                         ) AS `a` ON `s`.`account_id` = `a`.`id` JOIN (
                             SELECT `id`, `title` AS `problem_name` FROM `problem`
                         ) AS `p` ON `s`.`problem_id` = `p`.`id`
+                        ORDER BY `s`.`submit_time` DESC
                         """,
+                Strings.isNullOrBlank(filter.getName()) ? "" : "WITH `account_ids` AS (SELECT `id` FROM `account` WHERE `name` LIKE CONCAT('%', #{filter.name}, '%'))",
                 Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
-                Strings.isNullOrBlank(filter.getAccountIds()) ? "TRUE" : "`account_id` IN (#{filter.accountIds})",
+                Strings.isNullOrBlank(filter.getName()) ? "TRUE" : "`account_id` IN (SELECT `id` FROM `account_ids`)",
                 filter.getProblemId() == null ? "TRUE" : "`problem_id` = #{filter.problemId}",
                 filter.getMinScore() == null ? "TRUE" : "`score` >= #{filter.minScore}",
                 filter.getMaxScore() == null ? "TRUE" : "`score` <= #{filter.maxScore}");

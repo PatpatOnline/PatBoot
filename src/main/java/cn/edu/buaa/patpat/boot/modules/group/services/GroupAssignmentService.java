@@ -227,7 +227,7 @@ public class GroupAssignmentService extends BaseService {
             if (member.isOwner()) {
                 builder.append(" (Leader)");
             }
-            builder.append(String.format(" (%.2f)", (double) member.getWeight() / 100.0)).append("\n");
+            builder.append(String.format(" (%.2f)", (double) member.getWeight() / Globals.FULL_SCORE)).append("\n");
         }
 
         Files.writeString(Path.of(path, "README.txt"),
