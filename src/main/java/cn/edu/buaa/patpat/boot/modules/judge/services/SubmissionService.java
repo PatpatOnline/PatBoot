@@ -49,14 +49,6 @@ public class SubmissionService extends BaseService {
         return SubmissionDto.of(submission, mappers);
     }
 
-    public String queryAccountIds(String name) {
-        var ids = submissionFilterMapper.queryAccountIds(name);
-        if (ids.isEmpty()) {
-            return null;
-        }
-        return String.join(",", ids.stream().map(String::valueOf).toList());
-    }
-
     public PageListDto<SubmissionListView> query(int courseId, int page, int pageSize, SubmissionFilter filter) {
         int count;
         List<SubmissionListView> submissions;

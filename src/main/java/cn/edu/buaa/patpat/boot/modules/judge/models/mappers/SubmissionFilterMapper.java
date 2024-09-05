@@ -33,12 +33,6 @@ public interface SubmissionFilterMapper {
     List<SubmissionListView> queryImpl(int courseId, int pageSize, int offset, SubmissionFilter filter);
 
     @Select("""
-            SELECT `id` FROM `account`
-            WHERE `name` LIKE CONCAT('%', #{name}, '%')
-            """)
-    List<Integer> queryAccountIds(String name);
-
-    @Select("""
             SELECT `s`.`id`, `s`.`account_id`, `s`.`language`, `s`.`score`,
                    `s`.`submit_time`, `s`.`start_time`, `s`.`end_time`,
                    `s`.`buaa_id`, `a`.`name`, `s`.`problem_id`, `p`.`problem_name`

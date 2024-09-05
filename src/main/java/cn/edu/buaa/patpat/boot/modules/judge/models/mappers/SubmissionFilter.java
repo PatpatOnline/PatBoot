@@ -11,14 +11,15 @@ import lombok.Data;
 public class SubmissionFilter {
     private Integer id;
     private String buaaId;
+    private String name;
     private Integer problemId;
     private Integer minScore;
     private Integer maxScore;
-    private String accountIds;
 
-    public SubmissionFilter(Integer id, String buaaId, Integer problemId, Integer minScore, Integer maxScore) {
+    public SubmissionFilter(Integer id, String buaaId, String name, Integer problemId, Integer minScore, Integer maxScore) {
         this.id = id;
         this.buaaId = buaaId;
+        this.name = name;
         this.problemId = problemId;
         this.minScore = minScore;
         this.maxScore = maxScore;
