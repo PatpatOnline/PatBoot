@@ -42,7 +42,7 @@ public class IterationService extends TaskSubmissionService {
         TaskStatus status = checkSubmissionStatus(request.getId(), course.getCourseId(), TaskTypes.ITERATION, auth);
         List<TaskProblem> problems = taskProblemMapper.find(request.getId());
         if (problems.isEmpty()) {
-            throw new ForbiddenException(M("task.submit.forbidden", TaskTypes.toString(TaskTypes.ITERATION)));
+            throw new ForbiddenException(M("task.submit.iter.empty"));
         }
         int problemId = problems.get(0).getProblemId();
 
