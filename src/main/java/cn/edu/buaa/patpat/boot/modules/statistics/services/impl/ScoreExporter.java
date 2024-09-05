@@ -184,12 +184,12 @@ public class ScoreExporter {
 
     private int calculateLabScore(int accountId, ExportScoreRequest request) {
         int totalScore = request.getLabScores().getOrDefault(accountId, 0);
-        return (int) ((double) request.getConfig().getLabScore() * totalScore / (request.getTotalLabs() * 100.0));
+        return (int) ((double) request.getConfig().getLabScore() * totalScore / (request.getTotalLabs() * Globals.FULL_SCORE_DOUBLE));
     }
 
     private int calculateIterScore(int accountId, ExportScoreRequest request) {
         int totalScore = request.getIterScores().getOrDefault(accountId, 0);
-        return (int) ((double) request.getConfig().getIterScore() * totalScore / (request.getTotalIters() * 100.0));
+        return (int) ((double) request.getConfig().getIterScore() * totalScore / (request.getTotalIters() * Globals.FULL_SCORE_DOUBLE));
     }
 
     private int calculateProjScore(int accountId, ExportScoreRequest request) {
@@ -201,7 +201,7 @@ public class ScoreExporter {
         if (score == null) {
             return 0;
         }
-        return (int) ((double) request.getConfig().getProjScore() * (Math.max(0, score.getScore()) / 100.0));
+        return (int) ((double) request.getConfig().getProjScore() * (Math.max(0, score.getScore()) / Globals.FULL_SCORE_DOUBLE));
     }
 
     private void writeBanner(Sheet sheet, int startRow, ExportScoreRequest request) {

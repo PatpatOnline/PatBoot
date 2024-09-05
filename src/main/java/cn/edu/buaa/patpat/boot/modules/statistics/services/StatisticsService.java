@@ -107,7 +107,7 @@ public class StatisticsService extends BaseService {
             view.setGroupScore(groupScore);
             if (groupScore > 0) {
                 // cannot exceed 100
-                view.setScore(Math.min(100, (int) ((double) groupScore * memberCount * member.getWeight() / totalWeight)));
+                view.setScore(Math.min(Globals.FULL_SCORE, (int) ((double) groupScore * memberCount * member.getWeight() / totalWeight)));
             } else {
                 view.setScore(groupScore);
             }
