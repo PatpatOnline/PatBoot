@@ -35,13 +35,14 @@ public class MapperProvider {
                             `score`, `submit_time`, `start_time`, `end_time`
                             FROM `submission`
                             WHERE `course_id` = #{courseId} AND %s AND %s AND %s AND %s AND %s
-                            ORDER BY `id` DESC
+                            ORDER BY `submit_time` DESC
                             LIMIT #{pageSize} OFFSET #{offset}
                         ) AS `s` JOIN (
                             SELECT `id`, `name` FROM `account`
                         ) AS `a` ON `s`.`account_id` = `a`.`id` JOIN (
                             SELECT `id`, `title` AS `problem_name` FROM `problem`
                         ) AS `p` ON `s`.`problem_id` = `p`.`id`
+                        ORDER BY `s`.`submit_time` DESC
                         """,
                 Strings.isNullOrBlank(filter.getBuaaId()) ? "TRUE" : "`buaa_id` LIKE CONCAT('%', #{filter.buaaId}, '%')",
                 Strings.isNullOrBlank(filter.getAccountIds()) ? "TRUE" : "`account_id` IN (#{filter.accountIds})",
