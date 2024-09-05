@@ -146,19 +146,20 @@ public class TaskAdminController extends BaseController {
         return DataResponse.ok(problems);
     }
 
-    @GetMapping("{type}/download/{id}/{studentId}")
+    @GetMapping("{type}/download/{id}/{accountId}")
     @Operation(summary = "Download task submission", description = "Download a task submission of a student")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
     public ResponseEntity<Resource> download(
             @PathVariable String type,
             @PathVariable int id,
-            @PathVariable int studentId,
+            @PathVariable int accountId,
+            @CourseId Integer courseId,
             AuthPayload auth
     ) {
-        log.warn("{} initiates download of student {} in task {}", auth.getName(), studentId, id);
+        log.warn("{} initiates download of account {} in task {}", auth.getName(), accountId, id);
         TaskTypes.fromString(type);
-        Resource resource = taskAdminService.download(id, studentId);
+        Resource resource = taskAdminService.download(id, courseId, accountId);
         return ResourceResponse.ok(resource);
     }
 
