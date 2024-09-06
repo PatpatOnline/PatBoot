@@ -165,12 +165,13 @@ public class GroupAssignmentService extends BaseService {
         if (score == null) {
             throw new NotFoundException("group.assignment.submit.not");
         }
-        String path = bucketApi.recordToPrivatePath(score.getRecord());
+        String path = Medias.getParentPath(bucketApi.recordToPrivatePath(score.getRecord())).toString();
         try {
             String zipFilePath = bucketApi.getRandomTempFile("zip");
             Zips.zip(path, zipFilePath, false);
             return Medias.loadAsResource(zipFilePath, true);
         } catch (IOException e) {
+            log.error("Failed to download group project", e);
             throw new NotFoundException(M("group.assignment.download.error"));
         }
     }
