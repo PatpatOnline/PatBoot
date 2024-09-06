@@ -20,7 +20,7 @@ import java.util.List;
 public interface GroupFilterMapper {
     @Select("""
             SELECT `account_id`, `owner`, `weight`, `group_id`
-            FROM `group_member`
+            FROM `group_member` WHERE `group_id` = #{groupId}
             ORDER BY `owner` DESC
             """)
     @Options(useCache = false)
