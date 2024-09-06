@@ -179,12 +179,12 @@ public class TaskAdminController extends BaseController {
                 id,
                 teacherId);
 
-        Resource resource = taskAdminService.downloadAll(
+        var download = taskAdminService.downloadAll(
                 id,
                 TaskTypes.fromString(type),
                 courseId,
                 teacherId);
-        return ResourceResponse.ok(resource);
+        return ResourceResponse.ok(download.getFirst(), download.getSecond());
     }
 
     @PostMapping("lab/grade/{labId}")

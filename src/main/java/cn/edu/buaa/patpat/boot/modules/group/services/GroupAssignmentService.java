@@ -133,17 +133,20 @@ public class GroupAssignmentService extends BaseService {
         return String.format("artifact-%d.zip", groupId);
     }
 
-    public Resource downloadAll(int courseId) {
+    public Tuple<Resource, String> downloadAll(int courseId) {
         get(courseId);  // ensure the assignment exists
 
         List<GroupInfoView> groups = groupMapper.getGroups(courseId);
         List<GroupScoreInfoView> scores = groupScoreMapper.getGroupScores(courseId);
-        String submissionPath = getGroupProjectSubmissionPath(courseId);
-        String archivePath = bucketApi.getRandomTempPath();
-        String archiveName = getArchiveName();
         try {
+            String submissionPath = getGroupProjectSubmissionPath(courseId);
             prepareDownload(groups, submissionPath);
-            return downloadAgent.download(groups, scores, submissionPath, archivePath, archiveName);
+
+            String archivePath = bucketApi.getRandomTempPath();
+            Resource resource = downloadAgent.download(groups, scores, submissionPath, archivePath);
+            String archiveName = getArchiveName();
+
+            return Tuple.of(resource, archiveName);
         } catch (IOException e) {
             log.error("Failed to download group projects", e);
             throw new InternalServerErrorException(M("system.error.io"));

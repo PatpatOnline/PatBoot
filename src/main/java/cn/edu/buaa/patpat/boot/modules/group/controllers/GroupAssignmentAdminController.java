@@ -106,7 +106,7 @@ public class GroupAssignmentAdminController extends BaseController {
             AuthPayload auth
     ) {
         log.warn("{} initiates download of all group assignments in course {}", auth.getName(), courseId);
-        Resource resource = groupAssignmentService.downloadAll(courseId);
-        return ResourceResponse.ok(resource);
+        var download = groupAssignmentService.downloadAll(courseId);
+        return ResourceResponse.ok(download.getFirst(), download.getSecond());
     }
 }
