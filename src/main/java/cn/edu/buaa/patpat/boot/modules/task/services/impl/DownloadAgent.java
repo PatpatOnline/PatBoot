@@ -30,7 +30,7 @@ public class DownloadAgent {
         Medias.ensureParentPath(zipFile);
 
         Zips.zip(submissionPath, zipFile, false);
-        String reportPath = generateReport(students, scores, zipFile);
+        String reportPath = generateReport(students, scores, Medias.getParentPath(zipFile).toString());
         Zips.update(zipFile, reportPath);
 
         return Medias.loadAsResource(zipFile, path -> Medias.removeSilently(Medias.getParentPath(path)));
