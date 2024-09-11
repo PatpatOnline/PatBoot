@@ -5,6 +5,7 @@
 
 package cn.edu.buaa.patpat.boot.modules.problem.models.entities;
 
+import cn.edu.buaa.patpat.boot.common.Globals;
 import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.extensions.mappers.Mappers;
 import cn.edu.buaa.patpat.boot.modules.problem.exceptions.ProblemInitializeException;
@@ -70,7 +71,7 @@ public class ProblemDescriptor implements Serializable {
         if (timeLimit <= 0) {
             throw new ProblemInitializeException("Time limit must be positive");
         }
-        if (getTotalScore() != 100) {
+        if (getTotalScore() != Globals.FULL_SCORE) {
             throw new ProblemInitializeException("Total score of cases must be 100");
         }
     }

@@ -35,8 +35,8 @@ public class TaskSubmissionService extends BaseService {
     @Autowired
     protected TaskScoreMapper taskScoreMapper;
 
-    public Resource download(int taskId, int studentId) {
-        String path = getSubmissionPath(taskId, studentId);
+    public Resource download(int taskId, int courseId, int accountId) {
+        String path = getSubmissionPath(taskId, courseId, accountId);
         return download(path);
     }
 
@@ -90,14 +90,6 @@ public class TaskSubmissionService extends BaseService {
 
     protected String getSubmissionPath(int taskId, int courseId, int accountId) {
         TaskScore score = taskScoreMapper.find(taskId, courseId, accountId);
-        if (score == null) {
-            throw new NotFoundException(M("task.submit.exists.not"));
-        }
-        return bucketApi.recordToPrivatePath(score.getRecord());
-    }
-
-    protected String getSubmissionPath(int taskId, int studentId) {
-        TaskScore score = taskScoreMapper.findByTaskIdAndStudentId(taskId, studentId);
         if (score == null) {
             throw new NotFoundException(M("task.submit.exists.not"));
         }

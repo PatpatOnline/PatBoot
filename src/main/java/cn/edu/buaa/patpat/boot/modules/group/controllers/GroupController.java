@@ -74,7 +74,7 @@ public class GroupController extends BaseController {
                 mappers.map(group, GroupDto.class));
     }
 
-    @PutMapping("update")
+    @PostMapping("update")
     @Operation(summary = "Student update their group", description = "Student update their group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission
@@ -91,7 +91,7 @@ public class GroupController extends BaseController {
                 mappers.map(updated, GroupDto.class));
     }
 
-    @DeleteMapping("dismiss")
+    @PostMapping("dismiss")
     @Operation(summary = "Student dismiss their group", description = "Student dismiss a group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission

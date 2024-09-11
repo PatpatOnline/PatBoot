@@ -7,6 +7,7 @@ package cn.edu.buaa.patpat.boot.modules.account.api;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
 import cn.edu.buaa.patpat.boot.modules.account.models.mappers.AccountFilterMapper;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountBadgeView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
 import cn.edu.buaa.patpat.boot.modules.account.services.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,9 @@ public class AccountApi {
 
     public Account findRole(int id) {
         return accountFilterMapper.findRole(id);
+    }
+
+    public List<AccountBadgeView> queryBadges(List<Integer> ids) {
+        return accountService.queryBadges(ids);
     }
 }

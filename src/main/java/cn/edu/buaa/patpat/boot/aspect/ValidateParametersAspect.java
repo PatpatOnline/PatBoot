@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
+@Order(100)
 @RequiredArgsConstructor
 @Slf4j
 public class ValidateParametersAspect {
     @Before("@annotation(cn.edu.buaa.patpat.boot.aspect.ValidateParameters)")
-    @Order(100)
     public void intercept(final JoinPoint point) {
         Object[] args = point.getArgs();
         for (Object arg : args) {

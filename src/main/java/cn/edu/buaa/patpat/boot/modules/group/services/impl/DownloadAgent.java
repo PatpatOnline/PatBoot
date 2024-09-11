@@ -25,12 +25,12 @@ public class DownloadAgent {
             List<GroupInfoView> groups,
             List<GroupScoreInfoView> scores,
             String submissionPath,
-            String archivePath,
-            String archiveName
+            String archivePath
     ) throws IOException {
 
         Medias.ensureEmptyPath(archivePath);
-        String zipFile = Path.of(archivePath, archiveName).toString();
+
+        String zipFile = Path.of(archivePath, "submission.zip").toString();
 
         Zips.zip(submissionPath, zipFile, false);
         String reportPath = generateReport(groups, scores, archivePath);

@@ -11,7 +11,6 @@ import cn.edu.buaa.patpat.boot.aspect.ValidatePagination;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
-import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.course.aspect.CourseId;
@@ -51,14 +50,7 @@ public class SubmissionAdminController extends BaseController {
             @RequestParam(required = false) Integer maxScore,
             @CourseId Integer courseId
     ) {
-        var filter = new SubmissionFilter(id, buaaId, problemId, minScore, maxScore);
-        if ((id == null) && (!Strings.isNullOrBlank(name))) {
-            var accounts = submissionService.queryAccountIds(name);
-            if (Strings.isNullOrEmpty(accounts)) {
-                return DataResponse.ok(PageListDto.empty(page, pageSize));
-            }
-            filter.setAccountIds(accounts);
-        }
+        var filter = new SubmissionFilter(id, buaaId, name, problemId, minScore, maxScore);
         var submissions = submissionService.query(courseId, page, pageSize, filter);
         return DataResponse.ok(submissions);
     }

@@ -16,7 +16,7 @@ public class UpdateCourseRequest {
     @Size(min = 1, max = 15)
     private String code;
 
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 63)
     private String semester;
 
     private Boolean active;

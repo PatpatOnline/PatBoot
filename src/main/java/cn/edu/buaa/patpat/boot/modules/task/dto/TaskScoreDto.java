@@ -14,7 +14,10 @@ import org.apache.commons.io.FilenameUtils;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TaskScoreDto extends HasCreatedAndUpdated {
+    // don't let students see the score
+    @JsonIgnore
     private int score;
+
     private boolean late;
 
     @JsonIgnore

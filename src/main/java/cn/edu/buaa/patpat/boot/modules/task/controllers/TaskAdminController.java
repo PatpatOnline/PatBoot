@@ -58,7 +58,7 @@ public class TaskAdminController extends BaseController {
         return create(TaskTypes.fromString(type), courseId, request);
     }
 
-    @PutMapping("{type}/update/{id}")
+    @PostMapping("{type}/update/{id}")
     @Operation(summary = "Update Task", description = "Update an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -71,7 +71,7 @@ public class TaskAdminController extends BaseController {
         return update(id, courseId, TaskTypes.fromString(type), request);
     }
 
-    @DeleteMapping("{type}/delete/{id}")
+    @PostMapping("{type}/delete/{id}")
     @Operation(summary = "Delete Task", description = "Delete an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -146,19 +146,20 @@ public class TaskAdminController extends BaseController {
         return DataResponse.ok(problems);
     }
 
-    @GetMapping("{type}/download/{id}/{studentId}")
+    @GetMapping("{type}/download/{id}/{accountId}")
     @Operation(summary = "Download task submission", description = "Download a task submission of a student")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
     public ResponseEntity<Resource> download(
             @PathVariable String type,
             @PathVariable int id,
-            @PathVariable int studentId,
+            @PathVariable int accountId,
+            @CourseId Integer courseId,
             AuthPayload auth
     ) {
-        log.warn("{} initiates download of student {} in task {}", auth.getName(), studentId, id);
+        log.warn("{} initiates download of account {} in task {}", auth.getName(), accountId, id);
         TaskTypes.fromString(type);
-        Resource resource = taskAdminService.download(id, studentId);
+        Resource resource = taskAdminService.download(id, courseId, accountId);
         return ResourceResponse.ok(resource);
     }
 
@@ -178,12 +179,12 @@ public class TaskAdminController extends BaseController {
                 id,
                 teacherId);
 
-        Resource resource = taskAdminService.downloadAll(
+        var download = taskAdminService.downloadAll(
                 id,
                 TaskTypes.fromString(type),
                 courseId,
                 teacherId);
-        return ResourceResponse.ok(resource);
+        return ResourceResponse.ok(download.getFirst(), download.getSecond());
     }
 
     @PostMapping("lab/grade/{labId}")

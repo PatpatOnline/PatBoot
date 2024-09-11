@@ -37,6 +37,10 @@ public class MessageService extends BaseService {
     }
 
     public void sendMessages(List<MessageWrapper> wrappers) {
+        if (wrappers.isEmpty()) {
+            return;
+        }
+
         List<Message> messages = new ArrayList<>();
         try {
             for (var wrapper : wrappers) {

@@ -21,8 +21,8 @@ import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupAssignment;
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupScore;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupAssignmentMapper;
+import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupScoreMapper;
-import cn.edu.buaa.patpat.boot.modules.group.models.mappers.GroupStatisticsMapper;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupInfoView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupMemberView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreInfoView;
@@ -39,6 +39,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 
@@ -49,8 +50,8 @@ public class GroupAssignmentService extends BaseService {
     private final GroupAssignmentMapper groupAssignmentMapper;
     private final BucketApi bucketApi;
     private final GroupScoreMapper groupScoreMapper;
-    private final GroupStatisticsMapper groupStatisticsMapper;
     private final DownloadAgent downloadAgent = new DownloadAgent();
+    private final GroupMapper groupMapper;
 
     public GroupAssignment create(int courseId, CreateGroupAssignmentRequest request) {
         GroupAssignment assignment = mappers.map(request, GroupAssignment.class);
@@ -132,17 +133,20 @@ public class GroupAssignmentService extends BaseService {
         return String.format("artifact-%d.zip", groupId);
     }
 
-    public Resource downloadAll(int courseId) {
+    public Tuple<Resource, String> downloadAll(int courseId) {
         get(courseId);  // ensure the assignment exists
 
-        List<GroupInfoView> groups = groupStatisticsMapper.getGroups(courseId);
-        List<GroupScoreInfoView> scores = groupStatisticsMapper.getGroupScores(courseId);
-        String submissionPath = getGroupProjectSubmissionPath(courseId);
-        String archivePath = bucketApi.getRandomTempPath();
-        String archiveName = getArchiveName();
+        List<GroupInfoView> groups = groupMapper.getGroups(courseId);
+        List<GroupScoreInfoView> scores = groupScoreMapper.getGroupScores(courseId);
         try {
-            Medias.ensurePath(submissionPath);  // prevent empty zip error
-            return downloadAgent.download(groups, scores, submissionPath, archivePath, archiveName);
+            String submissionPath = getGroupProjectSubmissionPath(courseId);
+            prepareDownload(groups, submissionPath);
+
+            String archivePath = bucketApi.getRandomTempPath();
+            Resource resource = downloadAgent.download(groups, scores, submissionPath, archivePath);
+            String archiveName = getArchiveName();
+
+            return Tuple.of(resource, archiveName);
         } catch (IOException e) {
             log.error("Failed to download group projects", e);
             throw new InternalServerErrorException(M("system.error.io"));
@@ -164,12 +168,13 @@ public class GroupAssignmentService extends BaseService {
         if (score == null) {
             throw new NotFoundException("group.assignment.submit.not");
         }
-        String path = bucketApi.recordToPrivatePath(score.getRecord());
+        String path = Medias.getParentPath(bucketApi.recordToPrivatePath(score.getRecord())).toString();
         try {
             String zipFilePath = bucketApi.getRandomTempFile("zip");
             Zips.zip(path, zipFilePath, false);
             return Medias.loadAsResource(zipFilePath, true);
         } catch (IOException e) {
+            log.error("Failed to download group project", e);
             throw new NotFoundException(M("group.assignment.download.error"));
         }
     }
@@ -226,11 +231,33 @@ public class GroupAssignmentService extends BaseService {
             if (member.isOwner()) {
                 builder.append(" (Leader)");
             }
-            builder.append(String.format(" (%.2f)", (double) member.getWeight() / 100.0)).append("\n");
+            builder.append(String.format(" (%.2f)", (double) member.getWeight() / Globals.FULL_SCORE)).append("\n");
         }
 
         Files.writeString(Path.of(path, "README.txt"),
                 builder.toString(),
                 StandardOpenOption.CREATE);
+    }
+
+    /**
+     * If the group submitted anything before dismiss, it will leave a junk directory in the submission path.
+     * This method will remove all junk directories and keep only the directories of the given groups.
+     * Also, it ensures the submission path exists.
+     *
+     * @param groups         the groups to keep
+     * @param submissionPath the submission path
+     */
+    private void prepareDownload(List<GroupInfoView> groups, String submissionPath) throws IOException {
+        Set<String> groupIds = Set.of(groups.stream().map(GroupInfoView::getId).map(String::valueOf).toArray(String[]::new));
+
+        Medias.ensurePath(submissionPath);  // prevent empty zip error
+        // list all directories under the submission path
+        try (var directories = Files.list(Path.of(submissionPath))) {
+            directories.forEach(path -> {
+                if (!groupIds.contains(path.getFileName().toString())) {
+                    Medias.removeSilently(path);
+                }
+            });
+        }
     }
 }

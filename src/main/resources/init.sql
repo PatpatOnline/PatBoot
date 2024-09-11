@@ -34,7 +34,7 @@ CREATE TABLE `course`
     `id`         int          NOT NULL AUTO_INCREMENT,
     `name`       varchar(255) NOT NULL,
     `code`       varchar(15)  NOT NULL,
-    `semester`   varchar(15)  NOT NULL,
+    `semester`   varchar(63)  NOT NULL,
     `active`     bool         NOT NULL DEFAULT true,
     `created_at` timestamp    NOT NULL,
     `updated_at` timestamp    NOT NULL,
@@ -196,6 +196,7 @@ CREATE TABLE `submission`
 CREATE INDEX `submission_problem_id_account_id_index` ON `submission` (`problem_id`, `account_id`);
 CREATE INDEX `submission_course_id_index` ON `submission` (`course_id`);
 CREATE INDEX `submission_account_id_index` ON `submission` (`account_id`);
+CREATE INDEX `submission_submit_time_index` ON `submission` (`submit_time`);
 
 
 ############################################################

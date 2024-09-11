@@ -6,15 +6,14 @@
 package cn.edu.buaa.patpat.boot.modules.group.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.GroupScore;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreInfoView;
 import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupScoreListView;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
+@CacheNamespaceRef(GroupMapper.class)
 public interface GroupScoreMapper {
     /**
      * This is only called when students upload their group assignments, so {@code score}
@@ -42,4 +41,7 @@ public interface GroupScoreMapper {
 
     @Select("SELECT * FROM `group_score` WHERE `group_id` = #{groupId}")
     GroupScoreListView findById(int groupId);
+
+    @Select("SELECT `group_id`, `course_id`, `score` FROM `group_score` WHERE `course_id` = #{courseId}")
+    List<GroupScoreInfoView> getGroupScores(int courseId);
 }

@@ -6,6 +6,7 @@
 package cn.edu.buaa.patpat.boot.modules.account.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.account.models.entities.Account;
+import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountBadgeView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountDetailView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.AccountListView;
 import cn.edu.buaa.patpat.boot.modules.account.models.views.TeacherIndexView;
@@ -51,7 +52,26 @@ public interface AccountFilterMapper {
     @Select("SELECT `id`, `name` FROM `account` WHERE `teacher` = 1 AND `id` = #{id}")
     TeacherIndexView queryTeacher(int id);
 
+    @Select("""
+            <script>
+            SELECT `id`, `buaa_id`, `name`, `avatar`
+            FROM `account`
+            WHERE `id` IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+            </script>
+            """)
+    List<AccountBadgeView> queryBadgesImpl(List<Integer> ids);
+
     default List<AccountListView> query(int page, int pageSize, AccountFilter filter) {
         return queryImpl(pageSize, (page - 1) * pageSize, filter);
+    }
+
+    default List<AccountBadgeView> queryBadges(List<Integer> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        return queryBadgesImpl(ids);
     }
 }

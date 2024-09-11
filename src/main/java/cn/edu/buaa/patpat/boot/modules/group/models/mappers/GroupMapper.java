@@ -6,7 +6,10 @@
 package cn.edu.buaa.patpat.boot.modules.group.models.mappers;
 
 import cn.edu.buaa.patpat.boot.modules.group.models.entities.Group;
+import cn.edu.buaa.patpat.boot.modules.group.models.views.GroupInfoView;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 @CacheNamespace
@@ -36,4 +39,7 @@ public interface GroupMapper {
 
     @Select("SELECT `locked` FROM `group` WHERE `id` = #{id}")
     Group findLocked(int id);
+
+    @Select("SELECT `id`, `name` FROM `group` WHERE `course_id` = #{courseId}")
+    List<GroupInfoView> getGroups(int courseId);
 }

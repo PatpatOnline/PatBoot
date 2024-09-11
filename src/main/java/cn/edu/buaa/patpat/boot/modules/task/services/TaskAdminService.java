@@ -6,6 +6,7 @@
 package cn.edu.buaa.patpat.boot.modules.task.services;
 
 import cn.edu.buaa.patpat.boot.common.Globals;
+import cn.edu.buaa.patpat.boot.common.Tuple;
 import cn.edu.buaa.patpat.boot.common.utils.Medias;
 import cn.edu.buaa.patpat.boot.exceptions.InternalServerErrorException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
@@ -55,15 +56,16 @@ public class TaskAdminService extends TaskSubmissionService {
     /**
      * Download all tasks submissions of a teacher in a task.
      */
-    public Resource downloadAll(int taskId, int type, int courseId, int teacherId) {
+    public Tuple<Resource, String> downloadAll(int taskId, int type, int courseId, int teacherId) {
         List<StudentInfoView> students = studentMapper.getStudentsByTeacher(courseId, teacherId);
         List<TaskScoreView> scores = taskScoreMapper.getScores(taskId);
         String submissionPath = getSubmissionRootPath(taskId, TaskTypes.toTag(type));
-        String archivePath = bucketApi.getRandomTempPath();
-        String archiveName = getArchiveName(taskId, type, teacherId);
         try {
             Medias.ensurePath(submissionPath);  // prevent empty zip error
-            return downloadAgent.download(students, scores, submissionPath, archivePath, archiveName);
+            String zipFile = bucketApi.getRandomTempFile("zip");
+            Resource resource = downloadAgent.download(students, scores, submissionPath, zipFile);
+            String filename = getArchiveName(taskId, type, teacherId);
+            return Tuple.of(resource, filename);
         } catch (IOException e) {
             log.error("Failed to download task submissions", e);
             throw new InternalServerErrorException(M("system.error.io"));

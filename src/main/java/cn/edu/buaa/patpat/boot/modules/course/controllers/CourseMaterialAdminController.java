@@ -60,7 +60,7 @@ public class CourseMaterialAdminController extends BaseController {
         return DataResponse.ok(M("course.material.create.success"), dto);
     }
 
-    @PutMapping("update/{id}")
+    @PostMapping("update/{id}")
     @Operation(summary = "Update course material", description = "T.A. updates a course material")
     @ValidatePermission(AuthLevel.TA)
     @ValidateMultipartFile(allowNull = true, allowEmpty = true)
@@ -83,7 +83,7 @@ public class CourseMaterialAdminController extends BaseController {
         return DataResponse.ok(M("course.material.update.success"), dto);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PostMapping("delete/{id}")
     @Operation(summary = "Delete course material", description = "T.A. deletes a course material")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse

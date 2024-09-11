@@ -20,6 +20,6 @@ public class CreateCourseRequest {
     private String code;
 
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 63)
     private String semester;
 }

@@ -6,6 +6,7 @@
 package cn.edu.buaa.patpat.boot.config;
 
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
+import cn.edu.buaa.patpat.boot.common.utils.Requests;
 import cn.edu.buaa.patpat.boot.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,22 +31,30 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<MessageResponse> handleBadRequest(BadRequestException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
+
         return ResponseEntity.badRequest().body(MessageResponse.badRequest(e.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<MessageResponse> handleUnauthorized(UnauthorizedException e) {
+        logError(HttpStatus.UNAUTHORIZED, e);
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(MessageResponse.unauthorized(e.getMessage()));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<MessageResponse> handleNoResourceFound() {
+    public ResponseEntity<MessageResponse> handleNoResourceFound(NoResourceFoundException e) {
+        logError(HttpStatus.NOT_FOUND, e);
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).build();
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<MessageResponse> handleInternalServerError(InternalServerErrorException e) {
+        logError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 MessageResponse.internalServerError(e.getMessage())
         );
@@ -53,6 +62,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<MessageResponse> handleNotFound(NotFoundException e) {
+        logError(HttpStatus.NOT_FOUND, e);
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 MessageResponse.notFound(e.getMessage())
         );
@@ -60,6 +71,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<MessageResponse> handleForbidden(ForbiddenException e) {
+        logError(HttpStatus.FORBIDDEN, e);
+
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 MessageResponse.forbidden(e.getMessage())
         );
@@ -67,6 +80,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<MessageResponse> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        logError(HttpStatus.METHOD_NOT_ALLOWED, e);
+
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
                 MessageResponse.methodNotAllowed(e.getMessage())
         );
@@ -74,6 +89,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
+
         var error = e.getBindingResult().getFieldError();
         if (error == null) {
             return ResponseEntity.badRequest().body(MessageResponse.badRequest(M("validation.params.error")));
@@ -85,6 +102,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<MessageResponse> handleMissingPathVariableException(MissingPathVariableException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing path variable: " + e.getVariableName())
         );
@@ -92,6 +110,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<MessageResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Invalid parameter: " + e.getName())
         );
@@ -99,6 +118,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<MessageResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing request parameter: " + e.getParameterName())
         );
@@ -106,13 +126,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<MessageResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Missing request part: " + e.getRequestPartName())
         );
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<MessageResponse> handleHttpMessageNotReadableException() {
+    public ResponseEntity<MessageResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        logError(HttpStatus.BAD_REQUEST, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("Invalid request body")
         );
@@ -120,13 +142,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResponse> handleException(Exception e, WebRequest request) {
-        if (e.getMessage() == null) {
-            log.error("Unexpected exception", e);
-        } else {
-            log.error("Unexpected exception: {}", e.getMessage());
-        }
+        logError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         return ResponseEntity.badRequest().body(
                 MessageResponse.badRequest("How dare you!")
         );
+    }
+
+    private void logError(HttpStatus status, Exception e) {
+        if (e.getMessage() == null) {
+            log.error("{} at {}", status, getRequestUrl(), e);
+        } else {
+            log.error("{} at {}: {}", status, getRequestUrl(), e.getMessage());
+        }
+    }
+
+    private String getRequestUrl() {
+        return Requests.getCurrentRequest().getRequestURI();
     }
 }

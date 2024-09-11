@@ -25,15 +25,12 @@ public class DownloadAgent {
             List<StudentInfoView> students,
             List<TaskScoreView> scores,
             String submissionPath,
-            String archivePath,
-            String archiveName
+            String zipFile
     ) throws IOException {
-
-        Medias.ensureEmptyPath(archivePath);
-        String zipFile = Path.of(archivePath, archiveName).toString();
+        Medias.ensureParentPath(zipFile);
 
         Zips.zip(submissionPath, zipFile, false);
-        String reportPath = generateReport(students, scores, archivePath);
+        String reportPath = generateReport(students, scores, Medias.getParentPath(zipFile).toString());
         Zips.update(zipFile, reportPath);
 
         return Medias.loadAsResource(zipFile, path -> Medias.removeSilently(Medias.getParentPath(path)));

@@ -34,6 +34,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
  */
 @Component
 @Aspect
+@Order(300)
 @RequiredArgsConstructor
 @Slf4j
 public class ValidateCourseAspect {
@@ -41,7 +42,6 @@ public class ValidateCourseAspect {
     private final Mappers mappers;
 
     @Around("@annotation(cn.edu.buaa.patpat.boot.modules.course.aspect.ValidateCourse)")
-    @Order(300)
     public Object intercept(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
