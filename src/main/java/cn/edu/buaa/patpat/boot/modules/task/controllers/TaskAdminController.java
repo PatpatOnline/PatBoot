@@ -20,7 +20,6 @@ import cn.edu.buaa.patpat.boot.modules.task.models.entities.Task;
 import cn.edu.buaa.patpat.boot.modules.task.models.entities.TaskTypes;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskListView;
 import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskProblemListView;
-import cn.edu.buaa.patpat.boot.modules.task.models.views.TaskView;
 import cn.edu.buaa.patpat.boot.modules.task.services.TaskAdminService;
 import cn.edu.buaa.patpat.boot.modules.task.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,19 +92,6 @@ public class TaskAdminController extends BaseController {
     ) {
         var tasks = taskService.query(courseId, TaskTypes.fromString(type), false);
         return DataResponse.ok(tasks);
-    }
-
-    @GetMapping("{type}/query/{id}")
-    @Operation(summary = "Query Task", description = "Query a task (lab or iter)")
-    @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse
-    public DataResponse<TaskView> query(
-            @PathVariable String type,
-            @PathVariable int id,
-            @CourseId Integer courseId
-    ) {
-        var task = taskService.query(id, courseId, TaskTypes.fromString(type), false);
-        return DataResponse.ok(task);
     }
 
     @PostMapping("lab/problems/update/{id}")
