@@ -67,7 +67,7 @@ public class StudentImporter {
             if (clean) {
                 deleted = cleanStudents(sheet, courseId, teacher.getId());
             }
-            for (int i = 6; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 5; i < sheet.getLastRowNum(); i++) {
                 int ret = createOrUpdateStudent(sheet.getRow(i), courseId, teacher.getId());
                 if (ret == 1) {
                     created++;
@@ -176,8 +176,7 @@ public class StudentImporter {
 
     private Account extractTeacherFromSheet(Sheet sheet) throws ImportException {
         try {
-            String value = Excels.getNonEmptyCellValue(sheet.getRow(2).getCell(4));
-            String name = value.substring(value.lastIndexOf("：") + 1);
+            String name = Excels.getNonEmptyCellValue(sheet.getRow(3).getCell(7));
             Account account = accountApi.findByName(name);
             if (account == null) {
                 throw new ImportException(MessageFormat.format(M("student.import.error.teacher"), name));
@@ -236,7 +235,7 @@ public class StudentImporter {
 
     private Set<String> getAllBuaaIds(Sheet sheet) throws ExcelException {
         Set<String> buaaIds = new HashSet<>();
-        for (int i = 6; i <= sheet.getLastRowNum(); i++) {
+        for (int i = 5; i < sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             buaaIds.add(Excels.getNonEmptyCellValue(row.getCell(1)));
         }
@@ -278,7 +277,7 @@ public class StudentImporter {
     private void extractStudentFromRow(Row row, Student old) throws ExcelException {
         old.setMajor(Excels.getNonEmptyCellValue(row.getCell(5)));
         old.setClassName(Excels.getNonEmptyCellValue(row.getCell(6)));
-        old.setRepeat("重修".equals(Excels.getCellValue(row.getCell(29))));
+        old.setRepeat("重修".equals(Excels.getCellValue(row.getCell(10))));
     }
 
     private void extractAccountFromRow(Row row, Account old) throws ExcelException {

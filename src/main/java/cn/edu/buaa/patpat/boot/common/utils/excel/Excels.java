@@ -10,6 +10,7 @@ import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -69,7 +70,9 @@ public class Excels {
         if (cell == null) {
             throw new ExcelException("Cell is null");
         }
-        return cell.getStringCellValue();
+        // Use DataFormatter to get the cell value as string.
+        DataFormatter formatter = new DataFormatter();
+        return formatter.formatCellValue(cell);
     }
 
     public static Workbook getWorkbook() {
