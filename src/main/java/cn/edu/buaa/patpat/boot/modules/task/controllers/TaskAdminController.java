@@ -58,7 +58,7 @@ public class TaskAdminController extends BaseController {
         return create(TaskTypes.fromString(type), courseId, request);
     }
 
-    @PutMapping("{type}/update/{id}")
+    @PostMapping("{type}/update/{id}")
     @Operation(summary = "Update Task", description = "Update an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -71,7 +71,7 @@ public class TaskAdminController extends BaseController {
         return update(id, courseId, TaskTypes.fromString(type), request);
     }
 
-    @DeleteMapping("{type}/delete/{id}")
+    @PostMapping("{type}/delete/{id}")
     @Operation(summary = "Delete Task", description = "Delete an existing task (lab or iter)")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse

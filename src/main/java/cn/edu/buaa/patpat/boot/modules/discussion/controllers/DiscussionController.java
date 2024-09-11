@@ -71,7 +71,7 @@ public class DiscussionController extends BaseController {
         return DataResponse.ok(M("discussion.create.success"), view);
     }
 
-    @PutMapping("update/{id}")
+    @PostMapping("update/{id}")
     @Operation(summary = "Update a discussion", description = "Student update their discussion or T.A. update any discussion")
     @ValidatePermission
     @ValidateCourse
@@ -89,7 +89,7 @@ public class DiscussionController extends BaseController {
                 mappers.map(discussion, DiscussionUpdateDto.class));
     }
 
-    @DeleteMapping("delete/{id}")
+    @PostMapping("delete/{id}")
     @Operation(summary = "Delete a discussion", description = "Student delete their discussion or T.A. delete any discussion")
     @ValidatePermission
     @ValidateCourse
@@ -120,7 +120,7 @@ public class DiscussionController extends BaseController {
         return DataResponse.ok(new DiscussionWithReplyView(discussion, replies));
     }
 
-    @PutMapping("like/{id}")
+    @PostMapping("like/{id}")
     @Operation(summary = "Like/Unlike a discussion", description = "Student like/unlike a discussion")
     @ValidatePermission
     @ValidateCourse
@@ -139,7 +139,7 @@ public class DiscussionController extends BaseController {
                 : M("discussion.unlike.success"));
     }
 
-    @PutMapping("subscribe/{id}")
+    @PostMapping("subscribe/{id}")
     @Operation(summary = "Subscribe/Unsubscribe a discussion", description = "Student subscribe/unsubscribe a discussion")
     @ValidatePermission
     @ValidateCourse

@@ -66,7 +66,7 @@ public class AccountAdminController extends BaseController {
                 dto);
     }
 
-    @PutMapping("password/reset/{id}")
+    @PostMapping("password/reset/{id}")
     @Operation(summary = "Reset password", description = "Reset any account's password")
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse resetPassword(
@@ -76,7 +76,7 @@ public class AccountAdminController extends BaseController {
         return MessageResponse.ok(M("account.password.reset.success"));
     }
 
-    @PutMapping("update/{id}")
+    @PostMapping("update/{id}")
     @Operation(summary = "Update an account and role", description = "T.A. updates an account")
     @ValidatePermission(AuthLevel.TA)
     public DataResponse<AccountDto> update(

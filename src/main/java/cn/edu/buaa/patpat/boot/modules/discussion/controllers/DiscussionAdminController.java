@@ -26,7 +26,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class DiscussionAdminController extends BaseController {
     private final DiscussionService discussionService;
 
-    @PutMapping("top/{id}")
+    @PostMapping("top/{id}")
     @Operation(summary = "Top/Untop a discussion", description = "Top/Untop a discussion to the top of the list")
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse top(
@@ -39,7 +39,7 @@ public class DiscussionAdminController extends BaseController {
                 : M("discussion.untop.success"));
     }
 
-    @PutMapping("star/{id}")
+    @PostMapping("star/{id}")
     @Operation(summary = "Star/Unstar a discussion", description = "Star/Unstar a discussion")
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse star(

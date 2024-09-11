@@ -64,7 +64,7 @@ public class ReplyController extends BaseController {
         return DataResponse.ok(M("reply.create.success"), view);
     }
 
-    @PutMapping("update/{id}")
+    @PostMapping("update/{id}")
     @Operation(summary = "Update a reply", description = "Student update their reply in a discussion, T.A. can update any reply")
     @ValidatePermission
     @ValidateCourse
@@ -81,7 +81,7 @@ public class ReplyController extends BaseController {
                 mappers.map(reply, ReplyUpdateDto.class));
     }
 
-    @DeleteMapping("delete/{id}")
+    @PostMapping("delete/{id}")
     @Operation(summary = "Delete a reply", description = "Student delete their reply in a discussion, T.A. can delete any reply")
     @ValidatePermission
     @ValidateCourse
@@ -95,7 +95,7 @@ public class ReplyController extends BaseController {
         return MessageResponse.ok(M("reply.delete.success"));
     }
 
-    @PutMapping("like/{id}")
+    @PostMapping("like/{id}")
     @Operation(summary = "Like a reply", description = "Like a reply in a discussion")
     @ValidatePermission
     @ValidateCourse

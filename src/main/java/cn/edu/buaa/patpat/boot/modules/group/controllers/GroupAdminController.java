@@ -40,7 +40,7 @@ public class GroupAdminController extends BaseController {
     private final GroupConfigService groupConfigService;
     private final GroupAdminService groupAdminService;
 
-    @PutMapping("config/update")
+    @PostMapping("config/update")
     @Operation(summary = "Update group configuration", description = "Update group configuration of the current course")
     @ValidateParameters
     @ValidateCourse

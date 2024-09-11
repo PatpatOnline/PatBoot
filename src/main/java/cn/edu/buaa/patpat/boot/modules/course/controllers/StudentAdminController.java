@@ -126,7 +126,7 @@ public class StudentAdminController extends BaseController {
         return DataResponse.ok(view);
     }
 
-    @PutMapping("update/{id}")
+    @PostMapping("update/{id}")
     @Operation(summary = "Update student", description = "Update student information by student ID")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse(allowRoot = false)

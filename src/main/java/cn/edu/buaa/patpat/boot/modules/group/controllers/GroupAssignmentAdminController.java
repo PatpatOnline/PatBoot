@@ -54,7 +54,7 @@ public class GroupAssignmentAdminController extends BaseController {
                 mappers.map(assignment, GroupAssignmentDto.class));
     }
 
-    @PutMapping("update")
+    @PostMapping("update")
     @Operation(summary = "Update group assignment", description = "Update group assignment for the current course")
     @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
@@ -69,7 +69,7 @@ public class GroupAssignmentAdminController extends BaseController {
                 mappers.map(assignment, GroupAssignmentDto.class));
     }
 
-    @DeleteMapping("delete")
+    @PostMapping("delete")
     @Operation(summary = "Delete group assignment", description = "Delete group assignment for the current course")
     @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
