@@ -10,9 +10,12 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -193,7 +196,7 @@ public class Medias {
      * @throws IOException if failed to load resource
      */
     public static Resource loadAsResource(Path path, boolean autoDelete) throws IOException {
-        Resource resource = autoDelete ? new AutoDeleteFileSystemResource(path) : new FileSystemResource(path);
+        Resource resource = autoDelete ? new AutoDeleteUrlResource(path.toUri()) : new FileSystemResource(path);
         if (resource.exists() || resource.isReadable()) {
             return resource;
         } else {
@@ -211,8 +214,8 @@ public class Medias {
      */
     public static Resource loadAsResource(Path path, Consumer<Path> deleteAction) throws IOException {
         Resource resource = deleteAction == null
-                ? new FileSystemResource(path)
-                : new AutoDeleteFileSystemResource(path, deleteAction);
+                ? new UrlResource(path.toUri())
+                : new AutoDeleteUrlResource(path.toUri(), deleteAction);
         if (resource.exists() && resource.isReadable()) {
             return resource;
         } else {
@@ -243,15 +246,15 @@ public class Medias {
         return Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
-    private static class AutoDeleteFileSystemResource extends FileSystemResource {
+    private static class AutoDeleteUrlResource extends UrlResource {
         private final Consumer<Path> deleteAction;
 
-        public AutoDeleteFileSystemResource(Path path, @Nonnull Consumer<Path> deleteAction) {
+        public AutoDeleteUrlResource(URI path, @Nonnull Consumer<Path> deleteAction) throws MalformedURLException {
             super(path);
             this.deleteAction = deleteAction;
         }
 
-        public AutoDeleteFileSystemResource(Path path) {
+        public AutoDeleteUrlResource(URI path) throws MalformedURLException {
             this(path, Medias::removeSilently);
         }
 
