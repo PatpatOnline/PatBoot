@@ -118,7 +118,7 @@ public class StudentAdminController extends BaseController {
     @GetMapping("{id}")
     @Operation(summary = "Get student detail", description = "Get student detail by student ID")
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse(allowRoot = false)
+    @ValidateCourse
     public DataResponse<StudentDetailView> detail(
             @PathVariable int id
     ) {
@@ -129,7 +129,7 @@ public class StudentAdminController extends BaseController {
     @PostMapping("update/{id}")
     @Operation(summary = "Update student", description = "Update student information by student ID")
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse(allowRoot = false)
+    @ValidateCourse
     public DataResponse<StudentListView> update(
             @PathVariable int id,
             @RequestBody @Valid UpdateStudentRequest request
@@ -142,7 +142,7 @@ public class StudentAdminController extends BaseController {
     @GetMapping("query")
     @Operation(summary = "Query students", description = "Query students in current course with filters")
     @ValidatePermission(AuthLevel.TA)
-    @ValidateCourse(allowRoot = false)
+    @ValidateCourse
     @ValidatePagination
     public DataResponse<PageListDto<StudentListView>> query(
             @CourseId Integer courseId,
