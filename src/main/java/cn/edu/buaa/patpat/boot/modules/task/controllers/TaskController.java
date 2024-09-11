@@ -64,14 +64,21 @@ public class TaskController extends BaseController {
     }
 
     @GetMapping("{type}/query/{id}")
-    @Operation(summary = "Get task by id", description = "Get task by id, return forbidden if not started or ended")
+    @Operation(summary = "Get task by id", description = "Get task by id, T.A. get any, student return forbidden if not started or ended")
     @ValidateCourse
+    @ValidatePermission
     public DataResponse<TaskView> query(
             @PathVariable String type,
             @PathVariable Integer id,
-            @CourseId Integer courseId
+            @CourseId Integer courseId,
+            AuthPayload auth
     ) {
-        var task = taskService.query(id, courseId, TaskTypes.fromString(type), true);
+        // validate time if is student
+        var task = taskService.query(
+                id,
+                courseId,
+                TaskTypes.fromString(type),
+                auth.isStudent());
         return DataResponse.ok(task);
     }
 
