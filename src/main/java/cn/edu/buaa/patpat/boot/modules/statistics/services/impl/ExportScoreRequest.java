@@ -89,7 +89,7 @@ public class ExportScoreRequest {
      * The existing task scores will be replaced.
      */
     public void setGroupScores(List<GroupScoreIndexView> scores) {
-        groupScores = scores.stream()
+        groupScores = scores == null ? Map.of() : scores.stream()
                 .collect(Collectors.toMap(GroupScoreIndexView::getAccountId, s -> s));
     }
 }
