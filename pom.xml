@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.edu.buaa.patpat</groupId>
     <artifactId>PatBoot</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>PatBoot</name>
     <description>PatBoot</description>
     <url/>
