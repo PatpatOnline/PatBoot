@@ -69,7 +69,7 @@ public class ValidateMultipartFileAspect {
         }
 
         if (rule.maxSize() > 0 && file.getSize() > rule.maxSize() * 1024 * 1024) {
-            throw new BadRequestException(M("validation.file.size"));
+            throw new BadRequestException(M("validation.file.size", rule.maxSize()));
         }
     }
 }

@@ -84,7 +84,7 @@ public class TaskController extends BaseController {
 
     @PostMapping("lab/submit/{id}")
     @Operation(summary = "Submit Lab report", description = "Student submit Lab report")
-    @ValidateMultipartFile(extensions = { "zip", "pdf", "md", "doc", "docx", "txt" }, maxSize = 10)
+    @ValidateMultipartFile(extensions = { "zip", "pdf", "md", "doc", "docx", "txt" }, maxSize = 128)
     @ValidatePermission
     @ValidateCourse
     public DataResponse<TaskScoreDto> submit(
@@ -102,7 +102,7 @@ public class TaskController extends BaseController {
 
     @PostMapping("iter/submit/{id}")
     @Operation(summary = "Submit Iteration code", description = "Student submit Iteration code")
-    @ValidateMultipartFile(extensions = { "zip", "java" }, maxSize = 1)
+    @ValidateMultipartFile(extensions = { "zip", "java" }, maxSize = 16)
     @ValidatePermission
     @ValidateCourse
     public DataResponse<SubmissionDto> submit(
