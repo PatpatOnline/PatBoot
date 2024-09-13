@@ -21,7 +21,7 @@ public class UpdateTaskRequest implements IRequireValidation {
     @Size(min = 1, max = 255)
     private String title;
 
-    @Size(min = 1, max = 65535)
+    @Size(min = 1)
     private String content;
 
     private Boolean visible;

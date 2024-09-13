@@ -10,6 +10,7 @@ import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.ResourceResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.AuthLevel;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -54,6 +55,7 @@ public class TaskAdminController extends BaseController {
             @RequestBody @Valid CreateTaskRequest request,
             @CourseId Integer courseId
     ) {
+        request.setContent(Strings.fromBase64(request.getContent()));
         return create(TaskTypes.fromString(type), courseId, request);
     }
 
@@ -67,6 +69,9 @@ public class TaskAdminController extends BaseController {
             @RequestBody @Valid UpdateTaskRequest request,
             @CourseId Integer courseId
     ) {
+        if (request.getContent() != null) {
+            request.setContent(Strings.fromBase64(request.getContent()));
+        }
         return update(id, courseId, TaskTypes.fromString(type), request);
     }
 
