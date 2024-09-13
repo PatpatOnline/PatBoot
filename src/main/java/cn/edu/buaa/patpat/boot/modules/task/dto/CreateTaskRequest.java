@@ -24,7 +24,7 @@ public class CreateTaskRequest implements IRequireValidation {
     private String title;
 
     @NotNull
-    @Size(min = 1, max = 65535)
+    @Size(min = 1)  // remove max length limit
     private String content;
 
     @NotNull
