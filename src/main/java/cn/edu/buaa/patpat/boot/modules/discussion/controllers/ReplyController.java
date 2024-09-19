@@ -8,6 +8,7 @@ package cn.edu.buaa.patpat.boot.modules.discussion.controllers;
 import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
 import cn.edu.buaa.patpat.boot.modules.auth.models.AuthPayload;
@@ -49,6 +50,8 @@ public class ReplyController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
+        request.setContent(Strings.fromBase64(request.getContent()));
+
         if (!discussionService.exists(courseId, request.getDiscussionId())) {
             throw new NotFoundException(M("discussion.exists.not"));
         }
@@ -74,6 +77,10 @@ public class ReplyController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
+        if (request.getContent() != null) {
+            request.setContent(Strings.fromBase64(request.getContent()));
+        }
+        
         Reply reply = replyService.update(id, request, courseId, auth);
 
         return DataResponse.ok(

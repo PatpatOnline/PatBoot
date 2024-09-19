@@ -12,6 +12,7 @@ import cn.edu.buaa.patpat.boot.common.dto.DataResponse;
 import cn.edu.buaa.patpat.boot.common.dto.MessageResponse;
 import cn.edu.buaa.patpat.boot.common.dto.PageListDto;
 import cn.edu.buaa.patpat.boot.common.requets.BaseController;
+import cn.edu.buaa.patpat.boot.common.utils.Strings;
 import cn.edu.buaa.patpat.boot.exceptions.BadRequestException;
 import cn.edu.buaa.patpat.boot.exceptions.NotFoundException;
 import cn.edu.buaa.patpat.boot.modules.auth.aspect.ValidatePermission;
@@ -57,6 +58,8 @@ public class DiscussionController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
+        request.setContent(Strings.fromBase64(request.getContent()));
+
         var discussion = discussionService.create(request, courseId, auth.getId());
         if (discussion == null) {
             throw new BadRequestException(M("discussion.create.error"));
@@ -81,6 +84,10 @@ public class DiscussionController extends BaseController {
             AuthPayload auth,
             @CourseId Integer courseId
     ) {
+        if (request.getContent() != null) {
+            request.setContent(Strings.fromBase64(request.getContent()));
+        }
+
         var discussion = discussionService.update(id, request, courseId, auth);
 
         log.info("User {} updated discussion {}: {}", auth.getBuaaId(), discussion.getId(), discussion.getTitle());
