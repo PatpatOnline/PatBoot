@@ -36,7 +36,7 @@ public class AuthService extends BaseService {
     }
 
     public AuthPayload verifyJwt(String jwt) throws JwtVerifyException {
-        return validateJwt(jwt);
+        return validateJwt(jwtIssuer, jwt);
     }
 
     public String issueRefresh(AuthPayload auth) throws JwtIssueException {
@@ -50,7 +50,7 @@ public class AuthService extends BaseService {
     }
 
     public AuthPayload verifyRefresh(String refresh) throws JwtVerifyException {
-        return validateJwt(refresh);
+        return validateJwt(refreshIssuer, refresh);
     }
 
     public Cookie setJwtCookie(String jwt) {
@@ -69,8 +69,12 @@ public class AuthService extends BaseService {
         return refreshCookieSetter.clean();
     }
 
-    private AuthPayload validateJwt(String jwt) throws JwtVerifyException {
-        String subject = refreshIssuer.verify(jwt);
+    private AuthPayload validateJwt(IJwtIssuer issuer, String jwt) throws JwtVerifyException {
+        if (jwt == null) {
+            throw new JwtVerifyException("JWT is null");
+        }
+
+        String subject = issuer.verify(jwt);
         try {
             return mappers.fromJson(subject, AuthPayload.class);
         } catch (JsonProcessingException e) {

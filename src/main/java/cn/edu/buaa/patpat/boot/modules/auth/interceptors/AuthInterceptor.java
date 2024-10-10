@@ -34,10 +34,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String jwt = jwtCookieSetter.get(request);
-        if (jwt == null) {
-            throw new UnauthorizedException(M("auth.permission.jwt.missing"));
-        }
-
         AuthPayload payload;
 
         // Validate JWT first.
@@ -51,7 +47,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         // Validate refresh token second.
         try {
-            payload = authService.verifyRefresh(jwtCookieSetter.get(request));
+            payload = authService.verifyRefresh(refreshCookieSetter.get(request));
             String newJwt = authService.issueJwt(payload);
             String newRefresh = authService.issueRefresh(payload);
             Cookie jwtCookie = jwtCookieSetter.set(newJwt);
