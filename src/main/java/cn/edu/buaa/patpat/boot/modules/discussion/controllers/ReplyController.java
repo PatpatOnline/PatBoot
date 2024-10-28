@@ -80,7 +80,7 @@ public class ReplyController extends BaseController {
         if (request.getContent() != null) {
             request.setContent(Strings.fromBase64(request.getContent()));
         }
-        
+
         Reply reply = replyService.update(id, request, courseId, auth);
 
         return DataResponse.ok(

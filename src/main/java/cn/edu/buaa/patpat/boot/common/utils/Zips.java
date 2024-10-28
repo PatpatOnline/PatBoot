@@ -12,6 +12,7 @@ import net.lingala.zip4j.model.ZipParameters;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class Zips {
     private Zips() {}
@@ -42,6 +43,10 @@ public class Zips {
      * @throws IOException If an I/O error occurs.
      */
     public static void zip(Path sourceDir, Path zipFilePath, boolean includeParent) throws IOException {
+        if (!sourceDir.toFile().exists()) {
+            throw new IOException("Source directory does not exist.");
+        }
+
         var params = new ZipParameters();
         params.setIncludeRootFolder(includeParent);
         try (var archive = new ZipFile(zipFilePath.toFile())) {
@@ -53,6 +58,42 @@ public class Zips {
 
     public static void zip(String sourceDir, String zipFilePath, boolean includeParent) throws IOException {
         zip(Path.of(sourceDir), Path.of(zipFilePath), includeParent);
+    }
+
+    /**
+     * Zip files under a directory to a .zip archive with a filter.
+     * Note that it only searches for files under the directory, not recursively.
+     *
+     * @param sourceDir     The path to the directory to zip.
+     * @param zipFilePath   The path to the .zip archive.
+     * @param includeParent Whether to include the parent directory in the archive.
+     * @param filter        The filter to apply to the files.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void zip(Path sourceDir, Path zipFilePath, Predicate<String> filter) throws IOException {
+        if (!sourceDir.toFile().exists()) {
+            throw new IOException("Source directory does not exist.");
+        }
+        var files = sourceDir.toFile().listFiles();
+        if (files == null) {
+            throw new IOException("Failed to list files in the source directory.");
+        }
+
+        var params = new ZipParameters();
+        params.setIncludeRootFolder(true);
+        try (var archive = new ZipFile(zipFilePath.toFile())) {
+            for (var file : files) {
+                if (filter.test(file.getName())) {
+                    archive.addFolder(file, params);
+                }
+            }
+        } catch (ZipException e) {
+            throw new IOException(e);
+        }
+    }
+
+    public static void zip(String sourceDir, String zipFilePath, Predicate<String> filter) throws IOException {
+        zip(Path.of(sourceDir), Path.of(zipFilePath), filter);
     }
 
     /**

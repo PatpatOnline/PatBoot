@@ -29,7 +29,10 @@ public class DownloadAgent {
     ) throws IOException {
         Medias.ensureParentPath(zipFile);
 
-        Zips.zip(submissionPath, zipFile, false);
+        final Set<String> studentFolders = students.stream()
+                .map(student -> student.getBuaaId() + "-" + student.getName())
+                .collect(Collectors.toSet());
+        Zips.zip(submissionPath, zipFile, studentFolders::contains);
         String reportPath = generateReport(students, scores, Medias.getParentPath(zipFile).toString());
         Zips.update(zipFile, reportPath);
 
