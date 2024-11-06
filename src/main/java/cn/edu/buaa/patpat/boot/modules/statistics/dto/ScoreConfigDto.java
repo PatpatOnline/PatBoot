@@ -12,4 +12,5 @@ public class ScoreConfigDto {
     private int labScore;
     private int iterScore;
     private int projScore;
+    private int latePercent;
 }

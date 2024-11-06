@@ -158,7 +158,7 @@ public class ScoreExporter {
         for (var student : students) {
             helper.getRow(startRow++, row -> {
                 var view = taskScores.map(s -> s.get(student.getAccountId()));
-                var score = view.map(v -> v.isLate() ? v.getScore() / 2 : v.getScore()).orElse(0);
+                var score = view.map(v -> request.getConfig().getScore(v.getScore(), v.isLate())).orElse(0);
                 row.createCenteredCell(column, score);
             });
         }

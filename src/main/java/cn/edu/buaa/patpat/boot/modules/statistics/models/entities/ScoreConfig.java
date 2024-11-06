@@ -16,7 +16,17 @@ public class ScoreConfig implements Serializable {
     private int iterScore;
     private int projScore;
 
+    /**
+     * The percentage of the score for late submission.
+     * Final score = score * (latePercent / 100)
+     */
+    private int latePercent;
+
     public int getTotalScore() {
         return labScore + iterScore + projScore;
+    }
+
+    public int getScore(int score, boolean isLate) {
+        return isLate ? ((int) (score * ((double) latePercent / 100.0))) : score;
     }
 }

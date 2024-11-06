@@ -16,13 +16,14 @@ import org.apache.ibatis.annotations.Select;
 public interface ScoreConfigMapper {
     @Insert("""
             INSERT INTO `score_config` (
-                `course_id`, `lab_score`, `iter_score`, `proj_score`
+                `course_id`, `lab_score`, `iter_score`, `proj_score`, `late_percent`
             ) VALUES (
-                #{courseId}, #{labScore}, #{iterScore}, #{projScore}
+                #{courseId}, #{labScore}, #{iterScore}, #{projScore}, #{latePercent}
             ) ON DUPLICATE KEY UPDATE
                 `lab_score` = #{labScore},
                 `iter_score` = #{iterScore},
-                `proj_score` = #{projScore}
+                `proj_score` = #{projScore},
+                `late_percent` = #{latePercent}
             """)
     void saveOrUpdate(ScoreConfig config);
 

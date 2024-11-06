@@ -26,6 +26,7 @@ public class ScoreConfigService extends BaseService {
         DEFAULT_CONFIG.setLabScore(10);
         DEFAULT_CONFIG.setIterScore(10);
         DEFAULT_CONFIG.setProjScore(30);
+        DEFAULT_CONFIG.setLatePercent(50);
     }
 
     private final ScoreConfigMapper scoreConfigMapper;

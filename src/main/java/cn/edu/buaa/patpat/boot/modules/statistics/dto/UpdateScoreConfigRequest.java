@@ -22,4 +22,8 @@ public class UpdateScoreConfigRequest {
     @Max(100)
     @Min(0)
     private Integer projScore;
+
+    @Max(100)
+    @Min(0)
+    private Integer latePercent;
 }

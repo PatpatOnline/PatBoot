@@ -75,7 +75,7 @@ public class ExportScoreRequest {
                 if (accumulate == null) {
                     accumulate = 0;
                 }
-                accumulate += score.isLate() ? (score.getScore() / 2) : score.getScore();
+                accumulate += config.getScore(score.getScore(), score.isLate());
                 return accumulate;
             });
         }
