@@ -46,7 +46,7 @@ public class MessageController extends BaseController {
         return DataResponse.ok(messages);
     }
 
-    @PostMapping("read/{id}")
+    @RequestMapping(value = "read/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Read message", description = "Mark a message as read/unread")
     @ValidatePermission
     public DataResponse<Boolean> read(
@@ -60,7 +60,7 @@ public class MessageController extends BaseController {
                 : M("message.unread.success"), read);
     }
 
-    @PostMapping("update/{id}")
+    @RequestMapping(value = "update/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update message", description = "Update the argument of a message")
     @ValidatePermission
     public DataResponse<Object> update(
@@ -72,7 +72,7 @@ public class MessageController extends BaseController {
         return DataResponse.ok(M("message.update.success"), argument);
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete message", description = "Delete a message")
     @ValidatePermission
     public MessageResponse delete(

@@ -62,7 +62,7 @@ public class ProblemAdminController extends BaseController {
         return DataResponse.ok(M("problem.create.success"), response);
     }
 
-    @PostMapping("update/{id}")
+    @RequestMapping(value = "update/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update problem info", description = "T.A. updates problem info")
     @ValidateMultipartFile(allowNull = true, extensions = { "zip" })
     @ValidatePermission(AuthLevel.TA)
@@ -79,7 +79,7 @@ public class ProblemAdminController extends BaseController {
         return DataResponse.ok(M("problem.update.success"), response);
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete a problem", description = "T.A. deletes a problem")
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse delete(

@@ -83,7 +83,7 @@ public class CourseMaterialAdminController extends BaseController {
         return DataResponse.ok(M("course.material.update.success"), dto);
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete course material", description = "T.A. deletes a course material")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse

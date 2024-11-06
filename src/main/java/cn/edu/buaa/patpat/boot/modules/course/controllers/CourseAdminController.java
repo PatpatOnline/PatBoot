@@ -51,7 +51,7 @@ public class CourseAdminController extends BaseController {
                 course);
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete a course", description = "Teacher deletes a course")
     @ValidatePermission(AuthLevel.TEACHER)
     @ValidateCourse
@@ -75,7 +75,7 @@ public class CourseAdminController extends BaseController {
                 course);
     }
 
-    @PostMapping("update/{id}")
+    @RequestMapping(value = "update/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update a course", description = "Teacher updates a course, use null to keep the original value")
     @ValidatePermission(AuthLevel.TEACHER)
     public DataResponse<Course> update(
@@ -92,7 +92,7 @@ public class CourseAdminController extends BaseController {
                 course);
     }
 
-    @PostMapping("tutorial/update")
+    @RequestMapping(value = "tutorial/update", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update course tutorial", description = "T.A. updates the course tutorial")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse
@@ -106,7 +106,7 @@ public class CourseAdminController extends BaseController {
                 mappers.map(tutorial, CourseTutorialDto.class));
     }
 
-    @PostMapping("tutorial/delete")
+    @RequestMapping(value = "tutorial/delete", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete course tutorial", description = "T.A. deletes the course tutorial")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse

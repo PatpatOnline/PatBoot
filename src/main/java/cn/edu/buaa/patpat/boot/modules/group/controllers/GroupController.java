@@ -74,7 +74,7 @@ public class GroupController extends BaseController {
                 mappers.map(group, GroupDto.class));
     }
 
-    @PostMapping("update")
+    @RequestMapping(value = "update", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Student update their group", description = "Student update their group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission
@@ -91,7 +91,7 @@ public class GroupController extends BaseController {
                 mappers.map(updated, GroupDto.class));
     }
 
-    @PostMapping("dismiss")
+    @RequestMapping(value = "dismiss", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Student dismiss their group", description = "Student dismiss a group when they are the owner of the group")
     @ValidateCourse
     @ValidatePermission
@@ -202,7 +202,7 @@ public class GroupController extends BaseController {
         return DataResponse.ok(groups);
     }
 
-    @PostMapping("weight/{id}")
+    @RequestMapping(value = "weight/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Group owner update member weight", description = "Group owner update member weight")
     @ValidateCourse
     @ValidatePermission

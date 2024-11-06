@@ -26,7 +26,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class ReplyAdminController extends BaseController {
     private final ReplyService replyService;
 
-    @PostMapping("/verify/{id}")
+    @RequestMapping(value = "/verify/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Verify/Unverify a reply", description = "Verify/Unverify a reply")
     @ValidatePermission(AuthLevel.TA)
     public MessageResponse verify(

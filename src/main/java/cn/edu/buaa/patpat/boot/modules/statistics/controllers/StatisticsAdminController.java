@@ -51,7 +51,7 @@ public class StatisticsAdminController extends BaseController {
         return DataResponse.ok(mappers.map(config, ScoreConfigDto.class));
     }
 
-    @PostMapping("config/update")
+    @RequestMapping(value = "config/update", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update score config", description = "Update score config of course")
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse

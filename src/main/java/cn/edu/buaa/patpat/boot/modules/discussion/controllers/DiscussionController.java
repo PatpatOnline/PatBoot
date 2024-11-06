@@ -74,7 +74,7 @@ public class DiscussionController extends BaseController {
         return DataResponse.ok(M("discussion.create.success"), view);
     }
 
-    @PostMapping("update/{id}")
+    @RequestMapping(value = "update/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update a discussion", description = "Student update their discussion or T.A. update any discussion")
     @ValidatePermission
     @ValidateCourse
@@ -96,7 +96,7 @@ public class DiscussionController extends BaseController {
                 mappers.map(discussion, DiscussionUpdateDto.class));
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete a discussion", description = "Student delete their discussion or T.A. delete any discussion")
     @ValidatePermission
     @ValidateCourse

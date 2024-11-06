@@ -50,7 +50,7 @@ public class AnnouncementAdminController extends BaseController {
         return DataResponse.ok(M("announcement.create.success"), view);
     }
 
-    @PostMapping("update/{id}")
+    @RequestMapping(value = "update/{id}", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update an announcement", description = "T.A. updates an announcement")
     @ValidateCourse
     @ValidatePermission(AuthLevel.TA)
@@ -64,7 +64,7 @@ public class AnnouncementAdminController extends BaseController {
         return DataResponse.ok(M("announcement.update.success"), view);
     }
 
-    @PostMapping("delete/{id}")
+    @RequestMapping(value = "delete/{id}", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete an announcement", description = "T.A. deletes an announcement")
     @ValidateCourse(allowRoot = false)
     @ValidatePermission(AuthLevel.TA)

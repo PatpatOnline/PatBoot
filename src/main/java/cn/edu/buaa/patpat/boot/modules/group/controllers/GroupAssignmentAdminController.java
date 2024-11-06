@@ -40,7 +40,7 @@ public class GroupAssignmentAdminController extends BaseController {
     private final GroupAssignmentService groupAssignmentService;
 
     @PostMapping("create")
-    @Operation(summary = "Create group assignment", description = "Create group assignment for the current course")
+    @Operation(summary = "Create group assignment", description = "Create group assignment for the current course, do update if already exists")
     @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
     @ValidateCourse(allowRoot = false)
@@ -54,7 +54,7 @@ public class GroupAssignmentAdminController extends BaseController {
                 mappers.map(assignment, GroupAssignmentDto.class));
     }
 
-    @PostMapping("update")
+    @RequestMapping(value = "update", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update group assignment", description = "Update group assignment for the current course")
     @ValidateParameters
     @ValidatePermission(AuthLevel.TA)
@@ -69,7 +69,7 @@ public class GroupAssignmentAdminController extends BaseController {
                 mappers.map(assignment, GroupAssignmentDto.class));
     }
 
-    @PostMapping("delete")
+    @RequestMapping(value = "delete", method = { RequestMethod.POST, RequestMethod.DELETE })
     @Operation(summary = "Delete group assignment", description = "Delete group assignment for the current course")
     @ValidateParameters
     @ValidatePermission(AuthLevel.TA)

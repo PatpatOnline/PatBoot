@@ -35,7 +35,7 @@ import static cn.edu.buaa.patpat.boot.extensions.messages.Messages.M;
 public class AccountController extends BaseController {
     private final AccountService accountService;
 
-    @PostMapping("password")
+    @RequestMapping(value = "password", method = { RequestMethod.POST, RequestMethod.PUT })
     @Operation(summary = "Update password", description = "Update password of the current account")
     @ValidatePermission
     public MessageResponse updatePassword(
