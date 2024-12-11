@@ -71,13 +71,16 @@ public class TaskService extends BaseService {
         return taskMapper.query(courseId, type, visibleOnly);
     }
 
-    public TaskView query(int id, int courseId, int type, boolean validateTime) {
+    public TaskView query(int id, int courseId, int type, boolean isAdmin) {
         TaskView task = taskMapper.query(id, courseId, type);
         if (task == null) {
             throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
         }
-        if (validateTime) {
+        if (!isAdmin) {
             validateStartTime(type, task);
+            if (!task.isVisible()) {
+                throw new NotFoundException(M("task.exists.not", TaskTypes.toString(type)));
+            }
         }
         return task;
     }

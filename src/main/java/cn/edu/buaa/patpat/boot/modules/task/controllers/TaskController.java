@@ -73,12 +73,12 @@ public class TaskController extends BaseController {
             @CourseId Integer courseId,
             AuthPayload auth
     ) {
-        // validate time if is student
+        // validate time and visible if is student
         var task = taskService.query(
                 id,
                 courseId,
                 TaskTypes.fromString(type),
-                auth.isStudent());
+                auth.isTa());
         return DataResponse.ok(task);
     }
 
