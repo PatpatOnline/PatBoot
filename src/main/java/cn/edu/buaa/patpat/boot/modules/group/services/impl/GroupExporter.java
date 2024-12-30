@@ -108,6 +108,7 @@ public class GroupExporter {
                     row.createCenteredCell(colCursor++, member.getName());
                 }
             });
+            i++;
         }
     }
 
