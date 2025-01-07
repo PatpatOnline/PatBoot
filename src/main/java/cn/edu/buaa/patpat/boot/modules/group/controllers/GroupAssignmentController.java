@@ -60,7 +60,7 @@ public class GroupAssignmentController extends BaseController {
 
     @PostMapping("submit")
     @Operation(summary = "Submit group assignment", description = "Submit group assignment of the current course")
-    @ValidateMultipartFile(extensions = { "zip" }, maxSize = 64)
+    @ValidateMultipartFile(extensions = { "zip" }, maxSize = 128)
     @ValidateCourse
     @ValidatePermission
     @ValidateGroup(requireInGroup = true, requireOwner = true)
