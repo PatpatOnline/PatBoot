@@ -47,6 +47,8 @@ public class Zips {
             throw new IOException("Source directory does not exist.");
         }
 
+        Medias.ensureParentPath(zipFilePath.toString());
+
         var params = new ZipParameters();
         params.setIncludeRootFolder(includeParent);
         try (var archive = new ZipFile(zipFilePath.toFile())) {
