@@ -8,7 +8,18 @@
 
 在生产环境部署项目，参见 [PatpatDeploy](https://github.com/JavaEE-PatPatOnline/PatpatDeploy)。
 
-在本地运行项目，同样需要先在服务器或本地配置好 MySQL 和 RabbitMQ，在 IntelliJ IDEA 中创建运行配置，添加命令行参数  `--spring.profiles.active=dev`，并添加如下环境变量。
+在本地运行项目，首先需要克隆并构建项目。
+
+```bash
+# 克隆仓库
+git clone https://github.com/JavaEE-PatPatOnline/PatBoot.git
+cd PatBoot
+
+# 使用 Maven 构建项目
+mvn clean install
+```
+
+构建完成后，需要在服务器或本地配置好 MySQL 和 RabbitMQ，在 IntelliJ IDEA 中创建运行配置，添加命令行参数  `--spring.profiles.active=dev`，并添加如下环境变量。
 
 - MySQL
   - `MYSQL_HOST`: The host of the MySQL server
